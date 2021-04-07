@@ -11,5 +11,9 @@ cd /home/szabad/projects/def-sgravel/szabad/viprs-paper || exit
 
 pip install --no-index --upgrade pip
 pip install --no-index -r requirements.txt
+pip install --no-index -e ./software/rechunker
 
-python gwasimulator/setup.py
+cd gwasimulator || exit
+python setup.py
+
+cd /home/szabad/projects/def-sgravel/szabad/viprs-paper || exit
