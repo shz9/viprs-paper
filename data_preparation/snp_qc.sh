@@ -11,7 +11,7 @@ module load plink
 cd /home/szabad/projects/def-sgravel/szabad/viprs-paper || exit
 mkdir -p "data/ukbb_qc_genotypes/"
 
-plink2 --pfile "/lustre03/project/6004777/projects/uk_biobank/imputed_data/full_UKBB/v3_plink2/ukb_imp_chr{$1}_v3" \
+plink2 --pfile "/lustre03/project/6004777/projects/uk_biobank/imputed_data/full_UKBB/v3_plink2/ukb_imp_chr$1_v3" \
       --make-bed \
       --allow-no-sex \
       --keep data/keep_files/ukbb_qc_individuals.keep \
@@ -20,4 +20,4 @@ plink2 --pfile "/lustre03/project/6004777/projects/uk_biobank/imputed_data/full_
       --geno 0.05 \
       --maf 0.001 \
       --max-alleles 2 \
-      --out "data/ukbb_qc_genotypes/chr_{$1}"
+      --out "data/ukbb_qc_genotypes/chr_$1"

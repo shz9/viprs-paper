@@ -18,18 +18,18 @@ perc_training = 0.8  # Proportion of samples used for training (excluding sample
 num_pcs = 10  # Number of PCs to use as covariates (must be less than 40!)
 
 # File names:
-covar_file = "../data/covariates/covar_file.txt"
-keep_file = "../data/keep_files/ukbb_qc_individuals.keep"
-ld_keep_file = "../data/keep_files/ukbb_ld_subset.keep"
-train_keep_file = "../data/keep_files/ukbb_train_subset.keep"
-test_keep_file = "../data/keep_files/ukbb_test_subset.keep"
+covar_file = "data/covariates/covar_file.txt"
+keep_file = "data/keep_files/ukbb_qc_individuals.keep"
+ld_keep_file = "data/keep_files/ukbb_ld_subset.keep"
+train_keep_file = "data/keep_files/ukbb_train_subset.keep"
+test_keep_file = "data/keep_files/ukbb_test_subset.keep"
 
 # *** Variant options ***:
 
 min_info_score = 0.3
-hapmap_3_snps = "../data/keep_files/hm3_no_MHC.csv.bz2"  # Set to None in case we don't want to filter to HapMap3 SNPs.
+hapmap_3_snps = "data/keep_files/hm3_no_MHC.csv.bz2"  # Set to None in case we don't want to filter to HapMap3 SNPs.
 
-variant_keep_file = "../data/keep_files/ukbb_qc_variants.keep"
+variant_keep_file = "data/keep_files/ukbb_qc_variants.keep"
 
 
 # ----------- Helpler functions -----------
