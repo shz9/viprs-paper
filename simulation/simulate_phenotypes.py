@@ -4,8 +4,8 @@ Date: April 2021
 """
 
 import sys
-sys.path.append('../')
 import os.path as osp
+sys.path.append(osp.dirname(osp.dirname(__file__)))
 from gwasimulator.GWASSimulator import GWASSimulator
 from utils import makedir
 

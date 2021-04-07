@@ -4,9 +4,9 @@ Date: April 2021
 """
 
 import sys
-sys.path.append('../')
-import glob
 import os.path as osp
+sys.path.append(osp.dirname(osp.dirname(__file__)))
+import glob
 import pandas as pd
 from utils import makedir
 
