@@ -8,12 +8,13 @@
 
 module load plink
 
+sim_chrs=(22)
 cd /home/szabad/projects/def-sgravel/szabad/viprs-paper || exit
 
 for pheno in {1..100}
 do
   mkdir -p "data/gwas/{$1}/{$pheno}"
-  for chr in {1..22}
+  for chr in ${sim_chrs[*]};
   do
     plink2 --bfile "data/ukbb_qc_genotypes/chr_{$chr}" \
           --linear hide-covar \

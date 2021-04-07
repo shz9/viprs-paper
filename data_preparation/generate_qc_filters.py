@@ -3,11 +3,12 @@ Author: Shadi Zabad
 Date: April 2021
 """
 
-import os
+import sys
+sys.path.append('../')
 import glob
-import errno
 import os.path as osp
 import pandas as pd
+from utils import makedir
 
 
 # ----------- Options -----------
@@ -30,15 +31,6 @@ min_info_score = 0.3
 hapmap_3_snps = "data/keep_files/hm3_no_MHC.csv.bz2"  # Set to None in case we don't want to filter to HapMap3 SNPs.
 
 variant_keep_file = "data/keep_files/ukbb_qc_variants.keep"
-
-
-# ----------- Helpler functions -----------
-def makedir(directory):
-    try:
-        os.makedirs(directory)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
 
 
 # -------- Sample quality control --------
