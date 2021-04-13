@@ -15,9 +15,11 @@ plink2 --pfile "/lustre03/project/6004777/projects/uk_biobank/imputed_data/full_
       --make-bed \
       --allow-no-sex \
       --keep data/keep_files/ukbb_qc_individuals.keep \
-      --extract data/keep_files/ukbb_qc_variants.keep \
+      --extract data/keep_files/ukbb_qc_variants_hm3.keep \
+      --cm-map "../data/genetic_map/1000GP_Phase3/genetic_map_chr$1_combined_b37.txt" \
       --hwe 1e-10 \
       --geno 0.05 \
       --maf 0.001 \
+      --snps-only \
       --max-alleles 2 \
       --out "data/ukbb_qc_genotypes/chr_$1"

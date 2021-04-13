@@ -31,6 +31,7 @@ min_info_score = 0.3
 hapmap_3_snps = "data/keep_files/hm3_no_MHC.csv.bz2"  # Set to None in case we don't want to filter to HapMap3 SNPs.
 
 variant_keep_file = "data/keep_files/ukbb_qc_variants.keep"
+variant_hm3_keep_file = "data/keep_files/ukbb_qc_variants_hm3.keep"
 
 
 # -------- Sample quality control --------
@@ -116,11 +117,15 @@ variant_df.columns = ['SNP', 'INFO']
 # Exclude variants with imputation score less than `min_info_score`
 variant_df = variant_df.loc[variant_df['INFO'] >= min_info_score]
 
+# Write to file:
+makedir(osp.dirname(variant_keep_file))
+variant_df['SNP'].to_csv(variant_keep_file, header=False, index=False)
+
 # Merge with HapMap3 filter if provided:
 if hapmap_3_snps is not None:
     hm3_snps = pd.read_csv(hapmap_3_snps)
     variant_df = pd.merge(variant_df, hm3_snps)
 
-# Write to file:
-makedir(osp.dirname(variant_keep_file))
-variant_df['SNP'].to_csv(variant_keep_file, header=False, index=False)
+    # Write to file:
+    makedir(osp.dirname(variant_hm3_keep_file))
+    variant_df['SNP'].to_csv(variant_hm3_keep_file, header=False, index=False)

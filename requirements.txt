@@ -1,1 +1,3 @@
 pandas-plink
+psutil
+pandas>=1.1.4

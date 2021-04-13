@@ -1,5 +1,20 @@
 # Variational PRS paper
 
+## Data 
+
+In terms of the data that you need to reproduce the analyses, there 
+are three main data sources:
+
+1. [The 1000 Genomes Project genotype data](
+ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/): This data source is used to compute 
+reference LD matrices for analyses with summary statistics.
+   
+2. [The 1000G Phase III genetic map](https://mathgen.stats.ox.ac.uk/impute/1000GP%20Phase%203%20haplotypes%206%20October%202014.html): This is used to extract SNP positions along
+the chromosome in CentiMorgan (cM). This is important to define LD boundaries for
+   each SNP (e.g. by default, each SNP has a window of 1cM around it).
+   
+3. The UKBB genotype and phenotype data.
+
 ## Steps to reproduce the analyses
 
 1. Run the sample QC script, which selects individuals 
