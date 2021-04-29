@@ -12,7 +12,13 @@ reference LD matrices for analyses with summary statistics.
 2. [The 1000G Phase III genetic map](https://mathgen.stats.ox.ac.uk/impute/1000GP%20Phase%203%20haplotypes%206%20October%202014.html): This is used to extract SNP positions along
 the chromosome in CentiMorgan (cM). This is important to define LD boundaries for
    each SNP (e.g. by default, each SNP has a window of 1cM around it).
-   
+
+```shell
+wget https://mathgen.stats.ox.ac.uk/impute/1000GP_Phase3.tgz
+tar -xvzf 1000GP_Phase3.tgz
+rm 1000GP_Phase3/*.gz
+```   
+
 3. The UKBB genotype and phenotype data.
 
 ## Steps to reproduce the analyses
