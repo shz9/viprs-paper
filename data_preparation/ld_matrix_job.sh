@@ -11,6 +11,6 @@ source "$HOME/pyenv/bin/activate"
 LD_EST=${1:-"windowed"}  # LD estimator (default "windowed")
 CHR=${2:-22}  # Chromosome number (default 22)
 
-python compute_ld_matrices.py --estimator "$LD_EST" --chr "$CHR"
+python data_preparation/compute_ld_matrices.py --estimator "$LD_EST" --chr "$CHR"
 
 echo "Job finished with exit code $? at: `date`"
