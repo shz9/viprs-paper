@@ -28,7 +28,7 @@ test_keep_file = "data/keep_files/ukbb_test_subset.keep"
 # *** Variant options ***:
 
 min_info_score = 0.3
-hapmap_3_snps = "data/keep_files/hm3_no_MHC.csv.bz2"  # Set to None in case we don't want to filter to HapMap3 SNPs.
+hapmap_3_snps = "metadata/keep_files/hm3_no_MHC.csv.bz2"  # Set to None in case we don't want to filter to HapMap3 SNPs.
 
 variant_keep_file = "data/keep_files/ukbb_qc_variants.keep"
 variant_hm3_keep_file = "data/keep_files/ukbb_qc_variants_hm3.keep"
