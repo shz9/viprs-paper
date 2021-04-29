@@ -25,6 +25,7 @@ plink2 --bgen "/lustre03/project/6004777/projects/uk_biobank/imputed_data/full_U
       --maf 0.001 \
       --snps-only \
       --max-alleles 2 \
+      --hard-call-threshold 0.1 \
       --out "data/ukbb_qc_genotypes/chr_${CHR}"
 
 module load nixpkgs/16.09
