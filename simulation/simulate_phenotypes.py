@@ -14,9 +14,9 @@ import argparse
 
 parser = argparse.ArgumentParser(description='A module for simulating phenotypes')
 
-parser.add_argument('-h', '--h2g', dest='h2g', type=float, default=0.1,
+parser.add_argument('--h2g', dest='h2g', type=float, default=0.1,
                     help='Trait heritability (0. - 1.)')
-parser.add_argument('-p', '--pc', dest='prop_causal', type=float, default=0.01,
+parser.add_argument('-p', dest='prop_causal', type=float, default=0.01,
                     help='Proportion of causal SNPs (0. - 1.)')
 parser.add_argument('-n', '--replicates', dest='n_replicates', type=int, default=10,
                     help='Number of replicates')
