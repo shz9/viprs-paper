@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=def-sgravel
 #SBATCH --cpus-per-task=8
-#SBATCH --mem-per-cpu=1GB
+#SBATCH --mem-per-cpu=4GB
 #SBATCH --time=1:00:00
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=ALL
