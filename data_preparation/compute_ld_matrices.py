@@ -26,7 +26,7 @@ else:
 
 if args.estimator == 'windowed':
     GWASDataLoader(bed_dir,
-                   ld_subset_samples="data/keep_files/ukbb_ld_subset.keep",
+                   keep_individuals="data/keep_files/ukbb_ld_subset.keep",
                    ld_estimator="windowed",
                    window_unit="cM",
                    cm_window_cutoff=1.,
@@ -35,7 +35,7 @@ if args.estimator == 'windowed':
                    temp_dir="data/ld/ukbb_windowed/")
 elif args.estimator == 'shrinkage':
     GWASDataLoader(bed_dir,
-                   ld_subset_samples="data/keep_files/ukbb_ld_subset.keep",
+                   keep_individuals="data/keep_files/ukbb_ld_subset.keep",
                    ld_estimator="shrinkage",
                    genmap_Ne=11400,
                    genmap_sample_size=183,
