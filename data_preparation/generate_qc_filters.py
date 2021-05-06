@@ -117,6 +117,9 @@ variant_df.columns = ['SNP', 'INFO']
 # Exclude variants with imputation score less than `min_info_score`
 variant_df = variant_df.loc[variant_df['INFO'] >= min_info_score]
 
+# Exclude all SNPs with duplicate IDs:
+variant_df = variant_df.drop_duplicates(subset='SNP', keep=False)
+
 # Write to file:
 makedir(osp.dirname(variant_keep_file))
 variant_df['SNP'].to_csv(variant_keep_file, header=False, index=False)
