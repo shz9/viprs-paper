@@ -6,6 +6,7 @@ Date: May 2021
 import sys
 import os.path as osp
 sys.path.append(osp.dirname(osp.dirname(__file__)))
+sys.path.append("vemPRS/")
 from gwasimulator.GWASDataLoader import GWASDataLoader
 from vemPRS.prs.src.vem_c import vem_prs
 from vemPRS.prs.src.gibbs_c import prs_gibbs
