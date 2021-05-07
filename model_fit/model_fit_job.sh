@@ -8,6 +8,8 @@
 
 source "$HOME/pyenv/bin/activate"
 
-python model_fit/fit_prs.py "$1"
+model=${2:-"vem_c"}
+
+python model_fit/fit_prs.py -s "$1" -m "$model"
 
 echo "Job finished with exit code $? at: `date`"

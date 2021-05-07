@@ -1,6 +1,11 @@
 #!/bin/bash
 
-for ss_file in data/gwas/*/*/*.linear
+models=("vem_c" "gibbs_c")
+
+for m in "${models[@]}"
 do
-  sbatch model_fit/model_fit_job.sh "$ss_file"
+  for ss_file in data/gwas/*/*/*.linear
+  do
+    sbatch model_fit/model_fit_job.sh "$ss_file" "$m"
+  done
 done

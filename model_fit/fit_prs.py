@@ -8,11 +8,22 @@ import os.path as osp
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 from gwasimulator.GWASDataLoader import GWASDataLoader
 from vemPRS.prs.src.vem_c import vem_prs
+from vemPRS.prs.src.gibbs_c import prs_gibbs
 from utils import makedir
+import argparse
 
-sumstats_file = sys.argv[1]
+parser = argparse.ArgumentParser(description='Fit PRS models')
 
-output_dir = "data/model_fit/vem_c/"
+parser.add_argument('-m', '--model', dest='model', type=str, default='vem_c',
+                    help='The PRS model to fit', choices={'gibbs_c', 'vem_c'})
+parser.add_argument('-s', '--sumstats', dest='ss_file', type=str, required=True,
+                    help='The summary statistics file')
+
+args = parser.parse_args()
+
+sumstats_file = args.ss_file
+
+output_dir = f"data/model_fit/{args.model}/"
 output_f = osp.join(output_dir, sumstats_file.replace("data/gwas/", '').replace('.PHENO1.glm.linear', '.fit'))
 
 gdl = GWASDataLoader("data/ukbb_qc_genotypes/chr_22.bed",
@@ -21,6 +32,10 @@ gdl = GWASDataLoader("data/ukbb_qc_genotypes/chr_22.bed",
 
 makedir(osp.dirname(output_f))
 
-v = vem_prs(gdl)
-v.fit()
-v.write_inferred_params(output_f)
+if args.model == 'vem_c':
+    m = vem_prs(gdl)
+elif args.model == 'gibbs_c':
+    m = prs_gibbs(gdl)
+
+m.fit()
+m.write_inferred_params(output_f)
