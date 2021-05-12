@@ -1,6 +1,6 @@
 #!/bin/bash
 
-models=("vem_c" "gibbs_c")
+models=("vem_c" "gibbs_c" "vem_c_sbayes" "prs_gibbs_sbayes")
 
 for m in "${models[@]}"
 do
