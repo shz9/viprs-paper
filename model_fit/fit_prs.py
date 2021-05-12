@@ -31,6 +31,7 @@ output_dir = f"data/model_fit/{args.model}/"
 output_f = osp.join(output_dir, sumstats_file.replace("data/gwas/", '').replace('.PHENO1.glm.linear', '.fit'))
 
 gdl = GWASDataLoader("data/ukbb_qc_genotypes/chr_22.bed",
+                     keep_individuals="data/keep_files/ukbb_train_subset.keep",
                      ld_store_files="data/ld/ukbb_windowed/ld_ragged/chr_22",
                      sumstats_file=sumstats_file)
 
@@ -49,13 +50,19 @@ elif args.model == 'prs_gibbs_sbayes':
 m.fit()
 
 # Write inferred model parameters:
-m.write_inferred_params(output_f, index=False)
+m.write_inferred_params(output_f)
 
 # Write inferred hyperparameters:
 
-hyp_df = pd.DataFrame({
-    'Heritability': m.get_get_heritability(),
-    'Prop. Causal': [m.pi, m.pi.mean()]['gibbs' in args.model]
-})
+if 'gibbs' in args.model:
+    hyp_df = pd.DataFrame.from_dict({
+        'Heritability': m.get_heritability(),
+        'Prop. Causal': m.rs_pi.mean()
+    }, orient='index')
+else:
+    hyp_df = pd.DataFrame.from_dict({
+        'Heritability': m.get_heritability(),
+        'Prop. Causal': m.pi
+    }, orient='index')
 
-hyp_df.to_csv(output_f.replace('.fit', '.hyp'), index=False)
+hyp_df.to_csv(output_f.replace('.fit', '.hyp'))

@@ -8,13 +8,6 @@
 
 source "$HOME/pyenv/bin/activate"
 
-model=${2:-"vem_c"}
-
-start_time=`date +%s`
-
-python model_fit/fit_prs.py -s "$1" -m "$model"
-
-end_time=`date +%s`
+python evaluation/evaluate_prs.py "$1"
 
 echo "Job finished with exit code $? at: `date`"
-echo "Execution time: $((end_time-start_time))"
