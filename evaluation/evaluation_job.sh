@@ -8,6 +8,6 @@
 
 source "$HOME/pyenv/bin/activate"
 
-python evaluation/evaluate_prs.py "$1"
+python evaluation/evaluate_prs.py -p "$1"
 
 echo "Job finished with exit code $? at: `date`"

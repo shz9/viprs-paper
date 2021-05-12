@@ -53,7 +53,7 @@ for fit_file in glob.glob(f"data/model_fit/*/{config}/{trait}/chr_22.fit"):
                                                 prs_m.predict_phenotype())
     pred_perf.update({'Trait': trait, 'Model': fit_file.split("/")[2]})
 
-    dfs.append(pd.DataFrame.from_dict(pred_perf, orient='column').to_csv(output_file))
+    dfs.append(pd.DataFrame.from_dict(pred_perf, orient='index').T)
 
 makedir(osp.dirname(output_file))
 pd.concat(dfs).to_csv(output_file)
