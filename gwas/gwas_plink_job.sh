@@ -3,8 +3,9 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=2GB
 #SBATCH --time=01:00:00
+#SBATCH --output=./log/gwas/%j.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
-#SBATCH --mail-type=ALL
+#SBATCH --mail-type=FAIL
 
 module load plink
 
@@ -33,7 +34,6 @@ do
       plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
             --linear hide-covar \
             --covar-variance-standardize \
-            --covar data/covariates/covar_file.txt \
             --keep data/keep_files/ukbb_train_subset.keep \
             --allow-no-sex \
             --pheno "$pheno"  \
@@ -41,7 +41,6 @@ do
     else
       plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
             --linear hide-covar \
-            --covar data/covariates/covar_file.txt \
             --keep data/keep_files/ukbb_train_subset.keep \
             --allow-no-sex \
             --pheno "$pheno"  \

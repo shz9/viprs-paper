@@ -1,5 +1,10 @@
 #!/bin/bash
 
+rm -rf ./log/model_fit/*.out || true
+mkdir -p ./log/model_fit/
+
+echo "Submitting jobs for performing model fit..."
+
 models=("vem_c" "gibbs_c" "vem_c_sbayes" "prs_gibbs_sbayes")
 
 for m in "${models[@]}"

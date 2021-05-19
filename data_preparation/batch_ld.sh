@@ -1,5 +1,8 @@
 #!/bin/bash
 
+rm -rf ./log/data_preparation/ld_mat/*.out || true
+mkdir -p ./log/data_preparation/ld_mat/
+
 echo "Submitting jobs for computing LD matrices with the windowed estimator..."
 
 for c in $(seq 1 22)

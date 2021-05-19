@@ -3,8 +3,9 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --mem-per-cpu=1GB
 #SBATCH --time=1:00:00
+#SBATCH --output=./log/data_preparation/ld_mat/%j.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
-#SBATCH --mail-type=ALL
+#SBATCH --mail-type=FAIL
 
 source "$HOME/pyenv/bin/activate"
 
