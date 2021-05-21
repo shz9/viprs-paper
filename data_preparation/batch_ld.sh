@@ -16,3 +16,10 @@ for c in $(seq 1 22)
 do
   sbatch data_preparation/ld_matrix_job.sh "shrinkage" "$c"
 done
+
+echo "Submitting jobs for computing LD matrices with the sample estimator..."
+
+for c in $(seq 1 22)
+do
+  sbatch data_preparation/ld_matrix_job.sh "sample" "$c"
+done

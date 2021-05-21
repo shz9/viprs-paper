@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=def-sgravel
 #SBATCH --cpus-per-task=8
-#SBATCH --mem-per-cpu=2GB
+#SBATCH --mem-per-cpu=4GB
 #SBATCH --time=01:00:00
 #SBATCH --output=./log/model_fit/%j.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
@@ -10,6 +10,8 @@
 source "$HOME/pyenv/bin/activate"
 
 model=${2:-"vem_c"}
+
+echo "Performing model fit using $model on simulated dataset $1..."
 
 start_time=`date +%s`
 
