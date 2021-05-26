@@ -28,13 +28,15 @@ parser = argparse.ArgumentParser(description='Evaluate PRS models')
 
 parser.add_argument('-p', '--phenotype-file', dest='phenotype_file', type=str, required=True,
                     help='The file with the parameter fits')
+parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, required=True,
+                    help='The LD panel that was used for model fit')
 args = parser.parse_args()
 
 phenotype_file = args.phenotype_file
 config, trait = phenotype_file.split("/")[-2:]
 trait = trait.replace('.txt', '')
 
-output_file = f"data/evaluation/{config}/{trait}.csv"
+output_file = f"data/evaluation/{args.ld_panel}/{config}/{trait}.csv"
 
 sim_chrs = [22]  # Chromosomes used for simulation
 
@@ -46,7 +48,7 @@ prs_m = PRSModel(test_data)
 
 dfs = []
 
-for fit_file in glob.glob(f"data/model_fit/*/{config}/{trait}/chr_22.fit"):
+for fit_file in glob.glob(f"data/model_fit/{args.ld_panel}/*/{config}/{trait}/chr_22.fit"):
     prs_m.read_inferred_params(fit_file)
 
     pred_perf = evaluate_predictive_performance(test_data.phenotypes,

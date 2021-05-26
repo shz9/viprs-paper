@@ -5,12 +5,17 @@ mkdir -p ./log/model_fit/
 
 echo "Submitting jobs for performing model fit..."
 
-models=("vem_c" "gibbs_c" "vem_c_sbayes" "prs_gibbs_sbayes")
+ld_panels=("ukbb_windowed" "ukbb_shrinkage" "ukbb_sample")
+models=("VIPRS" "VIPRSSBayes" "GibbsPRS" "GibbsPRSSBayes")
+#("vem_c" "gibbs_c" "vem_c_sbayes" "prs_gibbs_sbayes")
 
 for m in "${models[@]}"
 do
-  for ss_file in data/gwas/*/*/*.linear
+  for ld in "${ld_panels[@]}"
   do
-    sbatch model_fit/model_fit_job.sh "$ss_file" "$m"
+    for ss_file in data/gwas/*/*/*.linear
+    do
+      sbatch model_fit/model_fit_job.sh "$ss_file" "$m" "$ld"
+    done
   done
 done

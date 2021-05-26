@@ -11,7 +11,7 @@ module load plink
 
 sim_chrs=(22)  # Chromosomes used for simulation
 input_dir=$1  # The input directory where the phenotype files are stored
-standardize=${2:-0}  # Whether to standardize the genotype/phenotype before performing regression (default: FALSE)
+standardize=${2:-1}  # Whether to standardize the genotype/phenotype before performing regression (default: TRUE)
 
 # Check that the input directory has been specified
 if test -z "$input_dir"
@@ -48,3 +48,5 @@ do
     fi
   done
 done
+
+echo "Job finished with exit code $? at: `date`"

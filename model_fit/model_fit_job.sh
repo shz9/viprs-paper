@@ -10,12 +10,13 @@
 source "$HOME/pyenv/bin/activate"
 
 model=${2:-"vem_c"}
+ld_panel=${3-"ukbb_windowed"}
 
 echo "Performing model fit using $model on simulated dataset $1..."
 
 start_time=`date +%s`
 
-python model_fit/fit_prs.py -s "$1" -m "$model"
+python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel"
 
 end_time=`date +%s`
 
