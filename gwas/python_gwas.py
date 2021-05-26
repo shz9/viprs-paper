@@ -36,5 +36,5 @@ for pheno_file in glob.glob(osp.join(args.input_dir, "*.txt")):
 
     ss_tables = gdl.to_sumstats_table(per_chromosome=True)
     for c, tab in ss_tables.items():
-        tab.to_csv(f"data/gwas/{config_name}/{pheno_id}/chr_{c}.PHENO1.glm.linear")
+        tab.to_csv(f"data/gwas/{config_name}/{pheno_id}/chr_{c}.PHENO1.glm.linear", index=False, sep="\t")
 
