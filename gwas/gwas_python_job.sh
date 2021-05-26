@@ -9,6 +9,6 @@
 
 source "$HOME/pyenv/bin/activate"
 
-python gwas/python_gwas.py "$1"
+python gwas/python_gwas.py -i "$1"
 
 echo "Job finished with exit code $? at: `date`"
