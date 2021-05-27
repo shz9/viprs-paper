@@ -1,16 +1,13 @@
 #!/bin/bash
 
-rm -rf ./log/evaluation/*.out || true
-mkdir -p ./log/evaluation/
+ld_panel=${1:-"ukbb_windowed"}
 
-echo "Submitting jobs for model evaluation..."
+rm -rf "./log/evaluation/$ld_panel/*.out" || true
+mkdir -p "./log/evaluation/$ld_panel"
 
-ld_panels=("ukbb_windowed" "ukbb_shrinkage" "ukbb_sample")
+echo "Submitting jobs for model evaluation using $ld_panel LD panel..."
 
-for ld in "${ld_panels[@]}"
+for trait_f in data/simulated_phenotypes/*/*.txt
 do
-  for trait_f in data/simulated_phenotypes/*/*.txt
-  do
-    sbatch evaluation/evaluation_job.sh "$trait_f" "$ld"
-  done
+  sbatch -J "$ld_panel" evaluation/evaluation_job.sh "$trait_f" "$ld_panel"
 done

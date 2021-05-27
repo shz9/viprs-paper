@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=8GB
 #SBATCH --time=01:00:00
-#SBATCH --output=./log/gwas/%j.out
+#SBATCH --output=./log/gwas/%x/%j.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
 

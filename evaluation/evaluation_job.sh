@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=4GB
 #SBATCH --time=01:00:00
-#SBATCH --output=./log/evaluation/%j.out
+#SBATCH --output=./log/evaluation/%x/%j.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
 

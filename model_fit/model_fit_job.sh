@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=4GB
 #SBATCH --time=01:00:00
-#SBATCH --output=./log/model_fit/%j.out
+#SBATCH --output=./log/model_fit/%x/%j.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
 
@@ -12,7 +12,10 @@ source "$HOME/pyenv/bin/activate"
 model=${2:-"vem_c"}
 ld_panel=${3-"ukbb_windowed"}
 
-echo "Performing model fit using $model on simulated dataset $1..."
+echo "Performing model fit..."
+echo "Dataset: $1"
+echo "Model: $model"
+echo "LD Panel: $ld_panel"
 
 start_time=`date +%s`
 
