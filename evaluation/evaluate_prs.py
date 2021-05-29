@@ -53,7 +53,7 @@ for fit_file in glob.glob(f"data/model_fit/{args.ld_panel}/*/{config}/{trait}/ch
 
     pred_perf = evaluate_predictive_performance(test_data.phenotypes,
                                                 prs_m.predict_phenotype())
-    pred_perf.update({'Trait': trait, 'Model': fit_file.split("/")[2]})
+    pred_perf.update({'Trait': trait, 'Model': fit_file.split("/")[3]})
 
     dfs.append(pd.DataFrame.from_dict(pred_perf, orient='index').T)
 

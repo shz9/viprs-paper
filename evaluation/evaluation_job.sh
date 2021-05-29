@@ -12,6 +12,6 @@ source "$HOME/pyenv/bin/activate"
 echo "Performing model evaluation on simulation directory $1..."
 echo "Using model fits obtained with LD panel $2"
 
-python evaluation/evaluate_prs.py -p "$1" "$2"
+python evaluation/evaluate_prs.py -p "$1" -l "$2"
 
 echo "Job finished with exit code $? at: `date`"
