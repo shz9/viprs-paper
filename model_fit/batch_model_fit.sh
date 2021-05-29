@@ -7,7 +7,7 @@ mkdir -p "./log/model_fit/$ld_panel"
 
 echo "Submitting jobs for performing model fit using LD panel $ld_panel..."
 
-models=("VIPRS" "VIPRSSBayes" "GibbsPRS" "GibbsPRSSBayes")
+models=("VIPRS" "vem_c" "VIPRSSBayes" "GibbsPRS" "GibbsPRSSBayes")
 #("vem_c" "gibbs_c" "vem_c_sbayes" "prs_gibbs_sbayes")
 
 for m in "${models[@]}"

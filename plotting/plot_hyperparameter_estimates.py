@@ -24,7 +24,7 @@ for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/*/*/chr_22.hyp"):
     df = pd.read_csv(f, index_col=0).T
     df.columns = ['Estimated ' + c for c in df.columns]
 
-    _, _, model, config, trait, _ = f.split("/")
+    _, _, _, model, config, trait, _ = f.split("/")
     df['Trait'] = trait
     _, h2, _, p = config.split("_")
     df['Heritability'] = float(h2)
