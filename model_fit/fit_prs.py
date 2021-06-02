@@ -74,11 +74,11 @@ elif args.model == 'GibbsPRSSBayes':
 # Fit the model to the data:
 
 if args.fitting_strategy == 'BO':
-    hs = HyperparameterSearch(m, opt_params=('sigma_epsilon', ))
-    m = hs.fit_bayes_opt()
+    hs = HyperparameterSearch(m)
+    m = hs.fit_bayes_opt(opt_params=('sigma_epsilon', ))
 elif args.fitting_strategy == 'GS':
-    hs = HyperparameterSearch(m, opt_params=('sigma_epsilon', ), n_steps=20)
-    m = hs.fit_grid_search()
+    hs = HyperparameterSearch(m)
+    m = hs.fit_grid_search(opt_params=('sigma_epsilon', ), n_steps=20)
 elif args.fitting_strategy == 'BAM':
     m = fit_model_averaging(m)
 else:
