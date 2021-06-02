@@ -17,6 +17,7 @@ from vemPRS.prs.src.VIPRS import VIPRS
 from vemPRS.prs.src.VIPRSSBayes import VIPRSSBayes
 from vemPRS.prs.src.GibbsPRS import GibbsPRS
 from vemPRS.prs.src.GibbsPRSSBayes import GibbsPRSSBayes
+from vemPRS.prs.src.HyperparameterSearch import HyperparameterSearch, fit_model_averaging
 from utils import makedir
 import argparse
 
@@ -25,6 +26,8 @@ parser = argparse.ArgumentParser(description='Fit PRS models')
 parser.add_argument('-m', '--model', dest='model', type=str, default='vem_c',
                     help='The PRS model to fit', choices={'VIPRS', 'VIPRSSBayes', 'GibbsPRS', 'GibbsPRSSBayes',
                                                           'gibbs_c', 'vem_c', 'vem_c_sbayes', 'prs_gibbs_sbayes'})
+parser.add_argument('-f', '--fitting-strategy', dest='fitting_strategy', type=str, default='EM',
+                    help='The strategy for fitting the hyperparameters', choices={'EM', 'BO', 'GS', 'BAM'})
 parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_windowed',
                     help='The LD panel to use in model fit', choices={'ukbb_windowed', 'ukbb_shrinkage', 'ukbb_sample'})
 parser.add_argument('-s', '--sumstats', dest='ss_file', type=str, required=True,
@@ -40,9 +43,6 @@ ld_panels = {
 
 sumstats_file = args.ss_file
 
-output_dir = f"data/model_fit/{args.ld_panel}/{args.model}/"
-output_f = osp.join(output_dir, sumstats_file.replace("data/gwas/", '').replace('.PHENO1.glm.linear', '.fit'))
-
 gdl = GWASDataLoader("data/ukbb_qc_genotypes/chr_22.bed",
                      keep_individuals="data/keep_files/ukbb_train_subset.keep",
                      ld_store_files=ld_panels[args.ld_panel],
@@ -52,8 +52,6 @@ if 'sample' in args.ld_panel:
     load_ld = False
 else:
     load_ld = True
-
-makedir(osp.dirname(output_f))
 
 if args.model == 'vem_c':
     m = vem_prs(gdl, load_ld=load_ld)
@@ -72,17 +70,63 @@ elif args.model == 'GibbsPRS':
 elif args.model == 'GibbsPRSSBayes':
     m = GibbsPRSSBayes(gdl, load_ld=load_ld)
 
+
 # Fit the model to the data:
-m.fit()
 
-# Write inferred model parameters:
-m.write_inferred_params(output_f)
+if args.fitting_strategy == 'BO':
+    hs = HyperparameterSearch(m)
+    m = hs.fit_bayes_opt()
+elif args.fitting_strategy == 'GS':
+    hs = HyperparameterSearch(m)
+    m = hs.fit_grid_search()
+elif args.fitting_strategy == 'BAM':
+    m = fit_model_averaging(m)
+else:
+    m = m.fit()
 
-# Write inferred hyperparameters:
+#### Writing out the output ####
 
-hyp_df = pd.DataFrame.from_dict({
-    'Heritability': m.get_heritability(),
-    'Prop. Causal': m.get_proportion_causal()
-}, orient='index')
+if args.fitting_strategy == 'EM':
+    output_dir = f"data/model_fit/{args.ld_panel}/{args.model}/"
+else:
+    output_dir = f"data/model_fit/{args.ld_panel}/{args.model}-{args.fitting_strategy}/"
 
-hyp_df.to_csv(output_f.replace('.fit', '.hyp'))
+output_f = osp.join(output_dir, sumstats_file.replace("data/gwas/", '').replace('.PHENO1.glm.linear', '.fit'))
+makedir(osp.dirname(output_f))
+
+if args.fitting_strategy == 'BAM':
+
+    # Write inferred model parameters:
+    dfs = []
+    for c in gdl.shapes:
+        dfs.append(
+            pd.DataFrame({'CHR': c,
+                          'SNP': gdl.snps[c],
+                          'PIP': m[0][c],
+                          'BETA': m[0][c]*m[1][c]})
+        )
+
+    dfs = pd.concat(dfs)
+    dfs.to_csv(output_f, sep="\t", index=False)
+
+    # Write inferred hyperparameters:
+
+    hyp_df = pd.DataFrame.from_dict({
+        'Heritability': m[2],
+        'Prop. Causal': m[3]
+    }, orient='index')
+
+    hyp_df.to_csv(output_f.replace('.fit', '.hyp'))
+
+else:
+    # Write inferred model parameters:
+    m.write_inferred_params(output_f)
+
+    # Write inferred hyperparameters:
+
+    hyp_df = pd.DataFrame.from_dict({
+        'Heritability': m.get_heritability(),
+        'Prop. Causal': m.get_proportion_causal()
+    }, orient='index')
+
+    hyp_df.to_csv(output_f.replace('.fit', '.hyp'))
