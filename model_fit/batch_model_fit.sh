@@ -17,7 +17,7 @@ do
   for m in "${models[@]}"
   do
 
-    if [[ $m == *"Gibbs"* && $fm == "BMA" ]]; then
+    if [[ $m == *"Gibbs"* && $fm != "EM" ]]; then
       continue
     fi
 
@@ -29,6 +29,8 @@ do
 
     rm -rf "./log/model_fit/$ld_panel/$model_name/*.out" || true
     mkdir -p "./log/model_fit/$ld_panel/$model_name"
+
+    echo "Submitting jobs for model $model_name..."
 
     for ss_file in data/gwas/*/*/*.linear
     do
