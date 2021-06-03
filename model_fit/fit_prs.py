@@ -109,15 +109,6 @@ if args.fitting_strategy == 'BAM':
     dfs = pd.concat(dfs)
     dfs.to_csv(output_f, sep="\t", index=False)
 
-    # Write inferred hyperparameters:
-
-    hyp_df = pd.DataFrame.from_dict({
-        'Heritability': m[2],
-        'Prop. Causal': m[3]
-    }, orient='index')
-
-    hyp_df.to_csv(output_f.replace('.fit', '.hyp'))
-
 else:
     # Write inferred model parameters:
     m.write_inferred_params(output_f)
