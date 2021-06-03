@@ -27,7 +27,7 @@ parser.add_argument('-m', '--model', dest='model', type=str, default='vem_c',
                     help='The PRS model to fit', choices={'VIPRS', 'VIPRSSBayes', 'GibbsPRS', 'GibbsPRSSBayes',
                                                           'gibbs_c', 'vem_c', 'vem_c_sbayes', 'prs_gibbs_sbayes'})
 parser.add_argument('-f', '--fitting-strategy', dest='fitting_strategy', type=str, default='EM',
-                    help='The strategy for fitting the hyperparameters', choices={'EM', 'BO', 'GS', 'BAM'})
+                    help='The strategy for fitting the hyperparameters', choices={'EM', 'BO', 'GS', 'BMA'})
 parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_windowed',
                     help='The LD panel to use in model fit', choices={'ukbb_windowed', 'ukbb_shrinkage', 'ukbb_sample'})
 parser.add_argument('-s', '--sumstats', dest='ss_file', type=str, required=True,
@@ -79,7 +79,7 @@ if args.fitting_strategy == 'BO':
 elif args.fitting_strategy == 'GS':
     hs = HyperparameterSearch(m)
     m = hs.fit_grid_search(opt_params=('sigma_epsilon', ), n_steps=20)
-elif args.fitting_strategy == 'BAM':
+elif args.fitting_strategy == 'BMA':
     m = fit_model_averaging(m)
 else:
     m = m.fit()

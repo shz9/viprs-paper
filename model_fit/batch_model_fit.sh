@@ -9,7 +9,7 @@ if [ "$ld_panel" == "ukbb_sample" ]; then
     fit_method=("EM")
 else
     models=("VIPRS" "VIPRSSBayes" "GibbsPRS" "GibbsPRSSBayes")
-    fit_method=("EM" "BAM" "BO" "GS")
+    fit_method=("EM" "BMA" "BO" "GS")
 fi
 
 for fm in "${fit_method[@]}"
@@ -17,7 +17,7 @@ do
   for m in "${models[@]}"
   do
 
-    if [[ $m == *"Gibbs"* && $fm == "BAM" ]]; then
+    if [[ $m == *"Gibbs"* && $fm == "BMA" ]]; then
       continue
     fi
 
