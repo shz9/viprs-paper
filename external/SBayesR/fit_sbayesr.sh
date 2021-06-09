@@ -14,7 +14,9 @@ trait=$(basename "$trait_dir")
 config_dir=$(dirname $trait_dir)
 config=$(basename "$config_dir")
 
-gctb_bin --sbayes R \
+mkdir -p "data/model_fit/external/sbayesr/$config/$trait/"
+
+$gctb_bin --sbayes R \
          --ldm "$1" \
          --pi 0.95,0.02,0.02,0.01 \
          --gamma 0.0,0.01,0.1,1 \
@@ -24,3 +26,9 @@ gctb_bin --sbayes R \
          --out-freq 100 \
          --out "data/model_fit/external/sbayesr/$config/$trait/chr_22"
 
+echo "Transforming output of SBayesR..."
+
+source "$HOME/pyenv/bin/activate"
+python external/SBayesR/transform_output.py "data/model_fit/external/sbayesr/$config/$trait"
+
+echo "Job finished with exit code $? at: `date`"
