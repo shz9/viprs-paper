@@ -19,7 +19,7 @@ args = parser.parse_args()
 
 dfs = []
 
-for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/*/*/chr_22.hyp"):
+for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/*/*/chr_22.hyp") + glob.glob(f"data/model_fit/external/*/*/*/chr_22.hyp"):
 
     df = pd.read_csv(f, index_col=0).T
     df.columns = ['Estimated ' + c for c in df.columns]

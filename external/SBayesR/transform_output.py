@@ -5,7 +5,7 @@ import os.path as osp
 snp_effects_file = osp.join(sys.argv[1], "chr_22.snpRes")
 hyperparams_file = osp.join(sys.argv[1], "chr_22.parRes")
 
-snp_effect_df = pd.read_csv(snp_effects_file, sep="\t")
+snp_effect_df = pd.read_csv(snp_effects_file, sep="\s+")
 snp_effect_df = snp_effect_df[['Chrom', 'Name', 'PIP', 'A1Effect']]
 snp_effect_df.columns = ['CHR', 'SNP', 'PIP', 'BETA']
 snp_effect_df.to_csv(snp_effects_file.replace('.snpRes', '.fit'), sep="\t", index=False)

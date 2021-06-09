@@ -20,7 +20,7 @@ args = parser.parse_args()
 
 dfs = []
 
-for f in glob.glob(f"data/evaluation/{args.ld_panel}/*/*.csv"):
+for f in glob.glob(f"data/evaluation/{args.ld_panel}/*/*.csv") + glob.glob(f"data/evaluation/external/*/*.csv"):
     df = pd.read_csv(f)
     config = osp.basename(osp.dirname(f))
     _, h2, _, p = config.split("_")
