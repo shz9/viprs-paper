@@ -27,7 +27,7 @@ do
       model_name="$m-$fm"
     fi
 
-    rm -rf "./log/model_fit/$ld_panel/$model_name/*.out" || true
+    rm -rf "./log/model_fit/$ld_panel/$model_name/" || true
     mkdir -p "./log/model_fit/$ld_panel/$model_name"
 
     echo "Submitting jobs for model $model_name..."

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm -rf ./log/simulation/*.out || true
+rm -rf ./log/simulation/ || true
 mkdir -p ./log/simulation/
 
 echo "Submitting jobs for performing phenotype simulation..."

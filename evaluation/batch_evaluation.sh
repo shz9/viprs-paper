@@ -2,7 +2,7 @@
 
 ld_panel=${1:-"ukbb_windowed"}
 
-rm -rf "./log/evaluation/$ld_panel/*.out" || true
+rm -rf "./log/evaluation/$ld_panel/" || true
 mkdir -p "./log/evaluation/$ld_panel"
 
 echo "Submitting jobs for model evaluation using $ld_panel LD panel..."

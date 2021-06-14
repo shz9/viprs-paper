@@ -2,7 +2,7 @@
 
 gwas_software=${1:-"python"}
 
-rm -rf "./log/gwas/$gwas_software/*.out" || true
+rm -rf "./log/gwas/$gwas_software/" || true
 mkdir -p "./log/gwas/$gwas_software"
 
 echo "Submitting jobs for performing GWAS with $gwas_software..."

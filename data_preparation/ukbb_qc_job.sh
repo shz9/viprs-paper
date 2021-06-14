@@ -2,8 +2,8 @@
 #SBATCH --account=def-sgravel
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=2GB
-#SBATCH --time=1:00:00
-#SBATCH --output=./log/data_preparation/qc/%j.out
+#SBATCH --time=00:30:00
+#SBATCH --output=./log/data_preparation/ukbb_qc/%j.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
 
@@ -33,7 +33,7 @@ module load nixpkgs/16.09
 module load plink/1.9b_4.1-x86_64
 # Update the SNP cM position using the HapMap3 genetic map:
 plink --bfile "data/ukbb_qc_genotypes/chr_${CHR}" \
-      --cm-map "../data/genetic_map/1000GP_Phase3/genetic_map_chr@_combined_b37.txt" \
+      --cm-map "$HOME/projects/def-sgravel/data/genetic_maps/1000GP_Phase3/genetic_map_chr@_combined_b37.txt" \
       --make-bed \
       --out "data/ukbb_qc_genotypes/chr_${CHR}"
 

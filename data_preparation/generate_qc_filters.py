@@ -7,6 +7,7 @@ import sys
 import os.path as osp
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 import glob
+import numpy as np
 import pandas as pd
 from utils import makedir
 
@@ -14,15 +15,25 @@ from utils import makedir
 # ----------- Options -----------
 
 # *** Sample options ***:
-n_ld_samples = 50000  # Number of samples used to compute LD matrices
-perc_training = 0.8  # Proportion of samples used for training (excluding samples used for LD)
-num_pcs = 10  # Number of PCs to use as covariates (must be less than 40!)
+
+# Number of samples used to compute LD matrices
+n_ld_samples = 50000
+n_ld_subsamples = [10000, 1000]  # Subsamples of the 50k individuals used to compute LD
+
+# Whether the individuals selected for the LD reference panel can be in the training/testing/validation sets.
+overlapping_ld = False
+# Proportion of samples used for training, validation, and testing
+train, valid, test = .7, .15, .15
+# Number of PCs to include as covariates (must be less than 40!)
+num_pcs = 10
 
 # File names:
 covar_file = "data/covariates/covar_file.txt"
 keep_file = "data/keep_files/ukbb_qc_individuals.keep"
-ld_keep_file = "data/keep_files/ukbb_ld_subset.keep"
+
+ld_keep_file = "data/keep_files/ukbb_ld_{}_subset.keep"
 train_keep_file = "data/keep_files/ukbb_train_subset.keep"
+valid_keep_file = "data/keep_files/ukbb_valid_subset.keep"
 test_keep_file = "data/keep_files/ukbb_test_subset.keep"
 
 # *** Variant options ***:
@@ -75,7 +86,9 @@ for col in pc_columns:
 makedir(osp.dirname(covar_file))
 covar_df.to_csv(covar_file, sep="\t", header=False, index=False)
 
-# -------- Split samples to training/testing/ld --------
+# ------------------------------------------------------
+# -------- Split samples to training/validation/testing/ld --------
+# ------------------------------------------------------
 
 ind_list = ind_list[['FID', 'IID']]
 
@@ -85,28 +98,50 @@ ld_subset = ind_list.sample(n=n_ld_samples, random_state=1)
 
 # Write to file:
 makedir(osp.dirname(ld_keep_file))
-ld_subset.to_csv(ld_keep_file, sep="\t", header=False, index=False)
+ld_subset.to_csv(ld_keep_file.format(str(n_ld_samples).replace('000', 'k')),
+                 sep="\t", header=False, index=False)
 
-# Remove individuals selected for LD computation:
-train_test_subset = ind_list.loc[~ind_list['IID'].isin(ld_subset['IID'])]
+# For smaller sample sizes of the LD panel, write their keep files as well:
+for subsample_n in n_ld_subsamples:
+    ld_subset_subsample = ld_subset.sample(n=subsample_n, random_state=1)
 
-# Select subset of individuals that will be used for training the model
+    # Write to file:
+    makedir(osp.dirname(ld_keep_file))
+    ld_subset_subsample.to_csv(ld_keep_file.format(str(subsample_n).replace('000', 'k')),
+                               sep="\t", header=False, index=False)
 
-train_subset = train_test_subset.sample(n=int(perc_training*len(train_test_subset)), random_state=1)
+# If the LD samples should not be overlapping with training set, remove from list:
+if overlapping_ld:
+    tvt_subset = ind_list  # Train/validation/test subset
+else:
+    tvt_subset = ind_list.loc[~ind_list['IID'].isin(ld_subset['IID'])]
 
-# Write to file:
+# Get the indices of the training/validation/testing sets and shuffle them:
+ind_index = tvt_subset.index.values
+np.random.shuffle(ind_index)
+
+# Obtain the indices for each subset:
+training_subset = ind_index[:int(train*len(ind_index))]
+validation_subset = ind_index[int(train*len(ind_index)): int((train + valid)*len(ind_index))]
+testing_subset = ind_index[int((train + valid)*len(ind_index)):]
+
+# Finally, output a keep file of the individuals in each subset:
+
+# (1) The training subset:
 makedir(osp.dirname(train_keep_file))
-train_subset.to_csv(train_keep_file, sep="\t", header=False, index=False)
+tvt_subset.loc[training_subset].to_csv(train_keep_file, sep="\t", header=False, index=False)
 
-# Select subset of individuals that will be used for testing/validation:
+# (2) The validation subset:
+makedir(osp.dirname(valid_keep_file))
+tvt_subset.loc[validation_subset].to_csv(valid_keep_file, sep="\t", header=False, index=False)
 
-test_subset = train_test_subset.loc[~train_test_subset['IID'].isin(train_subset['IID'])]
-
-# Write to file:
+# (3) The testing subset:
 makedir(osp.dirname(test_keep_file))
-test_subset.to_csv(test_keep_file, sep="\t", header=False, index=False)
+tvt_subset.loc[testing_subset].to_csv(test_keep_file, sep="\t", header=False, index=False)
 
+# --------------------------------------------
 # ---------------- Variant QC ----------------
+# --------------------------------------------
 
 info_files = "/lustre03/project/6004777/projects/uk_biobank/imputed_data/full_UKBB/v3_snp_stats/ukb_mfi_chr*_v3.txt"
 
