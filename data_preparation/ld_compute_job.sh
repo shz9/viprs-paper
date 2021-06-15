@@ -32,4 +32,5 @@ else
 fi
 
 echo "Job finished with exit code $? at: `date`"
-echo "Duration (minutes): $(($SECONDS / 60))"
+MINUTES=$(echo "scale=2; $SECONDS/60" | bc)
+echo "Duration (minutes): $MINUTES"

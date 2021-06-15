@@ -15,7 +15,7 @@ do
     echo "Using a sample size of $sample_size"
     for c in $(seq 22 22)
     do
-      sbatch data_preparation/ld_compute_job.sh "$ld" "data/ukbb_qc_genotypes/chr_$c" "ukbb_$ld_$sample_size" "$kf"
+      sbatch data_preparation/ld_compute_job.sh "$ld" "data/ukbb_qc_genotypes/chr_$c" "ukbb_$sample_size" "$kf"
     done
   done
 
@@ -23,7 +23,7 @@ do
 
   for c in $(seq 22 22)
   do
-    sbatch data_preparation/ld_compute_job.sh "$ld" "data/1000G_qc_genotypes/chr_$c" "1000G_$ld"
+    sbatch data_preparation/ld_compute_job.sh "$ld" "data/1000G_qc_genotypes/chr_$c" "1000G"
   done
 
 done
