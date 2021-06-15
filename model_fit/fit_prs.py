@@ -94,7 +94,7 @@ else:
 output_f = osp.join(output_dir, sumstats_file.replace("data/gwas/", '').replace('.PHENO1.glm.linear', '.fit'))
 makedir(osp.dirname(output_f))
 
-if args.fitting_strategy == 'BAM':
+if args.fitting_strategy == 'BMA':
 
     # Write inferred model parameters:
     dfs = []

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ld_panel=${1:-"ukbb_windowed"}
+ld_panel=${1:-"ukbb_50k_windowed"}
 
 rm -rf "./log/evaluation/$ld_panel/" || true
 mkdir -p "./log/evaluation/$ld_panel"

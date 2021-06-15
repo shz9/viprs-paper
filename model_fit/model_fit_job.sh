@@ -7,6 +7,8 @@
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
 
+echo "Job started at: `date`"
+
 source "$HOME/pyenv/bin/activate"
 
 model=${2:-"vem_c"}
@@ -18,11 +20,11 @@ echo "Dataset: $1"
 echo "Model: $model"
 echo "LD Panel: $ld_panel"
 
-start_time=`date +%s`
+SECONDS=0
 
 python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method"
 
-end_time=`date +%s`
+MINUTES=$(echo "scale=2; $SECONDS/60" | bc)
 
 echo "Job finished with exit code $? at: `date`"
-echo "Execution time: $((end_time-start_time))"
+echo "Duration (minutes): $MINUTES"

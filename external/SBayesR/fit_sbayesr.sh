@@ -7,6 +7,8 @@
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
 
+echo "Job started at: `date`"
+
 gctb_bin="$HOME/projects/def-sgravel/bin/gctb_v2.03/gctb"
 
 trait_dir=$(dirname $2)
@@ -14,7 +16,9 @@ trait=$(basename "$trait_dir")
 config_dir=$(dirname $trait_dir)
 config=$(basename "$config_dir")
 
-mkdir -p "data/model_fit/external/sbayesr/$config/$trait/"
+mkdir -p "data/model_fit/external/SBayesR/$config/$trait/"
+
+SECONDS=0
 
 $gctb_bin --sbayes R \
          --ldm "$1" \
@@ -24,11 +28,14 @@ $gctb_bin --sbayes R \
          --chain-length 10000 \
          --burn-in 2000 \
          --out-freq 100 \
-         --out "data/model_fit/external/sbayesr/$config/$trait/chr_22"
+         --out "data/model_fit/external/SBayesR/$config/$trait/chr_22"
+
+MINUTES=$(echo "scale=2; $SECONDS/60" | bc)
 
 echo "Transforming output of SBayesR..."
 
 source "$HOME/pyenv/bin/activate"
-python external/SBayesR/transform_output.py "data/model_fit/external/sbayesr/$config/$trait"
+python external/SBayesR/transform_output.py "data/model_fit/external/SBayesR/$config/$trait"
 
 echo "Job finished with exit code $? at: `date`"
+echo "Duration (minutes): $MINUTES"

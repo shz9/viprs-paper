@@ -41,7 +41,10 @@ makedir(sub_dir)
 gs.h2g = h2
 gs.pis = (1. - pc, pc)
 
+print(f"> Simulating {args.n_replicates} phenotypes...")
+
 for i in range(args.n_replicates):
+    print("Phenotype", i)
     gs.simulate(reset_beta=True, perform_gwas=False)
 
     pheno_table = gs.to_phenotype_table()

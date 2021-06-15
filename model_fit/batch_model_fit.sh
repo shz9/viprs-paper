@@ -1,10 +1,10 @@
 #!/bin/bash
 
-ld_panel=${1-"ukbb_windowed"}
+ld_panel=${1-"ukbb_50k_windowed"}
 
 echo "Submitting jobs for performing model fit using LD panel $ld_panel..."
 
-if [ "$ld_panel" == "ukbb_sample" ]; then
+if [[ $ld_panel == *"sample"* ]]; then
     models=("VIPRS" "VIPRSSBayes")
     fit_method=("EM")
 else
