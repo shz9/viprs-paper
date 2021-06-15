@@ -37,6 +37,6 @@ plink --bfile "data/ukbb_qc_genotypes/chr_${CHR}" \
       --make-bed \
       --out "data/ukbb_qc_genotypes/chr_${CHR}"
 
-rm "data/ukbb_qc_genotypes/*~"
+rm -r "data/ukbb_qc_genotypes/*~"
 
 echo "Job finished with exit code $? at: `date`"

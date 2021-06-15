@@ -90,6 +90,14 @@ covar_df.to_csv(covar_file, sep="\t", header=False, index=False)
 # -------- Split samples to training/validation/testing/ld --------
 # ------------------------------------------------------
 
+
+def humanize_number(n):
+    if n > 1000:
+        return str(float(n) / 1000) + 'k'
+    else:
+        return str(n)
+
+
 ind_list = ind_list[['FID', 'IID']]
 
 # Select the subset of individuals that will be used for
@@ -98,7 +106,7 @@ ld_subset = ind_list.sample(n=n_ld_samples, random_state=1)
 
 # Write to file:
 makedir(osp.dirname(ld_keep_file))
-ld_subset.to_csv(ld_keep_file.format(str(n_ld_samples).replace('000', 'k')),
+ld_subset.to_csv(ld_keep_file.format(humanize_number(n_ld_samples)),
                  sep="\t", header=False, index=False)
 
 # For smaller sample sizes of the LD panel, write their keep files as well:
@@ -107,7 +115,7 @@ for subsample_n in n_ld_subsamples:
 
     # Write to file:
     makedir(osp.dirname(ld_keep_file))
-    ld_subset_subsample.to_csv(ld_keep_file.format(str(subsample_n).replace('000', 'k')),
+    ld_subset_subsample.to_csv(ld_keep_file.format(humanize_number(subsample_n)),
                                sep="\t", header=False, index=False)
 
 # If the LD samples should not be overlapping with training set, remove from list:

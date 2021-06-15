@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --account=def-sgravel
-#SBATCH --cpus-per-task=8
-#SBATCH --mem-per-cpu=2GB
-#SBATCH --time=00:30:00
+#SBATCH --cpus-per-task=4
+#SBATCH --mem-per-cpu=1GB
+#SBATCH --time=00:10:00
 #SBATCH --output=./log/data_preparation/1000G_qc/%j.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
@@ -35,6 +35,6 @@ plink --bfile "data/1000G_qc_genotypes/chr_${CHR}" \
       --make-bed \
       --out "data/1000G_qc_genotypes/chr_${CHR}"
 
-rm "data/1000G_qc_genotypes/*~"
+rm -r "data/1000G_qc_genotypes/*~"
 
 echo "Job finished with exit code $? at: `date`"
