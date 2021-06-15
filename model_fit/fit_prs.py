@@ -28,30 +28,26 @@ parser.add_argument('-m', '--model', dest='model', type=str, default='vem_c',
                                                           'gibbs_c', 'vem_c', 'vem_c_sbayes', 'prs_gibbs_sbayes'})
 parser.add_argument('-f', '--fitting-strategy', dest='fitting_strategy', type=str, default='EM',
                     help='The strategy for fitting the hyperparameters', choices={'EM', 'BO', 'GS', 'BMA'})
-parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_windowed',
-                    help='The LD panel to use in model fit', choices={'ukbb_windowed', 'ukbb_shrinkage', 'ukbb_sample'})
+parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_50k_windowed',
+                    help='The LD panel to use in model fit')
 parser.add_argument('-s', '--sumstats', dest='ss_file', type=str, required=True,
                     help='The summary statistics file')
 
 args = parser.parse_args()
 
-ld_panels = {
-    'ukbb_windowed': 'data/ld/ukbb_windowed/ld_ragged/chr_22',
-    'ukbb_shrinkage': 'data/ld/ukbb_shrinkage/ld_ragged/chr_22',
-    'ukbb_sample': 'data/ld/ukbb_sample/ld/chr_22'
-}
+if 'sample' in args.ld_panel:
+    load_ld = False
+    ld_panel = f"data/ld/{args.ld_panel}/ld/chr_22"
+else:
+    load_ld = True
+    ld_panel = f"data/ld/{args.ld_panel}/ld_ragged/chr_22"
 
 sumstats_file = args.ss_file
 
 gdl = GWASDataLoader("data/ukbb_qc_genotypes/chr_22.bed",
                      keep_individuals="data/keep_files/ukbb_train_subset.keep",
-                     ld_store_files=ld_panels[args.ld_panel],
+                     ld_store_files=ld_panel,
                      sumstats_file=sumstats_file)
-
-if 'sample' in args.ld_panel:
-    load_ld = False
-else:
-    load_ld = True
 
 if args.model == 'vem_c':
     m = vem_prs(gdl, load_ld=load_ld)
