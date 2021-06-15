@@ -92,8 +92,8 @@ covar_df.to_csv(covar_file, sep="\t", header=False, index=False)
 
 
 def humanize_number(n):
-    if n > 1000:
-        return str(float(n) / 1000) + 'k'
+    if n >= 1000:
+        return str(n / 1000) + 'k'
     else:
         return str(n)
 
