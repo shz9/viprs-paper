@@ -22,6 +22,7 @@ parser.add_argument('-s', '--standardize', dest='standardize', type=bool, defaul
 args = parser.parse_args()
 
 gdl = GWASDataLoader([f"data/ukbb_qc_genotypes/chr_{i}" for i in sim_chrs],
+                     keep_individuals="data/keep_files/ukbb_train_subset.keep",
                      compute_ld=False,
                      standardize_genotype=args.standardize)
 
