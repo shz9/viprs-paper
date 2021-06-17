@@ -28,12 +28,17 @@ time_df = pd.DataFrame(time_df)
 
 for ldp in time_df['LD Panel'].unique():
 
+    if ldp == 'external':
+        continue
+
     df = time_df.loc[time_df['LD Panel'].isin(['external', ldp])]
     ax = sns.boxplot(x="Model", y="Duration", hue="Model", data=df)
     ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
     plt.ylabel("Runtime (Minutes)")
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
     makedir(f"plots/{ldp}")
 
+    plt.tight_layout()
     plt.savefig(f"plots/{ldp}/runtime.pdf")
     plt.close()

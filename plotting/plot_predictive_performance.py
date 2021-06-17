@@ -14,7 +14,7 @@ from utils import makedir
 import argparse
 
 parser = argparse.ArgumentParser(description='Plot predictive performance')
-parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_windowed')
+parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_50k_windowed')
 args = parser.parse_args()
 
 
@@ -35,5 +35,6 @@ g = sns.catplot(x="Heritability", y="R2",
                 hue="Model", col="Prop. Causal",
                 data=final_df, kind="box")
 
+plt.tight_layout()
 makedir(f"plots/{args.ld_panel}")
 plt.savefig(f"plots/{args.ld_panel}/simulation_predictive_performance.pdf")

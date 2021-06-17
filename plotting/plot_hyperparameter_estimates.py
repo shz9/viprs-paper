@@ -14,7 +14,7 @@ from utils import makedir
 import argparse
 
 parser = argparse.ArgumentParser(description='Plot hyperparameter estimates')
-parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_windowed')
+parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_50k_windowed')
 args = parser.parse_args()
 
 dfs = []
@@ -40,12 +40,13 @@ g = sns.catplot(x="Heritability", y="Estimated Heritability",
                 data=final_df, kind="box")
 
 makedir(f"plots/{args.ld_panel}")
+plt.tight_layout()
 plt.savefig(f"plots/{args.ld_panel}/simulation_h2_estimation.pdf")
 plt.close()
 
 g = sns.catplot(x="Prop. Causal", y="Estimated Prop. Causal",
                 hue="Model", col="Heritability",
                 data=final_df, kind="box")
-
+plt.tight_layout()
 plt.savefig(f"plots/{args.ld_panel}/simulation_pi_estimation.pdf")
 
