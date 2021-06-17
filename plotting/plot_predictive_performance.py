@@ -35,8 +35,6 @@ plt.figure(figsize=(9, 6))
 g = sns.catplot(x="Heritability", y="R2",
                 hue="Model", col="Prop. Causal",
                 data=final_df, kind="box")
-plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
-plt.tight_layout()
 makedir(f"plots/{args.ld_panel}")
-plt.savefig(f"plots/{args.ld_panel}/simulation_predictive_performance.pdf")
+plt.savefig(f"plots/{args.ld_panel}/simulation_predictive_performance.pdf", bbox_inches='tight')

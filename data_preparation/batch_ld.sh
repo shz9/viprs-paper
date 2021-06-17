@@ -13,7 +13,7 @@ do
   do
     sample_size=$(awk -F_ '{print $4}' <<< "$kf")
     echo "Using a sample size of $sample_size"
-    for c in $(seq 22 22)
+    for c in $(seq 1 22)
     do
       sbatch data_preparation/ld_compute_job.sh "$ld" "data/ukbb_qc_genotypes/chr_$c" "ukbb_$sample_size" "$kf"
     done
@@ -21,7 +21,7 @@ do
 
   echo "Submitting jobs for computing LD matrices from 1000G with $ld estimator..."
 
-  for c in $(seq 22 22)
+  for c in $(seq 1 22)
   do
     sbatch data_preparation/ld_compute_job.sh "$ld" "data/1000G_qc_genotypes/chr_$c" "1000G"
   done
