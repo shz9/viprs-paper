@@ -36,21 +36,18 @@ for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/*/*/chr_22.hyp") + glob.gl
 final_df = pd.concat(dfs)
 
 plt.figure(figsize=(9, 6))
-ax = sns.catplot(x="Heritability", y="Estimated Heritability",
-                 hue="Model", col="Prop. Causal",
-                 data=final_df, kind="box")
-ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+g = sns.catplot(x="Heritability", y="Estimated Heritability",
+                hue="Model", col="Prop. Causal",
+                data=final_df, kind="box")
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 makedir(f"plots/{args.ld_panel}")
-plt.tight_layout()
 plt.savefig(f"plots/{args.ld_panel}/simulation_h2_estimation.pdf")
 plt.close()
 
 plt.figure(figsize=(9, 6))
-ax = sns.catplot(x="Prop. Causal", y="Estimated Prop. Causal",
-                 hue="Model", col="Heritability",
-                 data=final_df, kind="box")
-ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-plt.tight_layout()
-plt.savefig(f"plots/{args.ld_panel}/simulation_pi_estimation.pdf")
+g = sns.catplot(x="Prop. Causal", y="Estimated Prop. Causal",
+                hue="Model", col="Heritability",
+                data=final_df, kind="box")
+plt.savefig(f"plots/{args.ld_panel}/simulation_pi_estimation.pdf", bbox_inches='tight')
 

@@ -41,6 +41,5 @@ for ldp in time_df['LD Panel'].unique():
 
     makedir(f"plots/{ldp}")
 
-    plt.tight_layout()
-    plt.savefig(f"plots/{ldp}/runtime.pdf")
+    plt.savefig(f"plots/{ldp}/runtime.pdf", bbox_inches='tight')
     plt.close()

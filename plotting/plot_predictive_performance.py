@@ -32,10 +32,10 @@ for f in glob.glob(f"data/evaluation/{args.ld_panel}/*/*.csv") + glob.glob(f"dat
 final_df = pd.concat(dfs)
 
 plt.figure(figsize=(9, 6))
-ax = sns.catplot(x="Heritability", y="R2",
-                 hue="Model", col="Prop. Causal",
-                 data=final_df, kind="box")
-ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+g = sns.catplot(x="Heritability", y="R2",
+                hue="Model", col="Prop. Causal",
+                data=final_df, kind="box")
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 plt.tight_layout()
 makedir(f"plots/{args.ld_panel}")
