@@ -35,6 +35,7 @@ Rscript "$PRSiceHome/PRSice.R" \
         --pvalue PVAL \
         --stat BETA \
         --binary-target F \
+        --print-snp \
         --out "data/model_fit/external/PRSice2/$config/$trait/chr_22"
 
 MINUTES=$(echo "scale=2; $SECONDS/60" | bc)
