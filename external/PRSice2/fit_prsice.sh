@@ -39,5 +39,10 @@ Rscript "$PRSiceHome/PRSice.R" \
 
 MINUTES=$(echo "scale=2; $SECONDS/60" | bc)
 
+echo "Transforming output..."
+
+source "$HOME/pyenv/bin/activate"
+python external/PRSice2/transform_output.py "data/model_fit/external/PRSice2/$config/$trait/chr_22" "$1"
+
 echo "Job finished with exit code $? at: `date`"
 echo "Duration (minutes): $MINUTES"
