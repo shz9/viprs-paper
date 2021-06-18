@@ -2,7 +2,7 @@
 #SBATCH --account=def-sgravel
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=8GB
-#SBATCH --time=00:45:00
+#SBATCH --time=01:20:00
 #SBATCH --output=./log/data_preparation/ukbb_qc/%j.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
