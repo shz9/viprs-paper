@@ -16,17 +16,18 @@ module load plink
 
 echo "Creating a combined .mindrem.id file..."
 # Combine the IDs of filtered individuals from all chromosomes:
+rm -rf data/ukbb_qc_genotypes/combined.mindrem.id || true
 awk '(NR == 1) || (FNR > 1)' data/ukbb_qc_genotypes/*.mindrem.id > data/ukbb_qc_genotypes/combined.mindrem.id
 
 echo "Filtering individuals with excessive missingness from all chromosomes..."
 
 for chr in $(seq 1 22)
 do
-  plink --bfile "data/ukbb_qc_genotypes/chr_$chr" \
-        --remove data/ukbb_qc_genotypes/combined.mindrem.id \
-        --out "data/ukbb_qc_genotypes/chr_$chr"
+  plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
+         --remove data/ukbb_qc_genotypes/combined.mindrem.id \
+         --out "data/ukbb_qc_genotypes/chr_$chr"
 done
 
-rm -r data/ukbb_qc_genotypes/*~
+rm -r data/ukbb_qc_genotypes/*~ || true
 
 echo "Job finished with exit code $? at: `date`"
