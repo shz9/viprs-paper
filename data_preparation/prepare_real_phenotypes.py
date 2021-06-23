@@ -39,7 +39,7 @@ wc = pheno_df[['FID', 'IID', '48-0.0']]
 wc.columns = ['FID', 'IID', 'phenotype']
 wc['phenotype'] = np.log(wc['phenotype'])
 wc['phenotype'][wc['phenotype'] < 3.5] = np.nan
-wc.to_csv("data/phenotypes/real/WC.txt", sep="\t")
+wc.to_csv("data/phenotypes/real/WC.txt", sep="\t", index=False, header=False)
 
 # Hip circumference:
 
@@ -47,25 +47,25 @@ hc = pheno_df[['FID', 'IID', '49-0.0']]
 hc.columns = ['FID', 'IID', 'phenotype']
 hc['phenotype'] = np.log(hc['phenotype'])
 hc['phenotype'][hc['phenotype'] < 4] = np.nan
-hc.to_csv("data/phenotypes/real/HC.txt", sep="\t")
+hc.to_csv("data/phenotypes/real/HC.txt", sep="\t", index=False, header=False)
 
 # Standing height:
 
 sh = pheno_df[['FID', 'IID', '50-0.0']]
 sh.columns = ['FID', 'IID', 'phenotype']
 sh['phenotype'][sh['phenotype'] < 130] = np.nan
-sh.to_csv("data/phenotypes/real/HEIGHT.txt", sep="\t")
+sh.to_csv("data/phenotypes/real/HEIGHT.txt", sep="\t", index=False, header=False)
 
 # Birth weight:
 
 bw = pheno_df[['FID', 'IID', '20022-0.0']]
 bw.columns = ['FID', 'IID', 'phenotype']
 bw['phenotype'][(bw['phenotype'] < 1) | (bw['phenotype'] > 6)] = np.nan
-bw.to_csv("data/phenotypes/real/BW.txt", sep="\t")
+bw.to_csv("data/phenotypes/real/BW.txt", sep="\t", index=False, header=False)
 
 # BMI:
 
 bmi = pheno_df[['FID', 'IID', '21001-0.0']]
 bmi.columns = ['FID', 'IID', 'phenotype']
 bmi['phenotype'] = np.log(bmi['phenotype'])
-bmi.to_csv("data/phenotypes/real/BMI.txt", sep="\t")
+bmi.to_csv("data/phenotypes/real/BMI.txt", sep="\t", index=False, header=False)
