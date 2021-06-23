@@ -28,7 +28,7 @@ pheno_df = pd.read_csv(pheno_file)
 
 pheno_df = keep_ind.merge(pheno_df[["eid"] + list(phenotypes.values())],
                           left_on="IID", right_on="eid")
-pheno_df.drop('eid', inplace=True)
+pheno_df.drop('eid', axis=1, inplace=True)
 
 # Write the phenotype files:
 makedir("data/phenotypes/real/")
