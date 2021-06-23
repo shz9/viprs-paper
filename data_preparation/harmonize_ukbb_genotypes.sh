@@ -23,7 +23,9 @@ echo "Filtering individuals with excessive missingness from all chromosomes..."
 
 for chr in $(seq 1 22)
 do
+  echo "------- Filtering individuals from chromosome $chr... -------"
   plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
+         --make-bed \
          --remove data/ukbb_qc_genotypes/combined.mindrem.id \
          --out "data/ukbb_qc_genotypes/chr_$chr"
 done

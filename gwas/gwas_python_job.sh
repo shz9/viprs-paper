@@ -9,6 +9,10 @@
 
 source "$HOME/pyenv/bin/activate"
 
-python gwas/python_gwas.py -i "$1"
+chr=${1:-22}  # Chromosome
+
+echo "Performing regression with chromosome $chr..."
+
+python gwas/python_gwas.py -i "$2" -c "$chr"
 
 echo "Job finished with exit code $? at: `date`"

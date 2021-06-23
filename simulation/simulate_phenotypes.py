@@ -26,7 +26,7 @@ args = parser.parse_args()
 
 h2 = args.h2g
 pc = args.prop_causal
-output_dir = "data/simulated_phenotypes"
+output_dir = "data/phenotypes"
 sim_chrs = [22]  # Chromosomes used for simulation
 
 # ---------------------------

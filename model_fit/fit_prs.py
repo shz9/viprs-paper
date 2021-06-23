@@ -35,16 +35,17 @@ parser.add_argument('-s', '--sumstats', dest='ss_file', type=str, required=True,
 
 args = parser.parse_args()
 
+sumstats_file = args.ss_file
+chrom = osp.basename(sumstats_file).split(".")[0]
+
 if 'sample' in args.ld_panel:
     load_ld = False
-    ld_panel = f"data/ld/{args.ld_panel}/ld/chr_22"
+    ld_panel = f"data/ld/{args.ld_panel}/ld/{chrom}"
 else:
     load_ld = True
-    ld_panel = f"data/ld/{args.ld_panel}/ld_ragged/chr_22"
+    ld_panel = f"data/ld/{args.ld_panel}/ld_ragged/{chrom}"
 
-sumstats_file = args.ss_file
-
-gdl = GWASDataLoader("data/ukbb_qc_genotypes/chr_22.bed",
+gdl = GWASDataLoader(f"data/ukbb_qc_genotypes/{chrom}.bed",
                      keep_individuals="data/keep_files/ukbb_train_subset.keep",
                      ld_store_files=ld_panel,
                      sumstats_file=sumstats_file)

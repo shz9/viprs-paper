@@ -24,6 +24,7 @@ def evaluate_predictive_performance(true_phenotype, pred_phenotype):
         'R2': r_val**2
     }
 
+
 parser = argparse.ArgumentParser(description='Evaluate PRS models')
 
 parser.add_argument('-p', '--phenotype-file', dest='phenotype_file', type=str, required=True,

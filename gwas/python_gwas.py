@@ -10,10 +10,10 @@ import argparse
 
 # Chromosomes used for simulation:
 
-sim_chrs = [22]
-
 parser = argparse.ArgumentParser(description='Perform GWAS')
 
+parser.add_argument('-c', '--chromosome', dest='chromosome', type=str, default=22,
+                    help='The input directory with phenotypes as .txt files')
 parser.add_argument('-i', '--input-dir', dest='input_dir', type=str, required=True,
                     help='The input directory with phenotypes as .txt files')
 parser.add_argument('-s', '--standardize', dest='standardize', type=bool, default=True,
@@ -21,7 +21,7 @@ parser.add_argument('-s', '--standardize', dest='standardize', type=bool, defaul
 
 args = parser.parse_args()
 
-gdl = GWASDataLoader([f"data/ukbb_qc_genotypes/chr_{i}" for i in sim_chrs],
+gdl = GWASDataLoader(f"data/ukbb_qc_genotypes/chr_{args.chromosome}",
                      keep_individuals="data/keep_files/ukbb_train_subset.keep",
                      compute_ld=False,
                      standardize_genotype=args.standardize)
