@@ -2,7 +2,7 @@
 #SBATCH --account=def-sgravel
 #SBATCH --cpus-per-task=16
 #SBATCH --mem-per-cpu=12GB
-#SBATCH --time=1:00:00
+#SBATCH --time=1:30:00
 #SBATCH --output=./log/data_preparation/ld_mat/%j.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL

@@ -21,17 +21,20 @@ parser.add_argument('-s', '--standardize', dest='standardize', type=bool, defaul
 
 args = parser.parse_args()
 
-gdl = GWASDataLoader(f"data/ukbb_qc_genotypes/chr_{args.chromosome}",
-                     keep_individuals="data/keep_files/ukbb_train_subset.keep",
-                     compute_ld=False,
-                     standardize_genotype=args.standardize)
-
 config_name = osp.basename(args.input_dir)
 
 for pheno_file in glob.glob(osp.join(args.input_dir, "*.txt")):
 
+    print(f"> Generating summary statistics for {pheno_file}")
+
+    gdl = GWASDataLoader(f"data/ukbb_qc_genotypes/chr_{args.chromosome}",
+                         keep_individuals="data/keep_files/ukbb_train_subset.keep",
+                         compute_ld=False,
+                         standardize_genotype=args.standardize,
+                         phenotype_file=pheno_file,
+                         standardize_phenotype=args.standardize)
+
     pheno_id = osp.basename(pheno_file).replace(".txt", "")
-    gdl.read_phenotypes(pheno_file, standardize=args.standardize)
 
     makedir(f"data/gwas/{config_name}/{pheno_id}/")
 
