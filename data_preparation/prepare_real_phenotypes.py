@@ -60,7 +60,7 @@ sh.to_csv("data/phenotypes/real/HEIGHT.txt", sep="\t")
 
 bw = pheno_df[['FID', 'IID', '20022-0.0']]
 bw.columns = ['FID', 'IID', 'phenotype']
-bw['phenotype'][bw['phenotype'] < 1 | bw['phenotype'] > 6] = np.nan
+bw['phenotype'][(bw['phenotype'] < 1) | (bw['phenotype'] > 6)] = np.nan
 bw.to_csv("data/phenotypes/real/BW.txt", sep="\t")
 
 # BMI:
