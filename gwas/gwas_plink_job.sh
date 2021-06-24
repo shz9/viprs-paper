@@ -14,10 +14,9 @@ input_dir=$2  # The input directory where the phenotype files are stored
 standardize=${3:-1}  # Whether to standardize the genotype/phenotype before performing regression (default: TRUE)
 
 # Check that the input directory has been specified
-if test -z "$input_dir"
-then
-      echo "Error: input directory is not set!"
-      exit
+if test -z "$input_dir"; then
+  echo "Error: input directory is not set!"
+  exit
 fi
 
 config_name=$(basename "$input_dir")  # The name of the simulation configuration

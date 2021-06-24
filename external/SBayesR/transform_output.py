@@ -2,8 +2,8 @@ import pandas as pd
 import sys
 import os.path as osp
 
-snp_effects_file = osp.join(sys.argv[1], "chr_22.snpRes")
-hyperparams_file = osp.join(sys.argv[1], "chr_22.parRes")
+snp_effects_file = sys.argv[1] + ".snpRes"
+hyperparams_file = sys.argv[1] + ".parRes"
 
 snp_effect_df = pd.read_csv(snp_effects_file, sep="\s+")
 snp_effect_df = snp_effect_df[['Chrom', 'Name', 'PIP', 'A1Effect']]
