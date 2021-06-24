@@ -1,8 +1,10 @@
 #!/bin/bash
 
 ld_panel=${1-"ukbb_50k_windowed"}
+sumstats_dir=${2-"real"}
 
 echo "Submitting jobs for performing model fit using LD panel $ld_panel..."
+echo "and summary statistics from directory $sumstats_dir"
 
 if [[ $ld_panel == *"sample"* ]]; then
     models=("VIPRS" "VIPRSSBayes")
@@ -27,14 +29,14 @@ do
       model_name="$m-$fm"
     fi
 
-    rm -rf "./log/model_fit/$ld_panel/$model_name/" || true
-    mkdir -p "./log/model_fit/$ld_panel/$model_name"
+    rm -rf "./log/model_fit/$ld_panel/$model_name/$sumstats_dir" || true
+    mkdir -p "./log/model_fit/$ld_panel/$model_name/$sumstats_dir"
 
     echo "Submitting jobs for model $model_name..."
 
-    for ss_file in data/gwas/*/*/*.linear
+    for ss_file in data/gwas/"$sumstats_dir"/*/*.linear
     do
-      sbatch -J "$ld_panel/$model_name" model_fit/model_fit_job.sh "$ss_file" "$m" "$ld_panel" "$fm"
+      sbatch -J "$ld_panel/$model_name/$sumstats_dir" model_fit/model_fit_job.sh "$ss_file" "$m" "$ld_panel" "$fm"
     done
 
   done
