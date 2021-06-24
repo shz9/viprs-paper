@@ -39,9 +39,12 @@ trait = trait.replace('.txt', '')
 
 output_file = f"data/evaluation/{args.ld_panel}/{config}/{trait}.csv"
 
-sim_chrs = [22]  # Chromosomes used for simulation
+# Find the fir files corresponding to unique chromosomes:
+unique_chroms = [osp.basename(f).replace(".fit", "")
+                 for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/{config}/{trait}/*.fit")]
 
-test_data = GWASDataLoader([f"data/ukbb_qc_genotypes/chr_{i}" for i in sim_chrs],
+
+test_data = GWASDataLoader([f"data/ukbb_qc_genotypes/{i}" for i in unique_chroms],
                            keep_individuals="data/keep_files/ukbb_test_subset.keep",
                            phenotype_file=phenotype_file,
                            compute_ld=False)
@@ -49,13 +52,25 @@ prs_m = PRSModel(test_data)
 
 dfs = []
 
-for fit_file in glob.glob(f"data/model_fit/{args.ld_panel}/*/{config}/{trait}/chr_22.fit"):
-    prs_m.read_inferred_params(fit_file)
+for model_dir in glob.glob(f"data/model_fit/{args.ld_panel}/*/"):
 
+    model = osp.basename(model_dir)  # Get the model name
+    model_fit_files = glob.glob(osp.join(model_dir, f"{config}/{trait}/*.fit"))
+
+    # Check that all required chromosomes have been fit under this model:
+    if any([osp.basename(mff).replace(".fit", "") not in unique_chroms for mff in model_fit_files]):
+        print(f"Model {model} does not have parameter fits for all chromosomes. Skipping evaluation...")
+        continue
+
+    # Read the inferred parameters:
+    prs_m.read_inferred_params(model_fit_files)
+
+    # Evaluate predictive performance:
     pred_perf = evaluate_predictive_performance(test_data.phenotypes,
                                                 prs_m.predict())
-    pred_perf.update({'Trait': trait, 'Model': fit_file.split("/")[3]})
+    pred_perf.update({'Trait': trait, 'Model': model})
 
+    # Append to the results table:
     dfs.append(pd.DataFrame.from_dict(pred_perf, orient='index').T)
 
 makedir(osp.dirname(output_file))
