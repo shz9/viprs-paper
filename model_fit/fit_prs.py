@@ -20,6 +20,8 @@ from vemPRS.prs.src.GibbsPRSSBayes import GibbsPRSSBayes
 from vemPRS.prs.src.HyperparameterSearch import HyperparameterSearch, fit_model_averaging
 from utils import makedir
 import argparse
+import functools
+print = functools.partial(print, flush=True)
 
 parser = argparse.ArgumentParser(description='Fit PRS models')
 
@@ -45,6 +47,9 @@ else:
     load_ld = True
     ld_panel = f"data/ld/{args.ld_panel}/ld_ragged/{chrom}"
 
+
+print("> Loading the LD data and associated summary statistics file...")
+
 gdl = GWASDataLoader(f"data/ukbb_qc_genotypes/{chrom}.bed",
                      keep_individuals="data/keep_files/ukbb_train_subset.keep",
                      ld_store_files=ld_panel,
@@ -68,7 +73,8 @@ elif args.model == 'GibbsPRSSBayes':
     m = GibbsPRSSBayes(gdl, load_ld=load_ld)
 
 
-# Fit the model to the data:
+#### Fit the model to the data: ####
+print("> Performing model fit...")
 
 try:
     if args.fitting_strategy == 'BO':
@@ -85,6 +91,7 @@ except Exception as e:
     print(e)
 
 #### Writing out the output ####
+print("> Writing out the inference results...")
 
 if args.fitting_strategy == 'EM':
     output_dir = f"data/model_fit/{args.ld_panel}/{args.model}/"

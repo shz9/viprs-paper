@@ -9,6 +9,8 @@ sys.path.append(osp.dirname(osp.dirname(__file__)))
 from gwasimulator.GWASSimulator import GWASSimulator
 from utils import makedir
 import argparse
+import functools
+print = functools.partial(print, flush=True)
 
 # --------- Options ---------
 

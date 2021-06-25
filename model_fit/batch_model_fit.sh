@@ -9,7 +9,7 @@ if [[ $ld_panel == *"sample"* ]]; then
     fit_method=("EM")
 else
     models=("VIPRS" "VIPRSSBayes" "GibbsPRS" "GibbsPRSSBayes")
-    fit_method=("EM" "BMA" "BO" "GS")
+    fit_method=("EM" "BMA")  # "BO" "GS"
 fi
 
 if [ -z "$2" ]; then

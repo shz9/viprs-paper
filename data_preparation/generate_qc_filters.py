@@ -10,6 +10,8 @@ import glob
 import numpy as np
 import pandas as pd
 from utils import makedir
+import functools
+print = functools.partial(print, flush=True)
 
 
 # ----------- Options -----------
@@ -47,6 +49,8 @@ variant_hm3_keep_file = "data/keep_files/ukbb_qc_variants_hm3.keep"
 
 # -------- Sample quality control --------
 # Read the sample QC file from the UKBB archive
+print("> Extracting individuals with white British ancestry...")
+
 ind_list = pd.read_csv("/lustre03/project/6004777/projects/uk_biobank/lists/ukb_sqc_v2_fullID_head.txt", sep="\s+")
 
 # Apply the standard filters:
@@ -66,6 +70,8 @@ ind_list[['FID', 'IID']].to_csv(keep_file, sep="\t", header=False, index=False)
 
 # -------- Sample covariate file --------
 # Create a covariates file to use in GWAS:
+
+print("Creating a file with covariates for the selected individuals...")
 
 pc_columns = ['PC' + str(i + 1) for i in range(num_pcs)]
 
@@ -90,6 +96,7 @@ covar_df.to_csv(covar_file, sep="\t", header=False, index=False)
 # -------- Split samples to training/validation/testing/ld --------
 # ------------------------------------------------------
 
+print("> Splitting the data to training/validation/testing/ld subsets...")
 
 def humanize_number(n):
     if n >= 1000:
@@ -150,6 +157,8 @@ tvt_subset.loc[testing_subset].to_csv(test_keep_file, sep="\t", header=False, in
 # --------------------------------------------
 # ---------------- Variant QC ----------------
 # --------------------------------------------
+
+print("> Performing variant filtering and selection...")
 
 info_files = "/lustre03/project/6004777/projects/uk_biobank/imputed_data/full_UKBB/v3_snp_stats/ukb_mfi_chr*_v3.txt"
 

@@ -12,29 +12,63 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from utils import makedir
 import argparse
+import functools
+print = functools.partial(print, flush=True)
+
 
 parser = argparse.ArgumentParser(description='Plot predictive performance')
 parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_50k_windowed')
 args = parser.parse_args()
 
+print("> Plotting predictive performance for different PRS methods...")
 
-dfs = []
+simulation_dfs = []
+real_dfs = []
 
 for f in glob.glob(f"data/evaluation/{args.ld_panel}/*/*.csv") + glob.glob(f"data/evaluation/external/*/*.csv"):
-    df = pd.read_csv(f)
+
     config = osp.basename(osp.dirname(f))
-    _, h2, _, p = config.split("_")
-    df['Heritability'] = float(h2)
-    df['Prop. Causal'] = float(p)
+    trait = osp.basename(f).replace(".csv", "")
 
-    dfs.append(df)
+    df = pd.read_csv(f)
+    df['Trait'] = trait
 
-final_df = pd.concat(dfs)
+    if config == 'real':
+        real_dfs.append(df)
+    else:
 
-plt.figure(figsize=(9, 6))
-g = sns.catplot(x="Heritability", y="R2",
-                hue="Model", col="Prop. Causal",
-                data=final_df, kind="box")
+        _, h2, _, p = config.split("_")
+        df['Heritability'] = float(h2)
+        df['Prop. Causal'] = float(p)
 
-makedir(f"plots/{args.ld_panel}")
-plt.savefig(f"plots/{args.ld_panel}/simulation_predictive_performance.pdf", bbox_inches='tight')
+        simulation_dfs.append(df)
+
+if len(simulation_dfs) > 0:
+    print("> Plotting predictive performance on simulations...")
+
+    final_simulation_df = pd.concat(simulation_dfs)
+
+    plt.figure(figsize=(9, 6))
+    g = sns.catplot(x="Heritability", y="R2",
+                    hue="Model", col="Prop. Causal",
+                    data=final_simulation_df, kind="box")
+
+    makedir(f"plots/predictive_performance/simulation/")
+    plt.savefig(f"plots/predictive_performance/simulation/{args.ld_panel}_predictive_performance.pdf",
+                bbox_inches='tight')
+    plt.close()
+
+
+if len(real_dfs) > 0:
+    print("> Plotting predictive performance on real data...")
+    final_real_df = pd.concat(real_dfs)
+
+    plt.figure(figsize=(9, 6))
+    g = sns.catplot(x="Model", y="R2",
+                    hue="Model", col="Trait",
+                    data=final_real_df, kind="bar")
+
+    makedir(f"plots/predictive_performance/real/")
+    plt.savefig(f"plots/predictive_performance/real/{args.ld_panel}_predictive_performance.pdf",
+                bbox_inches='tight')
+    plt.close()
