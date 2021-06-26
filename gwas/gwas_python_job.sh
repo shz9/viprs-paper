@@ -16,6 +16,6 @@ echo "with SNPs on chromosome: $chr..."
 
 echo "Analysis started at: `date`"
 
-python gwas/python_gwas.py -i "$2" -c "$chr"
+python gwas/python_gwas.py -p "$2" -c "$chr"
 
 echo "Job finished with exit code $? at: `date`"
