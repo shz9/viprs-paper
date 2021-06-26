@@ -35,7 +35,7 @@ keep_ind = pd.read_csv(keep_file, names=["FID", "IID"], sep="\t")
 pheno_df = None
 
 for ph_file, traits in file_pheno_dict.items():
-    df = pd.read_csv(ph_file)[["eid"] + traits]
+    df = pd.read_csv(osp.join(input_dir, ph_file))[["eid"] + traits]
     if pheno_df is None:
         pheno_df = df
     else:
