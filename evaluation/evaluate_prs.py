@@ -7,6 +7,7 @@ import sys
 import os.path as osp
 import glob
 import pandas as pd
+import numpy as np
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 sys.path.append("vemPRS/")
 from gwasimulator.GWASDataLoader import GWASDataLoader
@@ -42,8 +43,8 @@ trait = trait.replace('.txt', '')
 output_file = f"data/evaluation/{args.ld_panel}/{config}/{trait}.csv"
 
 # Find the fir files corresponding to unique chromosomes:
-unique_chroms = [osp.basename(f).replace(".fit", "")
-                 for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/{config}/{trait}/*.fit")]
+unique_chroms = np.unique([osp.basename(f).replace(".fit", "")
+                 for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/{config}/{trait}/*.fit")])
 
 
 test_data = GWASDataLoader([f"data/ukbb_qc_genotypes/{i}" for i in unique_chroms],

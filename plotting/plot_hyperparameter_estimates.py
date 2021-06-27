@@ -51,7 +51,7 @@ if len(simulation_dfs) > 0:
     final_simulation_df = pd.concat(simulation_dfs)
     final_simulation_df = final_simulation_df.groupby(['Heritability', 'Prop. Causal', 'Trait', 'Model']).agg(
         {'Estimated Heritability': 'sum', 'Estimated Prop. Causal': 'mean'}
-    )
+    ).reset_index()
 
     plt.figure(figsize=(9, 6))
     g = sns.catplot(x="Heritability", y="Estimated Heritability",
@@ -76,21 +76,23 @@ if len(real_dfs) > 0:
     final_real_df = pd.concat(real_dfs)
     final_real_df = final_real_df.groupby(['Trait', 'Model']).agg(
         {'Estimated Heritability': 'sum', 'Estimated Prop. Causal': 'mean'}
-    )
+    ).reset_index()
 
     plt.figure(figsize=(9, 6))
-    g = sns.catplot(x="Model", y="Estimated Heritability",
-                    hue="Model", col="Trait",
+    g = sns.catplot(x="Model", y="Estimated Heritability", col="Trait",
                     data=final_real_df, kind="bar")
+    for i, ax in enumerate(g.axes):
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
 
     makedir("plots/hyperparameters/real/h2g/")
     plt.savefig(f"plots/hyperparameters/real/h2g/{args.ld_panel}_estimates.pdf", bbox_inches='tight')
     plt.close()
 
     plt.figure(figsize=(9, 6))
-    g = sns.catplot(x="Model", y="Estimated Prop. Causal",
-                    hue="Model", col="Trait",
+    g = sns.catplot(x="Model", y="Estimated Prop. Causal", col="Trait",
                     data=final_real_df, kind="bar")
+    for i, ax in enumerate(g.axes):
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
 
     makedir("plots/hyperparameters/real/pi/")
     plt.savefig(f"plots/hyperparameters/real/pi/{args.ld_panel}_estimates.pdf", bbox_inches='tight')

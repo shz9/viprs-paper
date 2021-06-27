@@ -8,6 +8,9 @@
 #SBATCH --mail-type=FAIL
 
 echo "Job started at: `date`"
+echo "Performing model fit..."
+echo "Dataset: $1"
+echo "Model: SBayesR"
 
 gctb_bin="$HOME/projects/def-sgravel/bin/gctb_v2.03/gctb"
 

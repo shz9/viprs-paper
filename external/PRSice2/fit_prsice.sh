@@ -8,6 +8,9 @@
 #SBATCH --mail-type=FAIL
 
 echo "Job started at: `date`"
+echo "Performing model fit..."
+echo "Dataset: $1"
+echo "Model: PRSice2"
 
 module load gcc/9.3.0 r/4.0.2
 export R_LIBS=$HOME/projects/def-sgravel/R_environments/R_4.0.2/prsice

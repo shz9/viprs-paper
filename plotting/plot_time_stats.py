@@ -35,7 +35,9 @@ for log_f in glob.glob("log/model_fit/*/*/*/*.out"):
                         'Duration': duration})
 
     except Exception as e:
-        print(e)
+        print("Error parsing the log file:", log_f)
+        print("Error message:", e)
+        print("Skipping...")
         continue
 
 # Concatenate the entries into a single dataframe:
@@ -48,7 +50,7 @@ print("> Plotting time statistics by LD panel for simulations...")
 
 ldp_time_df = time_df.loc[time_df['Configuration'] != 'real'].groupby(
     ['LD Panel', 'Configuration', 'Trait', 'Model']
-).sum()
+).sum().reset_index()
 
 for ldp in ldp_time_df['LD Panel'].unique():
 
@@ -75,7 +77,7 @@ print("> Plotting time statistics by LD panel for real data...")
 
 ldp_time_df = time_df.loc[time_df['Configuration'] == 'real'].groupby(
     ['LD Panel', 'Configuration', 'Trait', 'Model']
-).sum()
+).sum().reset_index()
 
 for ldp in ldp_time_df['LD Panel'].unique():
 
