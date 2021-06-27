@@ -57,7 +57,7 @@ dfs = []
 
 print(f"Evaluating PRS models in the directory: data/model_fit/{args.ld_panel}/")
 
-for model_dir in glob.glob(f"data/model_fit/{args.ld_panel}/*/"):
+for model_dir in glob.glob(f"data/model_fit/{args.ld_panel}/*"):
 
     model = osp.basename(model_dir)  # Get the model name
     model_fit_files = glob.glob(osp.join(model_dir, f"{config}/{trait}/*.fit"))
@@ -65,7 +65,7 @@ for model_dir in glob.glob(f"data/model_fit/{args.ld_panel}/*/"):
     print(f"> Evaluating model: {model}")
 
     # Check that all required chromosomes have been fit under this model:
-    if any([osp.basename(mff).replace(".fit", "") not in unique_chroms for mff in model_fit_files]):
+    if len(set(unique_chroms) - set([osp.basename(mff).replace(".fit", "") for mff in model_fit_files])) > 0:
         print(f"Model {model} does not have parameter fits for all chromosomes. Skipping evaluation...")
         continue
 
