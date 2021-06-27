@@ -49,6 +49,9 @@ if len(simulation_dfs) > 0:
     print("> Plotting hyperparameter estimates on simulated data...")
 
     final_simulation_df = pd.concat(simulation_dfs)
+    final_simulation_df = final_simulation_df.groupby(['Heritability', 'Prop. Causal', 'Trait', 'Model']).agg(
+        {'Estimated Heritability': 'sum', 'Estimated Prop. Causal': 'mean'}
+    )
 
     plt.figure(figsize=(9, 6))
     g = sns.catplot(x="Heritability", y="Estimated Heritability",
@@ -71,6 +74,10 @@ if len(real_dfs) > 0:
     print("> Plotting hyperparameter estimates on real data...")
 
     final_real_df = pd.concat(real_dfs)
+    final_real_df = final_real_df.groupby(['Trait', 'Model']).agg(
+        {'Estimated Heritability': 'sum', 'Estimated Prop. Causal': 'mean'}
+    )
+
     plt.figure(figsize=(9, 6))
     g = sns.catplot(x="Model", y="Estimated Heritability",
                     hue="Model", col="Trait",

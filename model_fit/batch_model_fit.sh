@@ -2,6 +2,11 @@
 
 ld_panel=${1-"ukbb_50k_windowed"}
 
+######
+# TODO:
+# - Adjust time/memory resources by chromosome/model.
+######
+
 echo "Submitting jobs for performing model fit using LD panel $ld_panel..."
 
 if [[ $ld_panel == *"sample"* ]]; then
@@ -35,10 +40,12 @@ do
       model_name="$m-$fm"
     fi
 
-    echo "Submitting jobs for model $model_name..."
+    echo "|| Submitting jobs for model $model_name... ||"
 
     for indir in "${input_dir[@]}"
     do
+
+      echo "> Submitting jobs for summary statistics files in $indir..."
 
       rm -rf "./log/model_fit/$ld_panel/$model_name/$indir" || true
       mkdir -p "./log/model_fit/$ld_panel/$model_name/$indir"

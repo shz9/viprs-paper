@@ -76,6 +76,8 @@ elif args.model == 'GibbsPRSSBayes':
 #### Fit the model to the data: ####
 print("> Performing model fit...")
 
+# TODO: Change the exception handling logic.
+
 try:
     if args.fitting_strategy == 'BO':
         hs = HyperparameterSearch(m)
