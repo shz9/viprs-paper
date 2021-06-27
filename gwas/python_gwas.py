@@ -30,6 +30,7 @@ gdl = GWASDataLoader(f"data/ukbb_qc_genotypes/chr_{args.chromosome}",
                      standardize_genotype=args.standardize,
                      phenotype_file=args.pheno_file,
                      standardize_phenotype=args.standardize)
+gdl.perform_gwas()
 
 config_name = osp.basename(osp.dirname(args.pheno_file))
 pheno_id = osp.basename(args.pheno_file).replace(".txt", "")

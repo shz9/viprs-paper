@@ -37,7 +37,7 @@ Rscript "$PRSiceHome/PRSice.R" \
         --ld "data/ukbb_qc_genotypes/chr_$chrom" \
         --ld-keep "data/keep_files/ukbb_ld_50k_subset.keep" \
         --target "data/ukbb_qc_genotypes/chr_$chrom" \
-        --pheno "data/simulated_phenotypes/$config/$trait.txt" \
+        --pheno "data/phenotypes/$config/$trait.txt" \
         --keep "data/keep_files/ukbb_valid_subset.keep" \
         --pvalue PVAL \
         --stat BETA \
