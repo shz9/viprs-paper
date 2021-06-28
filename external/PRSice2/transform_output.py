@@ -23,5 +23,5 @@ merged_df['BETA'] = ((~merged_df['P'].isna()) & (merged_df['PVAL'] <= best_p_thr
 merged_df['PIP'] = np.nan
 
 # Output a .fit file for evaluation on the testing set:
-final_df = merged_df[['CHR', 'SNP', 'PIP', 'BETA']]
+final_df = merged_df[['CHR', 'SNP', 'A1', 'A2', 'PIP', 'BETA']]
 final_df.to_csv(prsice_prefix + ".fit", sep="\t", index=False)
