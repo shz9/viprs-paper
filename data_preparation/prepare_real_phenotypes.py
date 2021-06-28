@@ -53,7 +53,7 @@ wc = pheno_df[['FID', 'IID', '48-0.0']]
 wc.columns = ['FID', 'IID', 'phenotype']
 wc['phenotype'] = np.log(wc['phenotype'])
 wc['phenotype'][wc['phenotype'] < 3.5] = np.nan
-wc.to_csv("data/phenotypes/real/WC.txt", sep="\t", index=False, header=False)
+wc.to_csv("data/phenotypes/real/WC.txt", sep="\t", index=False, header=False, na_rep='NA')
 
 # Hip circumference:
 
@@ -61,38 +61,38 @@ hc = pheno_df[['FID', 'IID', '49-0.0']]
 hc.columns = ['FID', 'IID', 'phenotype']
 hc['phenotype'] = np.log(hc['phenotype'])
 hc['phenotype'][hc['phenotype'] < 4] = np.nan
-hc.to_csv("data/phenotypes/real/HC.txt", sep="\t", index=False, header=False)
+hc.to_csv("data/phenotypes/real/HC.txt", sep="\t", index=False, header=False, na_rep='NA')
 
 # Standing height:
 
 sh = pheno_df[['FID', 'IID', '50-0.0']]
 sh.columns = ['FID', 'IID', 'phenotype']
 sh['phenotype'][sh['phenotype'] < 130] = np.nan
-sh.to_csv("data/phenotypes/real/HEIGHT.txt", sep="\t", index=False, header=False)
+sh.to_csv("data/phenotypes/real/HEIGHT.txt", sep="\t", index=False, header=False, na_rep='NA')
 
 # Birth weight:
 
 bw = pheno_df[['FID', 'IID', '20022-0.0']]
 bw.columns = ['FID', 'IID', 'phenotype']
 bw['phenotype'][(bw['phenotype'] < 1) | (bw['phenotype'] > 6)] = np.nan
-bw.to_csv("data/phenotypes/real/BW.txt", sep="\t", index=False, header=False)
+bw.to_csv("data/phenotypes/real/BW.txt", sep="\t", index=False, header=False, na_rep='NA')
 
 # BMI:
 
 bmi = pheno_df[['FID', 'IID', '21001-0.0']]
 bmi.columns = ['FID', 'IID', 'phenotype']
 bmi['phenotype'] = np.log(bmi['phenotype'])
-bmi.to_csv("data/phenotypes/real/BMI.txt", sep="\t", index=False, header=False)
+bmi.to_csv("data/phenotypes/real/BMI.txt", sep="\t", index=False, header=False, na_rep='NA')
 
 # HDL:
 
 hdl = pheno_df[['FID', 'IID', '30760-0.0']]
 hdl.columns = ['FID', 'IID', 'phenotype']
 hdl['phenotype'] = np.log(hdl['phenotype'])
-hdl.to_csv("data/phenotypes/real/HDL.txt", sep="\t", index=False, header=False)
+hdl.to_csv("data/phenotypes/real/HDL.txt", sep="\t", index=False, header=False, na_rep='NA')
 
 # LDL:
 
 ldl = pheno_df[['FID', 'IID', '30780-0.0']]
 ldl.columns = ['FID', 'IID', 'phenotype']
-ldl.to_csv("data/phenotypes/real/LDL.txt", sep="\t", index=False, header=False)
+ldl.to_csv("data/phenotypes/real/LDL.txt", sep="\t", index=False, header=False, na_rep='NA')
