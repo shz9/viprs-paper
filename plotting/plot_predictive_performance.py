@@ -20,7 +20,7 @@ print("> Plotting predictive performance for different PRS methods...")
 simulation_dfs = []
 real_dfs = []
 
-for f in glob.glob(f"data/evaluation/*/*.csv"):
+for f in glob.glob("data/evaluation/*/*.csv"):
 
     config = osp.basename(osp.dirname(f))
     df = pd.read_csv(f)
@@ -38,7 +38,10 @@ if len(simulation_dfs) > 0:
 
     for ld_panel in final_simulation_df['LD Panel'].unique():
 
-        s_df = final_simulation_df.loc[final_simulation_df['LD Panel'] == ld_panel]
+        if ld_panel == 'external':
+            continue
+
+        s_df = final_simulation_df.loc[final_simulation_df['LD Panel'].isin([ld_panel, 'external'])]
         plt.figure(figsize=(9, 6))
         g = sns.catplot(x="Heritability", y="R2",
                         hue="Model", col="Prop. Causal",
@@ -55,7 +58,11 @@ if len(real_dfs) > 0:
     final_real_df = pd.concat(real_dfs)
 
     for ld_panel in final_real_df['LD Panel'].unique():
-        r_df = final_real_df.loc[final_real_df['LD Panel'] == ld_panel]
+
+        if ld_panel == 'external':
+            continue
+
+        r_df = final_real_df.loc[final_real_df['LD Panel'].isin([ld_panel, 'external'])]
         plt.figure(figsize=(9, 6))
         g = sns.catplot(x="Model", y="R2",
                         hue="Model", col="Trait",
