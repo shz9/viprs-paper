@@ -26,7 +26,7 @@ echo "Transforming PLINK scores to standard format..."
 awk -v FS='\t' -v OFS='\t' '{ print $1, $2, $3 * $5 }' "$output_dir/$chrom".sscore > "$output_dir/$chrom".prs
 
 # Update the header:
-sed -i '1s/.*/FID\tIID\tPRS/' "$output_dir/$chrom".pprs
+sed -i '1s/.*/FID\tIID\tPRS/' "$output_dir/$chrom".prs
 
 rm "$output_dir/$chrom".sscore
 

@@ -19,6 +19,8 @@ fi
 for indir in "${input_dir[@]}"
 do
 
+  echo "> Processing phenotypes in: $indir"
+
   rm -rf "./log/score/$ld_panel/$model/$indir" || true
   mkdir -p "./log/score/$ld_panel/$model/$indir"
 

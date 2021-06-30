@@ -15,7 +15,7 @@ from utils import makedir
 input_dir = "/lustre03/project/6004777/projects/uk_biobank/raw/"
 
 file_pheno_dict = {
-    "ukb5602.csv": ["48-0.0", "49-0.0", "50-0.0", "20022-0.0", "21001-0.0"],
+    "ukb5602.csv": ["48-0.0", "49-0.0", "50-0.0", "3062-0.0", "3063-0.0", "20022-0.0", "21001-0.0"],
     "ukb27843.csv": ["30760-0.0", "30780-0.0"]
 }
 keep_file = "data/keep_files/ukbb_qc_individuals.keep"
@@ -27,7 +27,9 @@ phenotypes = {
     "Birth weight": "20022-0.0",
     "BMI": "21001-0.0",
     "HDL": "30760-0.0",
-    "LDL": "30780-0.0"
+    "LDL": "30780-0.0",
+    "FVC": "3062-0.0",
+    "FEV1": "3063-0.0"
 }
 
 keep_ind = pd.read_csv(keep_file, names=["FID", "IID"], sep="\t")
@@ -96,3 +98,17 @@ hdl.to_csv("data/phenotypes/real/HDL.txt", sep="\t", index=False, header=False, 
 ldl = pheno_df[['FID', 'IID', '30780-0.0']]
 ldl.columns = ['FID', 'IID', 'phenotype']
 ldl.to_csv("data/phenotypes/real/LDL.txt", sep="\t", index=False, header=False, na_rep='NA')
+
+# FVC:
+
+fvc = pheno_df[['FID', 'IID', '3062-0.0']]
+fvc.columns = ['FID', 'IID', 'phenotype']
+fvc['phenotype'][np.log(fvc['phenotype']) < -.5] = np.nan
+fvc.to_csv("data/phenotypes/real/FVC.txt", sep="\t", index=False, header=False, na_rep='NA')
+
+# FEV1
+
+fev1 = pheno_df[['FID', 'IID', '3063-0.0']]
+fev1.columns = ['FID', 'IID', 'phenotype']
+fev1['phenotype'][np.log(fev1['phenotype']) < -1] = np.nan
+fev1.to_csv("data/phenotypes/real/FEV1.txt", sep="\t", index=False, header=False, na_rep='NA')
