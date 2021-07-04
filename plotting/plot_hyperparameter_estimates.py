@@ -14,6 +14,7 @@ from utils import makedir
 import argparse
 import functools
 print = functools.partial(print, flush=True)
+from plot_utils import add_labels_to_bars
 
 
 parser = argparse.ArgumentParser(description='Plot hyperparameter estimates')
@@ -80,8 +81,9 @@ if len(real_dfs) > 0:
 
     plt.figure(figsize=(9, 6))
     g = sns.catplot(x="Model", y="Estimated Heritability", col="Trait",
-                    data=final_real_df, kind="bar")
-    for i, ax in enumerate(g.axes):
+                    data=final_real_df, kind="bar", col_wrap=4)
+    add_labels_to_bars(g)
+    for ax in g.axes.flatten():
         ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
 
     makedir("plots/hyperparameters/real/h2g/")
@@ -90,8 +92,9 @@ if len(real_dfs) > 0:
 
     plt.figure(figsize=(9, 6))
     g = sns.catplot(x="Model", y="Estimated Prop. Causal", col="Trait",
-                    data=final_real_df, kind="bar")
-    for i, ax in enumerate(g.axes):
+                    data=final_real_df, kind="bar", col_wrap=4)
+    add_labels_to_bars(g)
+    for ax in g.axes.flatten():
         ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
 
     makedir("plots/hyperparameters/real/pi/")

@@ -13,6 +13,7 @@ import seaborn as sns
 from utils import makedir
 import functools
 print = functools.partial(print, flush=True)
+from plot_utils import add_labels_to_bars
 
 
 print("> Plotting predictive performance for different PRS methods...")
@@ -64,9 +65,10 @@ if len(real_dfs) > 0:
 
         r_df = final_real_df.loc[final_real_df['LD Panel'].isin([ld_panel, 'external'])]
         plt.figure(figsize=(9, 6))
-        g = sns.catplot(x="Model", y="R2",
-                        hue="Model", col="Trait",
-                        data=final_real_df, kind="bar")
+        g = sns.catplot(x="Model", y="R2", col="Trait",
+                        data=final_real_df, kind="bar",
+                        col_wrap=4)
+        add_labels_to_bars(g)
 
         makedir(f"plots/predictive_performance/real/")
         plt.savefig(f"plots/predictive_performance/real/{ld_panel}_predictive_performance.pdf",

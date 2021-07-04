@@ -1,5 +1,6 @@
 import pandas as pd
-from scipy import stats
+import numpy as np
+import statsmodels.api as sm
 import glob
 import os.path as osp
 import sys
@@ -9,16 +10,36 @@ import functools
 print = functools.partial(print, flush=True)
 
 
-def evaluate_predictive_performance(true_phenotype, pred_phenotype):
+def evaluate_predictive_performance(model_df):
 
-    _, _, r_val, _, _ = stats.linregress(pred_phenotype, true_phenotype)
+    null_result = sm.OLS(model_df['phenotype'], sm.add_constant(model_df[covariates])).fit()
+    full_result = sm.OLS(model_df['phenotype'], sm.add_constant(model_df[covariates + ['PRS']])).fit()
+
+    # Naive R2, regress the PRS on the phenotype:
+    naive_result = sm.OLS(model_df['phenotype'], sm.add_constant(model_df[['PRS']])).fit()
+
+    # Used to compute partial correlation:
+    prs_result = sm.OLS(model_df['PRS'], sm.add_constant(model_df[covariates])).fit()
 
     return {
-        'R2': r_val**2
+        'Null R2': null_result.rsquared,
+        'Full R2': full_result.rsquared,
+        'R2': full_result.rsquared - null_result.rsquared,
+        'Naive R2': naive_result.rsquared,
+        'Pearson Correlation': np.corrcoef(model_df['phenotype'], model_df['PRS'])[0, 1],
+        'Partial Correlation': np.corrcoef(null_result.resid, prs_result.resid)[0, 1]
     }
 
 
 print("> Evaluating predictive performance of PRS methods...")
+
+# Covariates:
+covariates = ['Sex'] + ['PC' + str(i + 1) for i in range(10)] + ['Age']
+
+# Read the covariates file:
+covar_df = pd.read_csv("data/covariates/covar_file.txt",
+                       names=['FID', 'IID'] + covariates,
+                       sep="\s+")
 
 for trait_f in glob.glob("data/phenotypes/*/*.txt"):
 
@@ -52,7 +73,9 @@ for trait_f in glob.glob("data/phenotypes/*/*.txt"):
         prs_df = prs_df.reset_index()
 
         merged_df = pheno_df.merge(prs_df).dropna()
-        res = evaluate_predictive_performance(merged_df['phenotype'], merged_df['PRS'])
+        merged_df = merged_df.merge(covar_df).dropna()
+
+        res = evaluate_predictive_performance(merged_df)
         res.update({
             'Trait': trait,
             'LD Panel': ld_panel,
