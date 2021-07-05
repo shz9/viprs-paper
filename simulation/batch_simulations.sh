@@ -6,7 +6,7 @@ mkdir -p ./log/simulation/
 echo "Submitting jobs for performing phenotype simulation..."
 
 h2g=(0.1 0.3 0.5)  # Heritability values
-pc=(0.001 0.01 0.1)  # Proportion of causal SNPs
+pc=(0.0001 0.001 0.01)  # Proportion of causal SNPs
 n_replicates=10
 
 for h in "${h2g[@]}"

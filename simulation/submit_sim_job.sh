@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --account=def-sgravel
 #SBATCH --cpus-per-task=8
-#SBATCH --mem-per-cpu=4GB
-#SBATCH --time=1:00:00
+#SBATCH --mem-per-cpu=14GB
+#SBATCH --time=1:30:00
 #SBATCH --output=./log/simulation/%j.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
