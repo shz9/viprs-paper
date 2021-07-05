@@ -169,13 +169,17 @@ lr_ld_df = pd.read_csv("metadata/long_range_ld.txt", sep="\s+")
 v_dfs = []
 for f in glob.glob(info_files):
 
-    vdf = pd.read_csv(f, sep="\t",
-                      names=['ID', 'SNP', 'POS', 'A1', 'A2', 'MAF', 'MinorAllele', 'INFO'])
+    try:
+        vdf = pd.read_csv(f, sep="\t",
+                          names=['ID', 'SNP', 'POS', 'A1', 'A2', 'MAF', 'MinorAllele', 'INFO'])
 
-    # Extract the chromosome information from the file name:
-    chrom = int(f.split('_')[-2].replace('chr', ''))
-    vdf['CHR'] = chrom
-    v_dfs.append(vdf)
+        # Extract the chromosome information from the file name:
+        chrom = int(f.split('_')[-2].replace('chr', ''))
+        vdf['CHR'] = chrom
+        v_dfs.append(vdf)
+    except Exception as e:
+        print(e)
+        continue
 
 variant_df = pd.concat(v_dfs)
 
