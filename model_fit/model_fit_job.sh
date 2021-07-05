@@ -11,8 +11,8 @@ echo "Job started at: `date`"
 
 source "$HOME/pyenv/bin/activate"
 
-model=${2:-"vem_c"}
-ld_panel=${3-"ukbb_windowed"}
+model=${2:-"VIPRS"}
+ld_panel=${3-"ukbb_50k_windowed"}
 fitting_method=${4-"EM"}
 
 echo "Performing model fit..."

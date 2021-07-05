@@ -13,7 +13,7 @@ source "$HOME/pyenv/bin/activate"
 
 LD_EST=${1:-"windowed"}  # LD estimator (default "windowed")
 BEDFILE=${2:-"data/ukbb_qc_genotypes/chr_22"}  # Bed file (default 22)
-NAME=${3:-"ukbb_windowed_50k"}
+NAME=${3:-"ukbb_50k_windowed"}
 KEEPFILE=$4  # Keep file for individuals
 
 echo "Computing the LD matrix $NAME for chromosome $(basename $BEDFILE) using the $LD_EST estimator..."
