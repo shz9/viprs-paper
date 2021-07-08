@@ -91,8 +91,11 @@ try:
         m = m.fit()
 except Exception as e:
     print(e)
+    if e.__class__.__name__ != 'OptimizationDivergence':
+        raise e
 
 #### Writing out the output ####
+
 print("> Writing out the inference results...")
 
 if args.fitting_strategy == 'EM':

@@ -18,6 +18,8 @@ from plot_utils import add_labels_to_bars
 
 print("> Plotting predictive performance for different PRS methods...")
 
+pred_metrics = ['R2', 'Full R2', 'Naive R2', 'Pearson Correlation', 'Partial Correlation']
+
 simulation_dfs = []
 real_dfs = []
 
@@ -43,15 +45,17 @@ if len(simulation_dfs) > 0:
             continue
 
         s_df = final_simulation_df.loc[final_simulation_df['LD Panel'].isin([ld_panel, 'external'])]
-        plt.figure(figsize=(9, 6))
-        g = sns.catplot(x="Heritability", y="R2",
-                        hue="Model", col="Prop. Causal",
-                        data=s_df, kind="box")
 
-        makedir(f"plots/predictive_performance/simulation/")
-        plt.savefig(f"plots/predictive_performance/simulation/{ld_panel}_predictive_performance.pdf",
-                    bbox_inches='tight')
-        plt.close()
+        for metric in pred_metrics:
+            plt.figure(figsize=(9, 6))
+            g = sns.catplot(x="Heritability", y=metric,
+                            hue="Model", col="Prop. Causal",
+                            data=s_df, kind="box")
+
+            makedir(f"plots/predictive_performance/simulation/{ld_panel}")
+            plt.savefig(f"plots/predictive_performance/simulation/{ld_panel}/{metric}_predictive_performance.pdf",
+                        bbox_inches='tight')
+            plt.close()
 
 
 if len(real_dfs) > 0:
@@ -64,13 +68,15 @@ if len(real_dfs) > 0:
             continue
 
         r_df = final_real_df.loc[final_real_df['LD Panel'].isin([ld_panel, 'external'])]
-        plt.figure(figsize=(9, 6))
-        g = sns.catplot(x="Model", y="R2", col="Trait",
-                        data=final_real_df, kind="bar",
-                        col_wrap=4)
-        add_labels_to_bars(g)
 
-        makedir(f"plots/predictive_performance/real/")
-        plt.savefig(f"plots/predictive_performance/real/{ld_panel}_predictive_performance.pdf",
-                    bbox_inches='tight')
-        plt.close()
+        for metric in pred_metrics:
+            plt.figure(figsize=(9, 6))
+            g = sns.catplot(x="Model", y=metric, col="Trait",
+                            data=final_real_df, kind="bar",
+                            col_wrap=4)
+            add_labels_to_bars(g)
+
+            makedir(f"plots/predictive_performance/real/{ld_panel}")
+            plt.savefig(f"plots/predictive_performance/real/{ld_panel}/{metric}_predictive_performance.pdf",
+                        bbox_inches='tight')
+            plt.close()
