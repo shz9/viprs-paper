@@ -2,16 +2,17 @@
 #SBATCH --account=def-sgravel
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=8GB
-#SBATCH --time=01:00:00
-#SBATCH --output=./log/gwas/%x/%j.out
+#SBATCH --time=02:00:00
+#SBATCH --output=./log/gwas/%x.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
 
 module load plink
 
-chr=${1:-22}  # Chromosome
-pheno_file=$2  # The input directory where the phenotype files are stored
-standardize=${3:-1}  # Whether to standardize the genotype/phenotype before performing regression (default: TRUE)
+pheno_file=$1  # The input file path
+keep_file=${2:-"data/keep_files/ukbb_train_subset.keep"}
+output_dir=$3
+standardize=${4:-1}  # Whether to standardize the genotype/phenotype before performing regression (default: TRUE)
 
 # Check that the input directory has been specified
 if test -z "$pheno_file"; then
@@ -25,23 +26,26 @@ pheno_id=$(basename "$pheno_file" .txt)  # Extract the phenotype ID
 
 cd /home/szabad/projects/def-sgravel/szabad/viprs-paper || exit
 
-mkdir -p "data/gwas/$config_name/$pheno_id"  # Create the output directory
+mkdir -p "$output_dir"  # Create the output directory
 
-if [ "${standardize}" == 1 ]; then
-  plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
-        --linear hide-covar \
-        --covar-variance-standardize \
-        --keep data/keep_files/ukbb_train_subset.keep \
-        --allow-no-sex \
-        --pheno "$pheno_file"  \
-        --out "data/gwas/$config_name/$pheno_id/chr_$chr"
-else
-  plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
-        --linear hide-covar \
-        --keep data/keep_files/ukbb_train_subset.keep \
-        --allow-no-sex \
-        --pheno "$pheno_file"  \
-        --out "data/gwas/$config_name/$pheno_id/chr_$chr"
-fi
+for chr in $(seq 1 22)
+do
+  if [ "${standardize}" == 1 ]; then
+    plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
+          --linear hide-covar \
+          --variance-standardize \
+          --keep "$keep_file" \
+          --allow-no-sex \
+          --pheno "$pheno_file"  \
+          --out "$output_dir/chr_$chr"
+  else
+    plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
+          --linear hide-covar \
+          --keep "$keep_file" \
+          --allow-no-sex \
+          --pheno "$pheno_file"  \
+          --out "$output_dir/chr_$chr"
+  fi
+done
 
 echo "Job finished with exit code $? at: `date`"
