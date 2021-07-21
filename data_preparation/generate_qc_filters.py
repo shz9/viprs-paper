@@ -41,7 +41,7 @@ test_keep_file = "data/keep_files/ukbb_test_subset.keep"
 # *** Variant options ***:
 
 min_info_score = 0.3
-hapmap_3_snps = "metadata/hm3_no_MHC.csv.bz2"  # Set to None in case we don't want to filter to HapMap3 SNPs.
+hapmap3_snps = "metadata/hm3_no_MHC.csv.bz2"  # Set to None in case we don't want to filter to HapMap3 SNPs.
 
 variant_keep_file = "data/keep_files/ukbb_qc_variants.keep"
 variant_hm3_keep_file = "data/keep_files/ukbb_qc_variants_hm3.keep"
@@ -213,8 +213,8 @@ makedir(osp.dirname(variant_keep_file))
 variant_df['SNP'].to_csv(variant_keep_file, header=False, index=False)
 
 # Merge with HapMap3 filter if provided:
-if hapmap_3_snps is not None:
-    hm3_snps = pd.read_csv(hapmap_3_snps)
+if hapmap3_snps is not None:
+    hm3_snps = pd.read_csv(hapmap3_snps)
     variant_df = pd.merge(variant_df, hm3_snps)
 
     # Write to file:

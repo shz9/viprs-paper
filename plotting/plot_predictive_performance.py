@@ -53,7 +53,7 @@ if len(simulation_dfs) > 0:
                             data=s_df, kind="box")
 
             makedir(f"plots/predictive_performance/simulation/{ld_panel}")
-            plt.savefig(f"plots/predictive_performance/simulation/{ld_panel}/{metric}_predictive_performance.pdf",
+            plt.savefig(f"plots/predictive_performance/simulation/{ld_panel}/{metric}_predictive_performance.pdf".replace(" ", "_"),
                         bbox_inches='tight')
             plt.close()
 
@@ -77,6 +77,6 @@ if len(real_dfs) > 0:
             add_labels_to_bars(g)
 
             makedir(f"plots/predictive_performance/real/{ld_panel}")
-            plt.savefig(f"plots/predictive_performance/real/{ld_panel}/{metric}_predictive_performance.pdf",
+            plt.savefig(f"plots/predictive_performance/real/{ld_panel}/{metric}_predictive_performance.pdf".replace(" ", "_"),
                         bbox_inches='tight')
             plt.close()

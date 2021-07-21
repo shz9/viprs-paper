@@ -24,4 +24,4 @@ merged_df['PIP'] = np.nan
 
 # Output a .fit file for evaluation on the testing set:
 final_df = merged_df[['CHR', 'SNP', 'A1', 'A2', 'PIP', 'BETA']]
-final_df.to_csv(prsice_prefix + ".fit", sep="\t", index=False)
+final_df.to_csv(prsice_prefix + ".fit", sep="\t", index=False, na_rep='NA')

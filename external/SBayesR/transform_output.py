@@ -4,7 +4,7 @@ import os.path as osp
 
 snp_effects_file = sys.argv[1] + ".snpRes"
 hyperparams_file = sys.argv[1] + ".parRes"
-sumstats_file = sys.argv[2]
+sumstats_file = sys.argv[2].replace('.ma', '.PHENO1.glm.linear')
 
 # Read the SNP effects file:
 snp_effect_df = pd.read_csv(snp_effects_file, sep="\s+")

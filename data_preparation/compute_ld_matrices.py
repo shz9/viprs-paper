@@ -29,8 +29,7 @@ if args.estimator == 'windowed':
                    window_unit="cM",
                    cm_window_cutoff=3.,
                    compute_ld=True,
-                   sparse_ld=True,
-                   temp_dir=f"data/ld/{args.name}_windowed/")
+                   output_dir=f"data/ld/{args.name}_windowed/")
 elif args.estimator == 'shrinkage':
     GWASDataLoader(args.bed_file,
                    keep_individuals=args.keep_file,
@@ -39,13 +38,12 @@ elif args.estimator == 'shrinkage':
                    genmap_sample_size=183,
                    shrinkage_cutoff=1e-5,
                    compute_ld=True,
-                   sparse_ld=True,
-                   temp_dir=f"data/ld/{args.name}_shrinkage/")
+                   output_dir=f"data/ld/{args.name}_shrinkage/")
 elif args.estimator == 'sample':
     GWASDataLoader(args.bed_file,
                    keep_individuals=args.keep_file,
                    ld_estimator="sample",
                    compute_ld=True,
-                   temp_dir=f"data/ld/{args.name}_sample/")
+                   output_dir=f"data/ld/{args.name}_sample/")
 else:
     raise Exception(f"LD estimator {args.estimator} not implemented!")

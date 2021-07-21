@@ -43,7 +43,7 @@ MINUTES=$(echo "scale=2; $SECONDS/60" | bc)
 echo "Transforming output of SBayesR..."
 
 source "$HOME/pyenv/bin/activate"
-python external/SBayesR/transform_output.py "data/model_fit/external/SBayesR/$config/$trait/chr_$chrom"
+python external/SBayesR/transform_output.py "data/model_fit/external/SBayesR/$config/$trait/chr_$chrom" "$ss_file"
 
 echo "Job finished with exit code $? at: `date`"
 echo "Duration (minutes): $MINUTES"

@@ -26,6 +26,7 @@ def evaluate_predictive_performance(model_df):
         'Full R2': full_result.rsquared,
         'R2': full_result.rsquared - null_result.rsquared,
         'Naive R2': naive_result.rsquared,
+        'Alt R2': 1. - np.sum(full_result.resid**2)/np.sum(null_result.resid**2),
         'Pearson Correlation': np.corrcoef(model_df['phenotype'], model_df['PRS'])[0, 1],
         'Partial Correlation': np.corrcoef(null_result.resid, prs_result.resid)[0, 1]
     }
@@ -54,7 +55,7 @@ for trait_f in glob.glob("data/phenotypes/*/*.txt"):
 
         ld_panel, model = prs_m_dir.split("/")[2:4]
         print(f"> Evaluating {model} ({ld_panel})")
-        prs_files = glob.glob(osp.join(prs_m_dir, "*.pprs"))
+        prs_files = glob.glob(osp.join(prs_m_dir, "*.prs"))
 
         if (config == 'real' and len(prs_files) != 22) or len(prs_files) < 1:
             print(f"> Some scoring files are missing for {ld_panel}/{model}. Skipping evaluation...")

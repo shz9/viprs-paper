@@ -22,6 +22,7 @@ plink2 --bfile "$HOME/projects/def-sgravel/data/genotypes/1000G_EUR_Phase3_plink
       --mind 0.05 \
       --geno 0.05 \
       --maf 0.001 \
+      --mac 5 \
       --snps-only \
       --max-alleles 2 \
       --out "data/1000G_qc_genotypes/chr_${CHR}"
