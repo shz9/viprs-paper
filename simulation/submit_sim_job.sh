@@ -1,13 +1,14 @@
 #!/bin/bash
 #SBATCH --account=def-sgravel
 #SBATCH --cpus-per-task=8
-#SBATCH --mem-per-cpu=14GB
-#SBATCH --time=1:30:00
+#SBATCH --mem-per-cpu=8GB
+#SBATCH --time=2:00:00
 #SBATCH --output=./log/simulation/%j.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
 
 source "$HOME/pyenv/bin/activate"
+module load plink
 
 H2G=${1:-0.1}  # Heritability (default 0.1)
 PC=${2:-0.01}  # Proportion of causal variants (default 0.01)

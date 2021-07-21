@@ -34,7 +34,7 @@ sim_chrs = range(1, 23)  # Chromosomes used for simulation
 # ---------------------------
 
 gs = GWASSimulator([f"data/ukbb_qc_genotypes/chr_{i}" for i in sim_chrs],
-                   compute_ld=False)
+                   compute_ld=False, use_plink=True)
 
 sub_dir = osp.join(output_dir, f'h2_{h2}_p_{pc}')
 
