@@ -11,8 +11,11 @@ n_replicates=10
 
 for h in "${h2g[@]}"
 do
-   for p in "${pc[@]}"
-   do
-     sbatch simulation/submit_sim_job.sh "$h" "$p" "$n_replicates"
-   done
+  for p in "${pc[@]}"
+  do
+    for r in $(seq 1 $n_replicates)
+    do
+      sbatch simulation/submit_sim_job.sh "$h" "$p" "$r"
+    done
+  done
 done

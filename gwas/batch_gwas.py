@@ -52,7 +52,7 @@ for trait_f in glob.glob(pheno_dir):
             jobs.append({
                 'Trait': trait_f,
                 'Keep': keep_f,
-                'Name': f"{args.software}/{config}/{trait}",
+                'Name': f"{args.software}/{config}_{fold}/{trait}",
                 'Output': f"data/gwas/{config}_{fold}/{trait}"
             })
     else:
