@@ -69,9 +69,10 @@ if len(jobs) > 500:
 
 for job in jobs:
 
+    makedir(osp.dirname(f"./log/gwas/{job['Name']}.out"))
+
     try:
         os.remove(f"./log/gwas/{job['Name']}.out")
-        makedir(osp.dirname(f"./log/gwas/{job['Name']}.out"))
     except Exception as e:
         pass
 

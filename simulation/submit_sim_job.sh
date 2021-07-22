@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --account=def-sgravel
-#SBATCH --cpus-per-task=8
-#SBATCH --mem-per-cpu=8GB
+#SBATCH --cpus-per-task=16
+#SBATCH --mem-per-cpu=2GB
 #SBATCH --time=2:00:00
 #SBATCH --output=./log/simulation/%j.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
@@ -19,6 +19,6 @@ echo "Heritability: $H2G"
 echo "Proportion of causal variants: $PC"
 echo "Number of replicates: $NREP"
 
-python simulation/simulate_phenotypes.py --h2g "$H2G" -p "$PC" -n "$NREP"
+parallel -j 4 python simulation/simulate_phenotypes.py --h2g "$H2G" -p "$PC" -r {} ::: $(seq 1 $NREP)
 
 echo "Job finished with exit code $? at: `date`"

@@ -20,8 +20,8 @@ parser.add_argument('--h2g', dest='h2g', type=float, default=0.1,
                     help='Trait heritability (0. - 1.)')
 parser.add_argument('-p', dest='prop_causal', type=float, default=0.01,
                     help='Proportion of causal SNPs (0. - 1.)')
-parser.add_argument('-n', '--replicates', dest='n_replicates', type=int, default=10,
-                    help='Number of replicates')
+parser.add_argument('-r', dest='replicate', type=int, default=1,
+                    help='replicate number')
 
 args = parser.parse_args()
 
@@ -43,11 +43,8 @@ makedir(sub_dir)
 gs.h2g = h2
 gs.pis = (1. - pc, pc)
 
-print(f"> Simulating {args.n_replicates} phenotypes...")
+print(f"> Simulating phenotype (replicate {args.replicate}...")
+gs.simulate(reset_beta=True, perform_gwas=False)
 
-for i in range(args.n_replicates):
-    print("Phenotype", i)
-    gs.simulate(reset_beta=True, perform_gwas=False)
-
-    pheno_table = gs.to_phenotype_table()
-    pheno_table.to_csv(osp.join(sub_dir, str(i + 1) + '.txt'), sep="\t", index=False, header=False)
+pheno_table = gs.to_phenotype_table()
+pheno_table.to_csv(osp.join(sub_dir, f'{args.replicate}.txt'), sep="\t", index=False, header=False)
