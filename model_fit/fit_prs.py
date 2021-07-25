@@ -47,10 +47,11 @@ ld_panel_files = [f"data/ld/{args.ld_panel}/ld/{osp.basename(ssf).split('.')[0]}
 gdls = []
 
 if args.genomewide:
-    gdls.append(GWASDataLoader(ld_store_files=ld_panel_files, sumstats_files=ss_files))
+    gdls.append(GWASDataLoader(ld_store_files=ld_panel_files, sumstats_files=ss_files, sumstats_format='plink'))
 else:
     for ldf, ssf in zip(ld_panel_files, ss_files):
-        gdls.append(GWASDataLoader(ld_store_files=ldf, sumstats_files=ssf))
+        print("Constructing a GDL for:", ssf)
+        gdls.append(GWASDataLoader(ld_store_files=ldf, sumstats_files=ssf, sumstats_format='plink'))
 
 
 if args.fitting_strategy == 'EM':
@@ -85,7 +86,10 @@ for gdl in gdls:
         m = GibbsPRSSBayes(gdl, load_ld=load_ld)
 
     # Fit the model to the data:
-    print("> Performing model fit...")
+    if args.genomewide:
+        print("> Performing model fit on all chromosomes jointly...")
+    else:
+        print("> Performing model fit on chromosome:", gdl.chromosomes)
 
     try:
         if args.fitting_strategy == 'BO':
@@ -108,9 +112,25 @@ for gdl in gdls:
     # Write inferred model parameters:
     m.write_inferred_params(output_dir, per_chromosome=True)
 
-    # Save inferred hyperparameters:
-    h2g.append(m.get_heritability())
-    prop_causal.append(m.get_proportion_causal())
+    # Write the estimated hyperparameters:
+    m_h2g = m.get_heritability()
+    m_p = m.get_proportion_causal()
+
+    if not args.genomewide:
+        # Write the per-chromosome estimates:
+        chrom = gdl.chromosomes[0]
+        pd.DataFrame.from_dict({
+            'Heritability': m_h2g,
+            'Prop. Causal': m_p
+        }, orient='index').to_csv(osp.join(output_dir, f'chr_{chrom}.hyp'))
+
+    h2g.append(m_h2g)
+    prop_causal.append(m_p)
+
+
+if np.sum(h2g) > 1.:
+    print("Warning: The estimated heritability has a value greater than 1. This is indicative of poor model fit or "
+          "the algorithm diverging. You may need to re-run this model with a different LD panel.")
 
 hyp_df = pd.DataFrame.from_dict({
     'Heritability': np.sum(h2g),
