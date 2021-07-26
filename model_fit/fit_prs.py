@@ -36,12 +36,15 @@ parser.add_argument('--genomewide', dest='genomewide', action='store_true', defa
 
 args = parser.parse_args()
 
-config = osp.basename(osp.dirname(args.ss_dir))
-trait = osp.basename(args.ss_dir)
+ss_dir = osp.normpath(args.ss_dir)  # Get the summary statistics directory
+config = osp.basename(osp.dirname(ss_dir))
+trait = osp.basename(ss_dir)
 
+print("> Processing GWAS summary statistics in:", ss_dir)
 print("> Loading the LD data and associated summary statistics file...")
 
-ss_files = glob.glob(osp.join(args.ss_dir, "*.linear"))
+ss_files = sorted(glob.glob(osp.join(ss_dir, "*.linear")),
+                  key=lambda x: int(osp.basename(x).split('.')[0].split('_')[1]))
 ld_panel_files = [f"data/ld/{args.ld_panel}/ld/{osp.basename(ssf).split('.')[0]}" for ssf in ss_files]
 
 gdls = []
@@ -64,6 +67,7 @@ if args.genomewide:
 else:
     output_dir = osp.join(output_dir, config, trait)
 
+print("> Storing model fit results in:", output_dir)
 makedir(output_dir)
 
 if 'sample' in args.ld_panel:

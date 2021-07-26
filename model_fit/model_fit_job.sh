@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH --account=def-sgravel
 #SBATCH --cpus-per-task=8
-#SBATCH --mem-per-cpu=8GB
-#SBATCH --time=01:30:00
-#SBATCH --output=./log/model_fit/%x/%j.out
+#SBATCH --mem-per-cpu=2GB
+#SBATCH --time=02:00:00
+#SBATCH --output=./log/model_fit/%x.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
 

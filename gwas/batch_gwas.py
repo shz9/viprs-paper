@@ -16,8 +16,6 @@ parser.add_argument('-c', '--config', dest='config', type=str,
 parser.add_argument('-s', '--software', dest='software', type=str, default='plink',
                     choices={'plink', 'python'},
                     help='The software to use to perform GWAS')
-parser.add_argument('-f', '--fold', dest='fold', type=str, default='all',
-                    help='The fold to perform GWAS on (for real traits only)')
 parser.add_argument('-a', '--application', dest='application', type=str,
                     choices={'real', 'simulation'},
                     help='The category of phenotypes to consider')
