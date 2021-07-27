@@ -75,5 +75,6 @@ for job in jobs:
         pass
 
     cmd = ["sbatch", "-J", job['Name'], f"gwas/gwas_{args.software}_job.sh", job['Trait'], job['Keep'], job['Output']]
+    print(" ".join(cmd))
     result = subprocess.run(" ".join(cmd), shell=True, capture_output=True)
     print(result.stdout)

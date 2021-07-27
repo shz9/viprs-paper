@@ -15,7 +15,7 @@ echo "Start time: `date`"
 for ss_file in data/gwas/*/*/*.linear
 do
   echo "> Transforming summary statistics file: $ss_file"
-  python external/SBayesR/sumstats_to_ma.py "$ss_file"
+  python external/SBayesR/sumstats_to_ma.py -s "$ss_file" -t "plink"
 done
 
 echo "Job finished with exit code $? at: `date`"

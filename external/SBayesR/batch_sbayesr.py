@@ -8,7 +8,7 @@ sys.path.append(osp.dirname(osp.dirname(__file__)))
 from utils import makedir
 
 
-parser = argparse.ArgumentParser(description='Deploy model fitting jobs on the cluster')
+parser = argparse.ArgumentParser(description='Deploy SBayesR model fitting jobs on the cluster')
 
 parser.add_argument('-p', '--phenotype', dest='pheno_name', type=str,
                     help='The name of the phenotype.')
@@ -17,16 +17,6 @@ parser.add_argument('-c', '--config', dest='config', type=str,
 parser.add_argument('-a', '--application', dest='application', type=str,
                     choices={'real', 'simulation'},
                     help='The category of phenotypes to consider')
-parser.add_argument('--strategy', dest='strategy', type=str, default='EM',
-                    choices={'EM', 'BMA', 'BO', 'GS'})
-parser.add_argument('-m', '--model', dest='model', type=str, default='VIPRS',
-                    choices={'VIPRS', 'VIPRSSBayes', 'GibbsPRS', 'GibbsPRSSBayes'})
-parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_50k_windowed',
-                    choices={'1000G_sample', '1000G_shrinkage', '1000G_windowed',
-                             'ukbb_1k_sample', 'ukbb_1k_shrinkage', 'ukbb_1k_windowed',
-                             'ukbb_10k_sample', 'ukbb_10k_shrinkage', 'ukbb_10k_windowed',
-                             'ukbb_50k_sample', 'ukbb_50k_shrinkage', 'ukbb_50k_windowed'})
-
 args = parser.parse_args()
 
 gwas_dir = "data/gwas/"
@@ -43,11 +33,6 @@ elif args.application is not None:
 else:
     gwas_dir = osp.join(gwas_dir, "*", "*")
 
-
-model_name = args.model
-if args.strategy != 'EM':
-    model_name += f'-{args.strategy}'
-
 jobs = []
 
 for gd in glob.glob(gwas_dir):
@@ -57,10 +42,7 @@ for gd in glob.glob(gwas_dir):
 
     jobs.append({
         'Trait': gd,
-        'Name': f"{args.ld_panel}/{model_name}/{config}/{trait}",
-        'Model': model_name,
-        'LD panel': args.ld_panel,
-        'Strategy': args.strategy
+        'Name': f"external/SBayesR/{config}/{trait}"
     })
 
 if len(jobs) > 500:
@@ -76,8 +58,7 @@ for job in jobs:
     except Exception as e:
         pass
 
-    cmd = ["sbatch", "-J", job['Name'], "model_fit/model_fit_job.sh",
-           job['Trait'], job['Model'], job['LD panel'], job['Strategy']]
+    cmd = ["sbatch", "-J", job['Name'], "external/SBayesR/fit_sbayesr.sh", job['Trait']]
     print(" ".join(cmd))
     result = subprocess.run(" ".join(cmd), shell=True, capture_output=True)
     print(result.stdout)

@@ -80,6 +80,9 @@ prop_causal = []
 
 for gdl in gdls:
 
+    if load_ld:
+        gdl.load_ld()
+
     if args.model == 'VIPRS':
         m = VIPRS(gdl, load_ld=load_ld)
     elif args.model == 'VIPRSSBayes':
@@ -127,6 +130,9 @@ for gdl in gdls:
             'Heritability': m_h2g,
             'Prop. Causal': m_p
         }, orient='index').to_csv(osp.join(output_dir, f'chr_{chrom}.hyp'))
+
+    if load_ld:
+        gdl.release_ld()
 
     h2g.append(m_h2g)
     prop_causal.append(m_p)
