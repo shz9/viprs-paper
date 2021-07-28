@@ -2,8 +2,8 @@
 #SBATCH --account=def-sgravel
 #SBATCH --cpus-per-task=4
 #SBATCH --mem-per-cpu=4GB
-#SBATCH --time=00:20:00
-#SBATCH --output=./log/model_fit/%x/%j.out
+#SBATCH --time=00:30:00
+#SBATCH --output=./log/model_fit/%x.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
 
@@ -18,39 +18,55 @@ export R_LIBS=$HOME/projects/def-sgravel/R_environments/R_4.0.2/prsice
 PRSiceHome=$HOME/projects/def-sgravel/bin/PRSice_v2.3.3
 
 # Inputs:
-ss_file=$1 # Summary statistics file
-chrom=$2   # Chromosome number
+ss_dir=$(readlink -e "$1")  # Summary statistics directory
+keep_file=$2   # Individual keep file for samples in the validation set
+sumstats_type=${3:-"plink"}
 
-ss_dir=$(dirname $ss_file)
 trait=$(basename "$ss_dir")
-config_dir=$(dirname $ss_dir)
-config=$(basename "$config_dir")
+config=$(basename "$(dirname "$ss_dir")")
 
-mkdir -p "data/model_fit/external/PRSice2/$config/$trait/"
+output_dir="data/model_fit/external/PRSice2/$config/$trait/"
+
+mkdir -p "$output_dir"
+
+if [ "$sumstats_type" == "plink" ]; then
+  p_pval="P"
+  p_chrom="#CHROM"
+  p_snp="ID"
+else
+  p_pval="PVAL"
+  p_chrom="CHR"
+  p_snp="SNP"
+fi
 
 SECONDS=0
 
-Rscript "$PRSiceHome/PRSice.R" \
-        --dir "$R_LIBS" \
-        --prsice "$PRSiceHome/PRSice_linux" \
-        --base "$ss_file" \
-        --ld "data/ukbb_qc_genotypes/chr_$chrom" \
-        --ld-keep "data/keep_files/ukbb_ld_50k_subset.keep" \
-        --target "data/ukbb_qc_genotypes/chr_$chrom" \
-        --pheno "data/phenotypes/$config/$trait.txt" \
-        --keep "data/keep_files/ukbb_valid_subset.keep" \
-        --pvalue PVAL \
-        --stat BETA \
-        --binary-target F \
-        --print-snp \
-        --out "data/model_fit/external/PRSice2/$config/$trait/chr_$chrom"
+for chrom in $(seq 1 22)
+do
+  Rscript "$PRSiceHome/PRSice.R" \
+          --dir "$R_LIBS" \
+          --prsice "$PRSiceHome/PRSice_linux" \
+          --base "$ss_dir/chr_${chrom}.PHENO1.glm.linear" \
+          --ld "data/ukbb_qc_genotypes/chr_${chrom}" \
+          --ld-keep "data/keep_files/ukbb_ld_50k_subset.keep" \
+          --target "data/ukbb_qc_genotypes/chr_${chrom}" \
+          --pheno "data/phenotypes/$config/$trait.txt" \
+          --keep "$keep_file" \
+          --pvalue "$p_pval" \
+          --chr "$p_chrom" \
+          --snp "$p_snp" \
+          --stat BETA \
+          --binary-target F \
+          --print-snp \
+          --out "$output_dir/chr_${chrom}"
+done
 
 MINUTES=$(echo "scale=2; $SECONDS/60" | bc)
 
 echo "Transforming output..."
 
 source "$HOME/pyenv/bin/activate"
-python external/PRSice2/transform_output.py "data/model_fit/external/PRSice2/$config/$trait/chr_$chrom" "$ss_file"
+python external/PRSice2/transform_output.py -o "$output_dir" -s "$ss_dir"
 
 echo "Job finished with exit code $? at: `date`"
 echo "Duration (minutes): $MINUTES"

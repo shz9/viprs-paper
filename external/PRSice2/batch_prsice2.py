@@ -40,10 +40,17 @@ for gd in glob.glob(gwas_dir):
     trait = osp.basename(gd)
     config = osp.basename(osp.dirname(gd))
 
+    if 'real' in config:
+        keep_file = f"data/keep_files/ukbb_cv/{trait}/{config.replace('real_', '')}/validation.keep"
+    else:
+        keep_file = "data/keep_files/ukbb_valid_subset.keep"
+
     jobs.append({
         'Trait': gd,
-        'Name': f"external/SBayesR/{config}/{trait}"
+        'Keep': keep_file,
+        'Name': f"external/PRSice2/{config}/{trait}"
     })
+
 
 if len(jobs) > 500:
     print("Cannot submit more than 500 jobs simultaneously. Please re-run with specific arguments.")
@@ -58,7 +65,7 @@ for job in jobs:
     except Exception as e:
         pass
 
-    cmd = ["sbatch", "-J", job['Name'], "external/SBayesR/fit_sbayesr.sh", job['Trait']]
+    cmd = ["sbatch", "-J", job['Name'], "external/PRSice2/fit_prsice.sh", job['Trait'], job['Keep']]
     print(" ".join(cmd))
     result = subprocess.run(" ".join(cmd), shell=True, capture_output=True)
     print(result.stdout)

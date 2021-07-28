@@ -32,7 +32,7 @@ do
            --ldm "$HOME/projects/def-sgravel/data/ld/ukbEURu_hm3_shrunk_sparse/ukbEURu_hm3_chr${chrom}_v3_50k.ldm.sparse" \
            --pi 0.95,0.02,0.02,0.01 \
            --gamma 0.0,0.01,0.1,1 \
-           --gwas-summary "$ss_dir/chr_${chrom}.PHENO1.glm.linear" \
+           --gwas-summary "$ss_dir/chr_${chrom}.ma" \
            --chain-length 10000 \
            --burn-in 2000 \
            --out-freq 100 \
