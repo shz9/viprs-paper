@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --account=def-sgravel
-#SBATCH --cpus-per-task=4
-#SBATCH --mem-per-cpu=4GB
-#SBATCH --time=00:30:00
+#SBATCH --cpus-per-task=8
+#SBATCH --mem-per-cpu=2GB
+#SBATCH --time=00:45:00
 #SBATCH --output=./log/model_fit/%x.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
@@ -24,6 +24,7 @@ sumstats_type=${3:-"plink"}
 
 trait=$(basename "$ss_dir")
 config=$(basename "$(dirname "$ss_dir")")
+pheno_config="${config/_fold_*/}"
 
 output_dir="data/model_fit/external/PRSice2/$config/$trait/"
 
@@ -31,11 +32,9 @@ mkdir -p "$output_dir"
 
 if [ "$sumstats_type" == "plink" ]; then
   p_pval="P"
-  p_chrom="#CHROM"
   p_snp="ID"
 else
   p_pval="PVAL"
-  p_chrom="CHR"
   p_snp="SNP"
 fi
 
@@ -50,10 +49,9 @@ do
           --ld "data/ukbb_qc_genotypes/chr_${chrom}" \
           --ld-keep "data/keep_files/ukbb_ld_50k_subset.keep" \
           --target "data/ukbb_qc_genotypes/chr_${chrom}" \
-          --pheno "data/phenotypes/$config/$trait.txt" \
+          --pheno "data/phenotypes/$pheno_config/$trait.txt" \
           --keep "$keep_file" \
           --pvalue "$p_pval" \
-          --chr "$p_chrom" \
           --snp "$p_snp" \
           --stat BETA \
           --binary-target F \
