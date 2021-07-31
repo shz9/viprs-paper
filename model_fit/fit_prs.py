@@ -134,6 +134,8 @@ for gdl in gdls:
     if load_ld:
         gdl.release_ld()
 
+    gdl.cleanup()
+
     h2g.append(m_h2g)
     prop_causal.append(m_p)
 

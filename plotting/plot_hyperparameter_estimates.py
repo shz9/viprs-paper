@@ -26,7 +26,8 @@ print("> Plotting hyperparameter estimates...")
 simulation_dfs = []
 real_dfs = []
 
-for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/*/*/*.hyp") + glob.glob(f"data/model_fit/external/*/*/*/*.hyp"):
+for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/*/*/combined.hyp") + \
+         glob.glob(f"data/model_fit/external/*/*/*/combined.hyp"):
 
     _, _, _, model, config, trait, _ = f.split("/")
 
@@ -36,7 +37,7 @@ for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/*/*/*.hyp") + glob.glob(f"
     df['Model'] = model
     df['Trait'] = trait
 
-    if config == 'real':
+    if 'real' in config:
         real_dfs.append(df)
     else:
 
@@ -45,6 +46,9 @@ for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/*/*/*.hyp") + glob.glob(f"
         df['Prop. Causal'] = float(p)
 
         simulation_dfs.append(df)
+
+sns.set_style("darkgrid")
+sns.set_context("paper")
 
 if len(simulation_dfs) > 0:
     print("> Plotting hyperparameter estimates on simulated data...")
@@ -57,7 +61,7 @@ if len(simulation_dfs) > 0:
     plt.figure(figsize=(9, 6))
     g = sns.catplot(x="Heritability", y="Estimated Heritability",
                     hue="Model", col="Prop. Causal",
-                    data=final_simulation_df, kind="box")
+                    data=final_simulation_df, kind="box", showfliers=False)
 
     makedir("plots/hyperparameters/simulation/h2g/")
     plt.savefig(f"plots/hyperparameters/simulation/h2g/{args.ld_panel}_estimates.pdf", bbox_inches='tight')
@@ -66,7 +70,7 @@ if len(simulation_dfs) > 0:
     plt.figure(figsize=(9, 6))
     g = sns.catplot(x="Prop. Causal", y="Estimated Prop. Causal",
                     hue="Model", col="Heritability",
-                    data=final_simulation_df, kind="box")
+                    data=final_simulation_df, kind="box", showfliers=False)
     makedir("plots/hyperparameters/simulation/pi/")
     plt.savefig(f"plots/hyperparameters/simulation/pi/{args.ld_panel}_estimates.pdf", bbox_inches='tight')
     plt.close()
@@ -75,28 +79,18 @@ if len(real_dfs) > 0:
     print("> Plotting hyperparameter estimates on real data...")
 
     final_real_df = pd.concat(real_dfs)
-    final_real_df = final_real_df.groupby(['Trait', 'Model']).agg(
-        {'Estimated Heritability': 'sum', 'Estimated Prop. Causal': 'mean'}
-    ).reset_index()
 
     plt.figure(figsize=(9, 6))
-    g = sns.catplot(x="Model", y="Estimated Heritability", col="Trait",
-                    data=final_real_df, kind="bar", col_wrap=4)
-    add_labels_to_bars(g)
-    for ax in g.axes.flatten():
-        ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
+    g = sns.catplot(x="Model", y="Estimated Heritability", col="Trait", col_wrap=4,
+                    data=final_real_df, kind="box", showfliers=False)
 
     makedir("plots/hyperparameters/real/h2g/")
     plt.savefig(f"plots/hyperparameters/real/h2g/{args.ld_panel}_estimates.pdf", bbox_inches='tight')
     plt.close()
 
     plt.figure(figsize=(9, 6))
-    g = sns.catplot(x="Model", y="Estimated Prop. Causal", col="Trait",
-                    data=final_real_df, kind="bar", col_wrap=4)
-    add_labels_to_bars(g)
-    for ax in g.axes.flatten():
-        ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
-
+    g = sns.catplot(x="Model", y="Estimated Prop. Causal", col="Trait", col_wrap=4,
+                    data=final_real_df, kind="box", showfliers=False)
     makedir("plots/hyperparameters/real/pi/")
     plt.savefig(f"plots/hyperparameters/real/pi/{args.ld_panel}_estimates.pdf", bbox_inches='tight')
     plt.close()

@@ -32,17 +32,21 @@ for chr in $(seq 1 22)
 do
   if [ "${standardize}" == 1 ]; then
     plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
-          --linear hide-covar \
+          --linear hide-covar cols=chrom,pos,alt1,ref,a1freq,nobs,beta,se,tz,p \
           --variance-standardize \
           --keep "$keep_file" \
           --allow-no-sex \
+          --maf 0.01 \
+          --mac 5 \
           --pheno "$pheno_file"  \
           --out "$output_dir/chr_$chr"
   else
     plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
-          --linear hide-covar \
+          --linear hide-covar cols=chrom,pos,alt1,ref,a1freq,nobs,beta,se,tz,p \
           --keep "$keep_file" \
           --allow-no-sex \
+          --maf 0.01 \
+          --mac 5 \
           --pheno "$pheno_file"  \
           --out "$output_dir/chr_$chr"
   fi

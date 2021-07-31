@@ -31,7 +31,7 @@ if 'real' in config:
 else:
     keep_file = "data/keep_files/ukbb_test_subset.keep"
 
-test_data = GWASDataLoader([f"data/ukbb_qc_genotypes/{chrom}.bed" for chrom in range(1, 23)],
+test_data = GWASDataLoader([f"data/ukbb_qc_genotypes/chr_{chrom}.bed" for chrom in range(1, 23)],
                            keep_individuals=keep_file,
                            min_mac=None,
                            min_maf=None,
@@ -50,7 +50,10 @@ print("> Saving results...")
 ind_table = test_data.to_individual_table()
 ind_table['PRS'] = prs
 
+# Clean up all the intermediate files/directories
+test_data.cleanup()
+
 # Output the scores:
-output_f = osp.dirname(fit_dir).replace("model_fit", "test_scores") + '.prs'
+output_f = fit_dir.replace("model_fit", "test_scores") + '.prs'
 makedir(osp.dirname(output_f))
 ind_table.to_csv(output_f, index=False, sep="\t")

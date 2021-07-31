@@ -16,20 +16,21 @@ time_df = []
 
 # Loop over the log files and extract the duration for each run
 # as well as associated info (e.g. configuration, model, LD panel, etc.):
+log/model_fit/ukbb_50k_windowed/VIPRS/real_fold_1/HEIGHT.out
 for log_f in glob.glob("log/model_fit/*/*/*/*.out"):
 
-    _, _, panel, model, config, _ = log_f.split('/')
+    _, _, panel, model, config, trait = log_f.split('/')
+    trait = trait.replace('.out', '')
+    if 'real' in config:
+        config = config.split('_')[0]
 
     try:
         with open(log_f, 'r') as f:
             lines = f.read().splitlines()
             duration = float(lines[-1].split(':')[-1].strip())
-            trait, chrom = lines[2].split("/")[-2:]
-            chrom = chrom.replace("chr_", "").replace(".PHENO1.glm.linear", "")
 
         time_df.append({'LD Panel': panel,
                         'Configuration': config,
-                        'Chromosome': int(chrom),
                         'Trait': trait,
                         'Model': model,
                         'Duration': duration})
@@ -94,16 +95,3 @@ for ldp in ldp_time_df['LD Panel'].unique():
 
     plt.savefig(f"plots/runtime_stats/ld_panel/{ldp}/real_runtime.pdf", bbox_inches='tight')
     plt.close()
-
-# ---------------------------------------------------------
-# Plots 3: Plot time statistics by chromosome:
-
-print("> Plotting time statistics by chromosome...")
-
-plt.figure(figsize=(9, 6))
-ax = sns.boxplot(x="Chromosome", y="Duration", hue="Model", data=time_df)
-plt.ylabel("Runtime (Minutes)")
-ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-
-plt.savefig(f"plots/runtime_stats/chromosome_runtime.pdf", bbox_inches='tight')
-plt.close()

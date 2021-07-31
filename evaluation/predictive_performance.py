@@ -49,27 +49,19 @@ for trait_f in glob.glob("data/phenotypes/*/*.txt"):
     print("> Configuration:", config, " | Trait:", trait)
     trait = trait.replace(".txt", "")
 
+    if config == 'real':
+        search_config = 'real_fold_*'
+    else:
+        search_config = config
+
     pheno_res = []
 
-    for prs_m_dir in glob.glob(f"data/test_scores/*/*/{config}/{trait}"):
+    for prs_file in glob.glob(f"data/test_scores/*/*/{search_config}/{trait}.prs"):
 
-        ld_panel, model = prs_m_dir.split("/")[2:4]
+        ld_panel, model, m_config = prs_file.split("/")[2:5]
         print(f"> Evaluating {model} ({ld_panel})")
-        prs_files = glob.glob(osp.join(prs_m_dir, "*.prs"))
 
-        if (config == 'real' and len(prs_files) != 22) or len(prs_files) < 1:
-            print(f"> Some scoring files are missing for {ld_panel}/{model}. Skipping evaluation...")
-            continue
-
-        prs_df = None
-
-        for prs_file in prs_files:
-            df = pd.read_csv(prs_file, sep="\s+").set_index(['FID', 'IID'])
-
-            if prs_df is None:
-                prs_df = df
-            else:
-                prs_df = prs_df.add(df)
+        prs_df = pd.read_csv(prs_file, sep="\s+")
 
         prs_df = prs_df.reset_index()
 
@@ -82,6 +74,8 @@ for trait_f in glob.glob("data/phenotypes/*/*.txt"):
             'LD Panel': ld_panel,
             'Model': model,
         })
+        if config == 'real':
+            res.update({'Fold': int(m_config.replace('real_fold_' ''))})
 
         pheno_res.append(res)
 

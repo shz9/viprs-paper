@@ -31,6 +31,8 @@ print(f"> Generating GWAS summary statistics for {args.pheno_file}")
 gdl = GWASDataLoader(f"data/ukbb_qc_genotypes/chr_{args.chromosome}",
                      keep_individuals=args.keep_file,
                      compute_ld=False,
+                     min_mac=5,
+                     min_maf=0.01,
                      standardize_genotype=args.standardize,
                      phenotype_file=args.pheno_file,
                      standardize_phenotype=args.standardize)

@@ -23,7 +23,6 @@ plink2 --bgen "/lustre03/project/6004777/projects/uk_biobank/imputed_data/full_U
       --hwe 1e-10 \
       --mind 0.05 \
       --geno 0.05 \
-      --maf 0.001 \
       --mac 5 \
       --snps-only \
       --max-alleles 2 \

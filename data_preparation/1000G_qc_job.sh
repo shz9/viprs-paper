@@ -21,7 +21,6 @@ plink2 --bfile "$HOME/projects/def-sgravel/data/genotypes/1000G_EUR_Phase3_plink
       --hwe 1e-10 \
       --mind 0.05 \
       --geno 0.05 \
-      --maf 0.001 \
       --mac 5 \
       --snps-only \
       --max-alleles 2 \
