@@ -75,7 +75,7 @@ for trait_f in glob.glob("data/phenotypes/*/*.txt"):
             'Model': model,
         })
         if config == 'real':
-            res.update({'Fold': int(m_config.replace('real_fold_' ''))})
+            res.update({'Fold': int(m_config.replace('real_fold_', ''))})
 
         pheno_res.append(res)
 

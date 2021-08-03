@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --account=def-sgravel
-#SBATCH --cpus-per-task=4
-#SBATCH --mem-per-cpu=4GB
-#SBATCH --time=01:00:00
+#SBATCH --cpus-per-task=8
+#SBATCH --mem-per-cpu=2GB
+#SBATCH --time=01:30:00
 #SBATCH --output=./log/model_fit/%x.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
@@ -33,6 +33,7 @@ do
            --pi 0.95,0.02,0.02,0.01 \
            --gamma 0.0,0.01,0.1,1 \
            --gwas-summary "$ss_dir/chr_${chrom}.ma" \
+           --unscale-genotype \
            --chain-length 10000 \
            --burn-in 2000 \
            --out-freq 100 \
