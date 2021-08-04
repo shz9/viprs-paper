@@ -50,14 +50,19 @@ def main():
                       key=lambda x: int(osp.basename(x).split('.')[0].split('_')[1]))
     ld_panel_files = [f"data/ld/{args.ld_panel}/ld/{osp.basename(ssf).split('.')[0]}" for ssf in ss_files]
 
-    gdls = []
+    file_sets = []
 
     if args.genomewide:
-        gdls.append(GWASDataLoader(ld_store_files=ld_panel_files, sumstats_files=ss_files, sumstats_format='plink'))
+        file_sets.append({
+            'LD': ld_panel_files,
+            'SS': ss_files
+        })
     else:
         for ldf, ssf in zip(ld_panel_files, ss_files):
-            print("Constructing a GDL for:", ssf)
-            gdls.append(GWASDataLoader(ld_store_files=ldf, sumstats_files=ssf, sumstats_format='plink'))
+            file_sets.append({
+                'LD': ldf,
+                'SS': ssf
+            })
 
     if args.fitting_strategy == 'EM':
         output_dir = f"data/model_fit/{args.ld_panel}/{args.model}"
@@ -80,7 +85,11 @@ def main():
     h2g = []
     prop_causal = []
 
-    for gdl in gdls:
+    for fs in file_sets:
+
+        gdl = GWASDataLoader(ld_store_files=fs['LD'],
+                             sumstats_files=fs['SS'],
+                             sumstats_format='plink')
 
         if load_ld:
             gdl.load_ld()
@@ -104,9 +113,9 @@ def main():
             if args.fitting_strategy == 'BO':
                 m = BayesOpt(gdl, m)
             elif args.fitting_strategy == 'GS':
-                m = GridSearch(gdl, m, n_proc=5)
+                m = GridSearch(gdl, m, n_proc=10)
             elif args.fitting_strategy == 'BMA':
-                m = BMA(gdl, m, n_proc=5)
+                m = BMA(gdl, m, n_proc=10)
 
             m = m.fit()
         except Exception as e:
@@ -120,10 +129,12 @@ def main():
         m.write_inferred_params(output_dir, per_chromosome=True)
 
         # Write the estimated hyperparameters:
+
         m_h2g = m.get_heritability()
         m_p = m.get_proportion_causal()
 
         if not args.genomewide and args.fitting_strategy != 'BMA':
+
             # Write the per-chromosome estimates:
             chrom = gdl.chromosomes[0]
             pd.DataFrame.from_dict({

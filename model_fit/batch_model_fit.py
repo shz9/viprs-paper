@@ -76,8 +76,14 @@ for job in jobs:
     except Exception as e:
         pass
 
-    cmd = ["sbatch", "-J", job['Name'], "model_fit/model_fit_job.sh",
-           job['Trait'], job['Model'], job['LD panel'], job['Strategy']]
+    if args.strategy in ('BMA', 'GS'):
+        cmd = ["sbatch", "-J", job['Name'],
+               "--cpus-per-task 12", "--time 3:0:0", "--mem-per-cpu 4GB",
+               "model_fit/model_fit_job.sh",
+               job['Trait'], job['Model'], job['LD panel'], job['Strategy']]
+    else:
+        cmd = ["sbatch", "-J", job['Name'], "model_fit/model_fit_job.sh",
+               job['Trait'], job['Model'], job['LD panel'], job['Strategy']]
     print(" ".join(cmd))
     result = subprocess.run(" ".join(cmd), shell=True, capture_output=True)
     print(result.stdout)
