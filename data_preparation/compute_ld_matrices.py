@@ -4,6 +4,7 @@ Date: April 2021
 """
 
 import sys
+import os
 import os.path as osp
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 import argparse
@@ -31,7 +32,8 @@ if args.estimator == 'windowed':
                          min_mac=5,
                          min_maf=0.01,
                          compute_ld=True,
-                         output_dir=f"data/ld/{args.name}_windowed/")
+                         output_dir=f"data/ld/{args.name}_windowed/",
+                         temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 elif args.estimator == 'shrinkage':
     gdl = GWASDataLoader(args.bed_file,
                          keep_individuals=args.keep_file,
@@ -42,7 +44,8 @@ elif args.estimator == 'shrinkage':
                          min_mac=5,
                          min_maf=0.01,
                          compute_ld=True,
-                         output_dir=f"data/ld/{args.name}_shrinkage/")
+                         output_dir=f"data/ld/{args.name}_shrinkage/",
+                         temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 elif args.estimator == 'sample':
     gdl = GWASDataLoader(args.bed_file,
                          keep_individuals=args.keep_file,
@@ -50,7 +53,8 @@ elif args.estimator == 'sample':
                          min_mac=5,
                          min_maf=0.01,
                          compute_ld=True,
-                         output_dir=f"data/ld/{args.name}_sample/")
+                         output_dir=f"data/ld/{args.name}_sample/",
+                         temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 else:
     raise Exception(f"LD estimator {args.estimator} not implemented!")
 

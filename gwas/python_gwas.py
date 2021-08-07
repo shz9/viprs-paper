@@ -1,4 +1,5 @@
 import sys
+import os
 import os.path as osp
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 from gwasimulator.GWASDataLoader import GWASDataLoader
@@ -35,7 +36,8 @@ gdl = GWASDataLoader(f"data/ukbb_qc_genotypes/chr_{args.chromosome}",
                      min_maf=0.01,
                      standardize_genotype=args.standardize,
                      phenotype_file=args.pheno_file,
-                     standardize_phenotype=args.standardize)
+                     standardize_phenotype=args.standardize,
+                     temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 gdl.perform_gwas()
 
 config_name = osp.basename(osp.dirname(args.pheno_file))

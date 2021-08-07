@@ -4,6 +4,7 @@ Date: May 2021
 """
 
 import sys
+import os
 import os.path as osp
 import glob
 sys.path.append(osp.dirname(osp.dirname(__file__)))
@@ -36,7 +37,8 @@ test_data = GWASDataLoader([f"data/ukbb_qc_genotypes/chr_{chrom}.bed" for chrom 
                            min_mac=None,
                            min_maf=None,
                            use_plink=True,
-                           compute_ld=False)
+                           compute_ld=False,
+                           temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 prs_m = PRSModel(test_data)
 prs_m.read_inferred_params(glob.glob(osp.join(fit_dir, "*.fit")))
 

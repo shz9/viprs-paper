@@ -4,6 +4,7 @@ Date: April 2021
 """
 
 import sys
+import os
 import os.path as osp
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 from gwasimulator.GWASSimulator import GWASSimulator
@@ -34,7 +35,9 @@ sim_chrs = range(1, 23)  # Chromosomes used for simulation
 # ---------------------------
 
 gs = GWASSimulator([f"data/ukbb_qc_genotypes/chr_{i}" for i in sim_chrs],
-                   compute_ld=False, use_plink=True)
+                   compute_ld=False,
+                   use_plink=True,
+                   temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 
 sub_dir = osp.join(output_dir, f'h2_{h2}_p_{pc}')
 

@@ -4,6 +4,7 @@ Date: May 2021
 """
 
 import sys
+import os
 import os.path as osp
 import glob
 import numpy as np
@@ -89,7 +90,8 @@ def main():
 
         gdl = GWASDataLoader(ld_store_files=fs['LD'],
                              sumstats_files=fs['SS'],
-                             sumstats_format='plink')
+                             sumstats_format='plink',
+                             temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 
         if load_ld:
             gdl.load_ld()

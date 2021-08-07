@@ -57,6 +57,27 @@ df_beta <- info_snp[!is_bad, ]
 #in_valid <- vctrs::vec_in(df_beta[, c("chr", "pos")], map_valid[, c("chr", "pos")])
 #df_beta <- df_beta[in_valid, ]
 
+
+for (chr in 1:22) {
+    ind.chr = which(info_snp$chr == chr)
+    ind.chr2 = info_snp$`_NUM_ID_`[ind.chr]
+    ind.chr3 = match(ind.chr2, which(CHR == chr))
+
+    # read corr
+    corr0 = readRDS(paste0("/ysm-gpfs/pi/zhao/gz222/UKB_real/ref/ldpred2/1kg_mh3_ldpred2_chr",chr,".rds"))[ind.chr3, ind.chr3]
+
+    if (chr == 1) {
+	df_beta = info_snp[ind.chr, c("beta", "beta_se", "n_eff", "_NUM_ID_")]
+	ld = Matrix::colSums(corr0^2)
+	corr = as_SFBM(corr0, tmp)
+    }
+    else {
+	df_beta = rbind(df_beta, info_snp[ind.chr, c("beta", "beta_se", "n_eff", "_NUM_ID_")])
+	ld = c(ld, Matrix::colSums(corr0^2))
+	corr$add_columns(corr0, nrow(corr))
+    }
+}
+
 # Filter the reference correlation matrix:
 
 ind.chr <- which(df_beta$chr == chr)
@@ -65,6 +86,7 @@ ind.chr2 <- df_beta$`_NUM_ID_`[ind.chr]
 # indices in 'corr_chr'
 ind.chr3 <- match(ind.chr2, which(map_ldref$chr == chr))
 
+# TODO: Put the tempfiles in SLURM_TMPDIR
 tmp <- tempfile(tmpdir = "temp/LDPred2/")
 on.exit(file.remove(paste0(tmp, ".sbk")), add = TRUE)
 corr0 <- as_SFBM(corr[ind.chr3, ind.chr3], tmp)
