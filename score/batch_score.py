@@ -21,7 +21,7 @@ parser.add_argument('-m', '--model', dest='model', type=str, default='all',
                     choices={'VIPRS', 'VIPRSSBayes', 'GibbsPRS', 'GibbsPRSSBayes',
                              'VIPRS-BMA', 'VIPRS-BO', 'VIPRS-GS',
                              'VIPRSSBayes-BMA', 'VIPRSSBayes-BO', 'VIPRSSBayes-GS',
-                             'SBayesR', 'PRSice2', 'LDPred2', 'PRS-CS', 'all'})
+                             'SBayesR', 'PRSice2', 'LDPred2', 'PRScs', 'all'})
 parser.add_argument('-l', '--panel', dest='panel', type=str, default='all',
                     choices={'external', '1000G_sample', '1000G_shrinkage', '1000G_windowed',
                              'ukbb_1k_sample', 'ukbb_1k_shrinkage', 'ukbb_1k_windowed',

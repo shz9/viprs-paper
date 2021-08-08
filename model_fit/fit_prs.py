@@ -80,8 +80,10 @@ def main():
 
     if 'sample' in args.ld_panel:
         load_ld = False
+        max_iter = 100
     else:
         load_ld = True
+        max_iter = 1000
 
     h2g = []
     prop_causal = []
@@ -119,7 +121,7 @@ def main():
             elif args.fitting_strategy == 'BMA':
                 m = BMA(gdl, m, n_proc=10)
 
-            m = m.fit()
+            m = m.fit(max_iter=max_iter)
         except Exception as e:
             print(e)
             if e.__class__.__name__ != 'OptimizationDivergence':

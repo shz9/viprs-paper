@@ -11,7 +11,7 @@ parser.add_argument('-o', '--output', dest='output_dir', type=str, required=True
 args = parser.parse_args()
 
 for chrom in range(1, 23):
-    ss_df = pd.read_csv(osp.join(args.output_dir, f"chr_{chrom}_pst_eff_a1_b0.5_phiauto_chr{chrom}.txt "),
+    ss_df = pd.read_csv(osp.join(args.output_dir, f"chr_{chrom}_pst_eff_a1_b0.5_phiauto_chr{chrom}.txt"),
                         sep="\t", names=['CHR', 'SNP', 'POS', 'A1', 'A2', 'BETA'])
 
     ss_df['PIP'] = np.nan
