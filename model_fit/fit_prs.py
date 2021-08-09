@@ -9,6 +9,7 @@ import os.path as osp
 import glob
 import numpy as np
 import pandas as pd
+from zarr import blosc
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 sys.path.append("vemPRS/")
 from gwasimulator.GWASDataLoader import GWASDataLoader
@@ -37,6 +38,8 @@ def main():
                         help='The summary statistics directory')
     parser.add_argument('--genomewide', dest='genomewide', action='store_true', default=False,
                         help='Fit all chromosomes jointly')
+    parser.add_argument('--threads', dest='threads', type=int, default=8,
+                        help='Number of threads to use by VIPRS')
 
     args = parser.parse_args()
 
@@ -85,6 +88,8 @@ def main():
         load_ld = True
         max_iter = 1000
 
+    blosc.set_nthreads(args.threads)
+
     h2g = []
     prop_causal = []
 
@@ -99,13 +104,13 @@ def main():
             gdl.load_ld()
 
         if args.model == 'VIPRS':
-            m = VIPRS(gdl, load_ld=load_ld)
+            m = VIPRS(gdl, load_ld=load_ld, threads=args.threads)
         elif args.model == 'VIPRSSBayes':
-            m = VIPRSSBayes(gdl, load_ld=load_ld)
+            m = VIPRSSBayes(gdl, load_ld=load_ld, threads=args.threads)
         elif args.model == 'GibbsPRS':
-            m = GibbsPRS(gdl, load_ld=load_ld)
+            m = GibbsPRS(gdl, load_ld=load_ld, threads=args.threads)
         elif args.model == 'GibbsPRSSBayes':
-            m = GibbsPRSSBayes(gdl, load_ld=load_ld)
+            m = GibbsPRSSBayes(gdl, load_ld=load_ld, threads=args.threads)
 
         # Fit the model to the data:
         if args.genomewide:

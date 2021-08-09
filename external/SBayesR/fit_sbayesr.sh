@@ -14,6 +14,10 @@ echo "Model: SBayesR"
 
 gctb_bin="$HOME/projects/def-sgravel/bin/gctb_v2.03/gctb"
 
+export MKL_NUM_THREADS=8
+export NUMEXPR_NUM_THREADS=8
+export OMP_NUM_THREADS=8
+
 # Inputs:
 ss_dir=$(readlink -e "$1") # Summary statistics directory
 

@@ -15,6 +15,10 @@ echo "Model: PRScs"
 source "$HOME/pyenv/bin/activate"
 prscs_bin="$HOME/projects/def-sgravel/bin/PRScs/PRScs.py"
 
+export MKL_NUM_THREADS=8
+export NUMEXPR_NUM_THREADS=8
+export OMP_NUM_THREADS=8
+
 # Inputs:
 ss_dir=$(readlink -e "$1") # Summary statistics directory
 

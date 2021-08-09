@@ -81,7 +81,7 @@ for job in jobs:
                "--cpus-per-task 12", "--time 3:0:0", "--mem-per-cpu 4GB",
                "model_fit/model_fit_job.sh",
                job['Trait'], job['Model'], job['LD panel'], job['Strategy']]
-    elif args.ld_panel == 'sample':
+    elif 'sample' in args.ld_panel:
         cmd = ["sbatch", "-J", job['Name'], "--time 24:0:0",
                "model_fit/model_fit_job.sh",
                job['Trait'], job['Model'], job['LD panel'], job['Strategy']]

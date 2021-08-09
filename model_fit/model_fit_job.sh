@@ -11,6 +11,10 @@ echo "Job started at: `date`"
 
 source "$HOME/pyenv/bin/activate"
 
+export MKL_NUM_THREADS=8
+export NUMEXPR_NUM_THREADS=8
+export OMP_NUM_THREADS=8
+
 model=${2:-"VIPRS"}
 ld_panel=${3-"ukbb_50k_windowed"}
 fitting_method=${4-"EM"}

@@ -12,6 +12,10 @@ echo "Performing model fit..."
 echo "Dataset: $1"
 echo "Model: PRSice2"
 
+export MKL_NUM_THREADS=8
+export NUMEXPR_NUM_THREADS=8
+export OMP_NUM_THREADS=8
+
 module load gcc/9.3.0 r/4.0.2
 export R_LIBS=$HOME/projects/def-sgravel/R_environments/R_4.0.2/prsice
 
