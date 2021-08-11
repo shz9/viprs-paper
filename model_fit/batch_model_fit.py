@@ -82,7 +82,7 @@ for job in jobs:
                "model_fit/model_fit_job.sh",
                job['Trait'], job['Model'], job['LD panel'], job['Strategy']]
     elif 'sample' in args.ld_panel:
-        cmd = ["sbatch", "-J", job['Name'], "--time 24:0:0", "--mem-per-cpu 10GB",
+        cmd = ["sbatch", "-J", job['Name'], "--time 12:0:0", "--mem-per-cpu 10GB",
                "model_fit/model_fit_job.sh",
                job['Trait'], job['Model'], job['LD panel'], job['Strategy']]
     else:

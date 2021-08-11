@@ -9,15 +9,19 @@
 
 echo "Job started at: `date`"
 
-source "$HOME/pyenv/bin/activate"
+model=${2:-"VIPRS"}
+ld_panel=${3-"ukbb_50k_windowed"}
+fitting_method=${4-"EM"}
+
+if [ "${fitting_method}" == "GS" ] || [ "${fitting_method}" == "BMA" ]; then
+  source setup_python_environment.sh
+else
+  source "$HOME/pyenv/bin/activate"
+fi
 
 export MKL_NUM_THREADS=8
 export NUMEXPR_NUM_THREADS=8
 export OMP_NUM_THREADS=8
-
-model=${2:-"VIPRS"}
-ld_panel=${3-"ukbb_50k_windowed"}
-fitting_method=${4-"EM"}
 
 echo "Performing model fit..."
 echo "Dataset: $1"
