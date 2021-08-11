@@ -82,8 +82,8 @@ def main():
     makedir(output_dir)
 
     if 'sample' in args.ld_panel:
-        load_ld = False
-        max_iter = 100
+        load_ld = True
+        max_iter = 500
     else:
         load_ld = True
         max_iter = 1000
