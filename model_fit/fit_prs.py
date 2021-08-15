@@ -38,8 +38,6 @@ def main():
                         help='The summary statistics directory')
     parser.add_argument('--genomewide', dest='genomewide', action='store_true', default=False,
                         help='Fit all chromosomes jointly')
-    parser.add_argument('--threads', dest='threads', type=int, default=8,
-                        help='Number of threads to use by VIPRS')
 
     args = parser.parse_args()
 
@@ -81,19 +79,22 @@ def main():
     print("> Storing model fit results in:", output_dir)
     makedir(output_dir)
 
-    if 'sample' in args.ld_panel:
+    if args.fitting_strategy in ('BMA', 'GS'):
+        load_ld = True
+        max_iter = 100
+    elif 'sample' in args.ld_panel:
         load_ld = True
         max_iter = 500
     else:
         load_ld = True
         max_iter = 1000
 
-    blosc.set_nthreads(args.threads)
-
     h2g = []
     prop_causal = []
 
     for fs in file_sets:
+
+        print("- - - - - - - - - - - - - - - - - - - -")
 
         gdl = GWASDataLoader(ld_store_files=fs['LD'],
                              sumstats_files=fs['SS'],
@@ -104,13 +105,13 @@ def main():
             gdl.load_ld()
 
         if args.model == 'VIPRS':
-            m = VIPRS(gdl, load_ld=load_ld, threads=args.threads)
+            m = VIPRS(gdl, load_ld=load_ld)
         elif args.model == 'VIPRSSBayes':
-            m = VIPRSSBayes(gdl, load_ld=load_ld, threads=args.threads)
+            m = VIPRSSBayes(gdl, load_ld=load_ld)
         elif args.model == 'GibbsPRS':
-            m = GibbsPRS(gdl, load_ld=load_ld, threads=args.threads)
+            m = GibbsPRS(gdl, load_ld=load_ld)
         elif args.model == 'GibbsPRSSBayes':
-            m = GibbsPRSSBayes(gdl, load_ld=load_ld, threads=args.threads)
+            m = GibbsPRSSBayes(gdl, load_ld=load_ld)
 
         # Fit the model to the data:
         if args.genomewide:

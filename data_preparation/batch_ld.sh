@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ld_estimator=("windowed" "shrinkage" "sample")
+ld_estimator=("windowed" "block" "shrinkage" "sample")
 
 for ld in "${ld_estimator[@]}"
 do

@@ -34,6 +34,16 @@ if args.estimator == 'windowed':
                          compute_ld=True,
                          output_dir=f"data/ld/{args.name}_windowed/",
                          temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
+if args.estimator == 'block':
+    gdl = GWASDataLoader(args.bed_file,
+                         keep_individuals=args.keep_file,
+                         ld_estimator="block",
+                         ld_block_files='metadata/ldetect_blocks.txt',
+                         min_mac=5,
+                         min_maf=0.01,
+                         compute_ld=True,
+                         output_dir=f"data/ld/{args.name}_block/",
+                         temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 elif args.estimator == 'shrinkage':
     gdl = GWASDataLoader(args.bed_file,
                          keep_individuals=args.keep_file,
