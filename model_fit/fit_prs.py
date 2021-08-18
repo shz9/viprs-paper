@@ -9,7 +9,6 @@ import os.path as osp
 import glob
 import numpy as np
 import pandas as pd
-from zarr import blosc
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 sys.path.append("vemPRS/")
 from gwasimulator.GWASDataLoader import GWASDataLoader
@@ -162,6 +161,8 @@ def main():
             prop_causal.append(m_p)
 
     if args.fitting_strategy != 'BMA':
+        print(">>> Total heritability for the trait:", np.sum(h2g))
+
         if np.sum(h2g) > 1.:
             print("Warning: The estimated heritability has a value greater than 1. "
                   "This is indicative of poor model fit or the algorithm diverging. "

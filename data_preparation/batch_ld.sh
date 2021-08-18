@@ -26,7 +26,7 @@ do
     done
   done
 
-  echo "Submitting jobs for computing LD matrices from 1000G with $ld estimator..."
+  echo "Submitting jobs for computing LD matrices from 1000G with the $ld estimator..."
 
   rm -rf ./log/data_preparation/ld_mat/1000G/"$ld_estimator" || true
   mkdir -p ./log/data_preparation/ld_mat/1000G/"$ld_estimator"

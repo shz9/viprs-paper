@@ -23,10 +23,11 @@ parser.add_argument('-m', '--model', dest='model', type=str, default='all',
                              'VIPRSSBayes-BMA', 'VIPRSSBayes-BO', 'VIPRSSBayes-GS',
                              'SBayesR', 'PRSice2', 'LDPred2', 'PRScs', 'all'})
 parser.add_argument('-l', '--panel', dest='panel', type=str, default='all',
-                    choices={'external', '1000G_sample', '1000G_shrinkage', '1000G_windowed',
-                             'ukbb_1k_sample', 'ukbb_1k_shrinkage', 'ukbb_1k_windowed',
-                             'ukbb_10k_sample', 'ukbb_10k_shrinkage', 'ukbb_10k_windowed',
-                             'ukbb_50k_sample', 'ukbb_50k_shrinkage', 'ukbb_50k_windowed', 'all'})
+                    choices={'external', '1000G_sample', '1000G_shrinkage', '1000G_windowed', '1000G_block',
+                             'ukbb_1k_sample', 'ukbb_1k_shrinkage', 'ukbb_1k_windowed', 'ukbb_1k_block',
+                             'ukbb_10k_sample', 'ukbb_10k_shrinkage', 'ukbb_10k_windowed', 'ukbb_10k_block',
+                             'ukbb_50k_sample', 'ukbb_50k_shrinkage', 'ukbb_50k_windowed', 'ukbb_50k_block',
+                             'all'})
 
 args = parser.parse_args()
 

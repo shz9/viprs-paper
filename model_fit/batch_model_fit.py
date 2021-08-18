@@ -22,10 +22,10 @@ parser.add_argument('--strategy', dest='strategy', type=str, default='EM',
 parser.add_argument('-m', '--model', dest='model', type=str, default='VIPRS',
                     choices={'VIPRS', 'VIPRSSBayes', 'GibbsPRS', 'GibbsPRSSBayes'})
 parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_50k_windowed',
-                    choices={'1000G_sample', '1000G_shrinkage', '1000G_windowed',
-                             'ukbb_1k_sample', 'ukbb_1k_shrinkage', 'ukbb_1k_windowed',
-                             'ukbb_10k_sample', 'ukbb_10k_shrinkage', 'ukbb_10k_windowed',
-                             'ukbb_50k_sample', 'ukbb_50k_shrinkage', 'ukbb_50k_windowed'})
+                    choices={'1000G_sample', '1000G_shrinkage', '1000G_windowed', '1000G_block',
+                             'ukbb_1k_sample', 'ukbb_1k_shrinkage', 'ukbb_1k_windowed', 'ukbb_1k_block',
+                             'ukbb_10k_sample', 'ukbb_10k_shrinkage', 'ukbb_10k_windowed', 'ukbb_10k_block',
+                             'ukbb_50k_sample', 'ukbb_50k_shrinkage', 'ukbb_50k_windowed', 'ukbb_50k_block'})
 
 args = parser.parse_args()
 
