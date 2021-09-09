@@ -10,6 +10,9 @@ import functools
 print = functools.partial(print, flush=True)
 
 
+# TODO: Add argparser to select specific models/LD panels.
+# TODO: Parallelize over models/panels/traits
+
 def evaluate_predictive_performance(model_df):
 
     null_result = sm.OLS(model_df['phenotype'], sm.add_constant(model_df[covariates])).fit()

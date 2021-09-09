@@ -42,7 +42,7 @@ for gd in glob.glob(gwas_dir):
 
     jobs.append({
         'Trait': gd,
-        'Name': f"external/LDPred2/{config}/{trait}"
+        'Name': f"external/Lassosum/{config}/{trait}"
     })
 
 if len(jobs) > 500:
@@ -58,7 +58,7 @@ for job in jobs:
     except Exception as e:
         pass
 
-    cmd = ["sbatch", "-J", job['Name'], "external/LDPred2/ldpred2_job.sh", job['Trait']]
+    cmd = ["sbatch", "-J", job['Name'], "external/Lassosum/lassosum_job.sh", job['Trait']]
     print(" ".join(cmd))
     result = subprocess.run(" ".join(cmd), shell=True, capture_output=True)
     print(result.stdout)

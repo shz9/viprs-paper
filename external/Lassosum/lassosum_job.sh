@@ -12,11 +12,11 @@
 echo "Job started at: `date`"
 echo "Performing model fit..."
 echo "Dataset: $1"
-echo "Model: LDPred2"
+echo "Model: Lassosum"
 
 module load gcc/9.3.0 r/4.0.2
-export R_LIBS=$HOME/projects/def-sgravel/R_environments/R_4.0.2/bigsnpr
+export R_LIBS=$HOME/projects/def-sgravel/R_environments/R_4.0.2/lassosum
 
-Rscript external/LDPred2/fit_ldpred2.R "$1" "plink"
+Rscript external/Lassosum/fit_lassosum.R "$1" "plink"
 
 echo "Job finished with exit code $? at: `date`"

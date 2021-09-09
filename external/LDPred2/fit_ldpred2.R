@@ -1,110 +1,190 @@
-library(bigsnpr)
+# NOTE: This code is modified from:
+# https://github.com/privefl/paper-ldpred2/blob/master/code/run-ldpred2-gwide.R#L34-L118
 
-# Read in the path to the sumstats file as an argument:
+library(bigsnpr)
+library(dplyr)
+
 args <- commandArgs(trailingOnly=TRUE)
-path_to_ss <- args[1]
+ss_dir_path <- args[1]
+ss_type <- args[2]
 
 # Get the number of available cores:
 NCORES <- nb_cores()
 
-# Get the trait name and the simulation configuration:
-chr <- as.integer(sub("chr_", "", sub(".PHENO1.glm.linear", "", basename(path_to_ss))))
-trait_dir <- dirname(path_to_ss)
-trait <- basename(trait_dir)
-config <- basename(dirname(trait_dir))
+# Extract information about the trait and configuration:
+trait <- basename(ss_dir_path)
+config <- basename(dirname(ss_dir_path))
+trait_config <- gsub("_fold_[0-9]*", "", config)
 
-# Read the reference LD panel:
+# ----------------------------------------------------------
+# Step 1: Prepare the validation dataset:
+# Obtain the indices of individuals in the validation subset:
 
-map_ldref <- readRDS("~/projects/def-sgravel/data/ld/ukb_eur_ldpred2_ld/map.rds")
-corr <- readRDS(sprintf("~/projects/def-sgravel/data/ld/ukb_eur_ldpred2_ld/LD_chr%d.rds", chr))
+# 1.1: Read the validation subset file:
 
-# Load the validation dataset:
-#obj.bigSNP <- snp_attach("data/ukbb_qc_genotypes_bigsnpr/chr_22.rds")
-
-#G   <- obj.bigSNP$genotypes
-#CHR <- obj.bigSNP$map$chromosome
-#POS <- obj.bigSNP$map$physical.pos
-
-#map_valid <- obj.bigSNP$map[-(2:3)]
-#names(map_valid) <- c("chr", "pos", "a0", "a1")
-
-# Read the phenotypes for the validation set:
-#y <- read.table(paste0("data/phenotypes/", config, "/", trait, ".txt"),
-#                header=FALSE, col.names=c('FID', 'IID', 'phenotype'))
-#y <- y[y$IID %in% obj.bigSNP$fam$sample.ID, 'phenotype']
-
-# Read the summary statistics:
-
-ss <- read.table(path_to_ss, header=TRUE)
-names(ss) <- c("chr", "pos", "rsid", "a0", "a1", "maf", "n_eff", "beta", "z", "beta_se", "p")
-
-# Match the summary statistics with the LD reference panel SNPs
-info_snp <- snp_match(ss, map_ldref, strand_flip=F)
-
-# Filter SNPs that have significant mismatch between reference panels and summary statistics:
-(info_snp <- tidyr::drop_na(tibble::as_tibble(info_snp)))
-
-sd_ldref <- with(info_snp, sqrt(2 * af_UKBB * (1 - af_UKBB)))
-sd_ss <- with(info_snp, 2 / sqrt(n_eff * beta_se^2))
-
-is_bad <-
-  sd_ss < (0.5 * sd_ldref) | sd_ss > (sd_ldref + 0.1) | sd_ss < 0.1 | sd_ldref < 0.05
-
-df_beta <- info_snp[!is_bad, ]
-
-# Make sure that the SNPs are also present in the validation dataset:
-
-#in_valid <- vctrs::vec_in(df_beta[, c("chr", "pos")], map_valid[, c("chr", "pos")])
-#df_beta <- df_beta[in_valid, ]
-
-
-for (chr in 1:22) {
-    ind.chr = which(info_snp$chr == chr)
-    ind.chr2 = info_snp$`_NUM_ID_`[ind.chr]
-    ind.chr3 = match(ind.chr2, which(CHR == chr))
-
-    # read corr
-    corr0 = readRDS(paste0("/ysm-gpfs/pi/zhao/gz222/UKB_real/ref/ldpred2/1kg_mh3_ldpred2_chr",chr,".rds"))[ind.chr3, ind.chr3]
-
-    if (chr == 1) {
-	df_beta = info_snp[ind.chr, c("beta", "beta_se", "n_eff", "_NUM_ID_")]
-	ld = Matrix::colSums(corr0^2)
-	corr = as_SFBM(corr0, tmp)
-    }
-    else {
-	df_beta = rbind(df_beta, info_snp[ind.chr, c("beta", "beta_se", "n_eff", "_NUM_ID_")])
-	ld = c(ld, Matrix::colSums(corr0^2))
-	corr$add_columns(corr0, nrow(corr))
-    }
+if (trait_config == "real"){
+  validation_subset_path <- sprintf("data/keep_files/ukbb_cv/%s/%s/validation.keep", trait, gsub("real_", "", config))
+}
+else{
+  validation_subset_path <- "data/keep_files/ukbb_valid_subset.keep"
 }
 
-# Filter the reference correlation matrix:
+validation_subset <- read.table(validation_subset_path,
+                                header=FALSE, col.names=c('FID', 'IID'))
+fam_list <- read.table("data/ukbb_qc_genotypes/combined.fam", header=FALSE)[, 1:2]
+names(fam_list) <- c('FID', 'IID')
 
-ind.chr <- which(df_beta$chr == chr)
-# indices in 'map_ldref'
-ind.chr2 <- df_beta$`_NUM_ID_`[ind.chr]
-# indices in 'corr_chr'
-ind.chr3 <- match(ind.chr2, which(map_ldref$chr == chr))
+ind_subset <- which(fam_list$IID %in% validation_subset$IID)
 
-# TODO: Put the tempfiles in SLURM_TMPDIR
-tmp <- tempfile(tmpdir = "temp/LDPred2/")
+# Prepare the genotype file for the validation set:
+backing_file <- tempfile(tmpdir = Sys.getenv("SLURM_TMPDIR", unset="temp"))
+on.exit(file.remove(paste0(backing_file, ".rds")), add = TRUE)
+
+# Read the bigSNP object:
+obj.bigSNP <- snp_attach("data/ukbb_qc_genotypes/UKBB_imp_hm3.rds")
+
+# Subset the bigSNP object:
+obj.bigSNP <- snp_attach(subset(obj.bigSNP,
+                                ind.row = ind_subset,
+                                backingfile = backing_file))
+
+G   <- obj.bigSNP$genotypes
+CHR <- obj.bigSNP$map$chromosome
+POS <- obj.bigSNP$map$physical.pos
+
+map_valid <- obj.bigSNP$map[-(2:3)]
+names(map_valid) <- c("chr", "pos", "a0", "a1")
+
+# Read the phenotypes for the validation set:
+y <- read.table(paste0("data/phenotypes/", trait_config, "/", trait, ".txt"),
+                header=FALSE, col.names=c('FID', 'IID', 'phenotype'))
+y <- left_join(fam_list, y)$phenotype
+
+ind.val2 <- ind_subset[!is.na(y[ind_subset])]
+
+# ----------------------------------------------------------
+# Step 2: Prepare the GWAS summary statistics:
+
+for (chr in 1:22){
+  ss <- read.table(file.path(ss_dir_path, sprintf("chr_%d.PHENO1.glm.linear", chr)), header=TRUE)
+
+  if (ss_type == "plink"){
+    names(ss) <- c("chr", "pos", "rsid", "REF", "ALT1", "a1", "maf", "n_eff", "beta", "beta_se", "z", "p")
+    ss$a0 <- mapply(function(ref, alt, a1) {if (ref == a1) alt else ref}, ss$REF, ss$ALT, ss$a1)
+  }
+  else{
+    names(ss) <- c("chr", "pos", "rsid", "a0", "a1", "maf", "n_eff", "beta", "z", "beta_se", "p")
+  }
+
+  if (chr == 1){
+    sumstats <- ss
+  }
+  else{
+    sumstats <- rbind(sumstats, ss)
+  }
+}
+
+# ----------------------------------------------------------
+# Step 3: Match the GWAS summary statistics and the LD reference panel
+
+map_ldref <- readRDS("~/projects/def-sgravel/data/ld/ukb_eur_ldpred2_ld/map.rds")
+
+sumstats <- snp_match(sumstats, map_ldref, join_by_pos=F)
+(sumstats <- tidyr::drop_na(tibble::as_tibble(sumstats)))
+
+tmp <- tempfile(tmpdir = Sys.getenv("SLURM_TMPDIR", unset="temp"))
 on.exit(file.remove(paste0(tmp, ".sbk")), add = TRUE)
-corr0 <- as_SFBM(corr[ind.chr3, ind.chr3], tmp)
 
-# Estimate heritability:
+for (chr in 1:22) {
 
-(ldsc <- snp_ldsc2(corr0, df_beta))
+  print(paste("> Matching chromosome:", chr))
+
+  ## indices in 'sumstats'
+  ind.chr <- which(sumstats$chr == chr)
+  ## indices in 'corr'
+  ind.chr2 <- sumstats$`_NUM_ID_`[ind.chr]
+  ## indices in 'G'
+  ind.chr3 <- match(ind.chr2, which(CHR == chr))
+  #ind.chr3 <- ind.chr3[!is.na(ind.chr3)]
+
+  corr0 <- readRDS(sprintf("~/projects/def-sgravel/data/ld/ukb_eur_ldpred2_ld/LD_chr%d.rds", chr))[ind.chr3, ind.chr3]
+
+  if (chr == 1) {
+    df_beta <- sumstats[ind.chr, c("beta", "beta_se", "n_eff", "_NUM_ID_")]
+    ld <- Matrix::colSums(corr0^2)
+    corr <- as_SFBM(corr0, tmp)
+  } else {
+    df_beta <- rbind(df_beta, sumstats[ind.chr, c("beta", "beta_se", "n_eff", "_NUM_ID_")])
+    ld <- c(ld, Matrix::colSums(corr0^2))
+    corr$add_columns(corr0, nrow(corr))
+  }
+}
+
+# ----------------------------------------------------------
+# Step 4: Perform model fitting
+
+(ldsc <- with(df_beta, snp_ldsc(ld, length(ld), chi2 = (beta / beta_se)^2,
+                                sample_size = n_eff, blocks = NULL)))
 h2_est <- ldsc[["h2"]]
 
-# Fit LDPred2-auto:
-multi_auto <- snp_ldpred2_auto(corr0, df_beta, h2_init = h2_est,
-                               vec_p_init = seq_log(1e-4, 0.5, length.out = NCORES),
+# -------------------------
+# Step 4.1: LDpred2-inf
+beta_inf <- snp_ldpred2_inf(corr, df_beta, h2_est)
+
+# -------------------------
+# Step 4.2: LDpred2-grid
+(h2_seq <- round(h2_est * c(0.7, 1, 1.4), 4))
+(p_seq <- signif(seq_log(1e-5, 1, length.out = 21), 2))
+(params <- expand.grid(p = p_seq, h2 = h2_seq))
+
+beta_grid <- snp_ldpred2_grid(corr, df_beta, params, ncores = NCORES)
+params$sparsity <- colMeans(beta_grid == 0)
+
+bigparallelr::set_blas_ncores(NCORES)
+pred_grid <- big_prodMat(G, beta_grid, ind.row = ind.val2,
+                         ind.col = df_beta[["_NUM_ID_"]])
+params$score <- big_univLogReg(as_FBM(pred_grid), y[ind.val2])$score
+
+
+best_beta_grid <- params %>%
+  mutate(id = row_number()) %>%
+  arrange(desc(score)) %>%
+  slice(1) %>%
+  pull(id) %>%
+  beta_grid[, .]
+
+# -------------------------
+# Step 4.3: LDpred2-auto
+multi_auto <- snp_ldpred2_auto(corr, df_beta, h2_init = h2_est,
+                               vec_p_init = seq_log(1e-4, 0.9, 30),
                                ncores = NCORES)
 beta_auto <- sapply(multi_auto, function(auto) auto$beta_est)
-
-pred_auto <- big_prodMat(G, beta_auto, ind.col=df_beta[["_NUM_ID_"]])
-
+pred_auto <- big_prodMat(G, beta_auto, ind.row = ind.val,
+                         ind.col = df_beta[["_NUM_ID_"]])
 sc <- apply(pred_auto, 2, sd)
 keep <- abs(sc - median(sc)) < 3 * mad(sc)
-
 final_beta_auto <- rowMeans(beta_auto[, keep])
+
+# ----------------------------------------------------------
+# Step 5: Write the posterior effect sizes according to the 3 models:
+
+for (chr in 1:22) {
+  snp_cond <- sumstats$chr == chr
+  chr_sumstats <- sumstats[snp_cond, c("chr", "rsid", "a1", "a0")]
+  chr_sumstats$PIP <- NA
+
+  # Write out the beta_inf results:
+  chr_sumstats$BETA <- beta_inf[snp_cond]
+  write.table(chr_sumstats, sprintf("data/model_fit/external/LDPred2-inf/%s/%s/chr_%d.fit", config, trait, chr),
+              row.names = F)
+
+  # Write out the grid search results:
+  chr_sumstats$BETA <- best_beta_grid[snp_cond]
+  write.table(chr_sumstats, sprintf("data/model_fit/external/LDPred2-grid/%s/%s/chr_%d.fit", config, trait, chr),
+              row.names = F)
+
+  # Write out the auto results:
+  chr_sumstats$BETA <- final_beta_auto[snp_cond]
+  write.table(chr_sumstats, sprintf("data/model_fit/external/LDPred2-auto/%s/%s/chr_%d.fit", config, trait, chr),
+              row.names = F)
+}
