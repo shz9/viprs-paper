@@ -6,12 +6,11 @@ import os.path as osp
 import sys
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 from utils import makedir
+import argparse
 import functools
+from multiprocessing import Pool
 print = functools.partial(print, flush=True)
 
-
-# TODO: Add argparser to select specific models/LD panels.
-# TODO: Parallelize over models/panels/traits
 
 def evaluate_predictive_performance(model_df):
 
@@ -35,17 +34,7 @@ def evaluate_predictive_performance(model_df):
     }
 
 
-print("> Evaluating predictive performance of PRS methods...")
-
-# Covariates:
-covariates = ['Sex'] + ['PC' + str(i + 1) for i in range(10)] + ['Age']
-
-# Read the covariates file:
-covar_df = pd.read_csv("data/covariates/covar_file.txt",
-                       names=['FID', 'IID'] + covariates,
-                       sep="\s+")
-
-for trait_f in glob.glob("data/phenotypes/*/*.txt"):
+def process_trait(trait_f):
 
     pheno_df = pd.read_csv(trait_f, names=['FID', 'IID', 'phenotype'], sep="\s+")
     config, trait = trait_f.split("/")[2:]
@@ -92,3 +81,47 @@ for trait_f in glob.glob("data/phenotypes/*/*.txt"):
     makedir(f"data/evaluation/{config}/")
     eval_pheno_df.to_csv(f"data/evaluation/{config}/{trait}.csv", index=False)
 
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(description='Evaluate the predictive performance of PRS models')
+
+    parser.add_argument('-p', '--phenotype', dest='pheno_name', type=str,
+                        help='The name of the phenotype to evaluate.')
+    parser.add_argument('-c', '--config', dest='config', type=str,
+                        help='The simulation configuration to evaluate')
+    parser.add_argument('-a', '--application', dest='application', type=str,
+                        choices={'real', 'simulation'},
+                        help='The category of phenotypes to consider')
+    args = parser.parse_args()
+
+    pheno_dir = "data/phenotypes/"
+
+    if args.pheno_name is not None:
+        pheno_dir = osp.join(pheno_dir, "real", args.pheno_name + ".txt")
+    elif args.config is not None:
+        pheno_dir = osp.join(pheno_dir, args.config, "*.txt")
+    elif args.application is not None:
+        if args.application == 'real':
+            pheno_dir = osp.join(pheno_dir, "real", "*.txt")
+        else:
+            pheno_dir = osp.join(pheno_dir, "h2_*", "*.txt")
+    else:
+        pheno_dir = osp.join(pheno_dir, "*", "*.txt")
+
+    print("> Evaluating predictive performance of PRS methods...")
+
+    # Covariates:
+    covariates = ['Sex'] + ['PC' + str(i + 1) for i in range(10)] + ['Age']
+
+    # Read the covariates file:
+    covar_df = pd.read_csv("data/covariates/covar_file.txt",
+                           names=['FID', 'IID'] + covariates,
+                           sep="\s+")
+
+    pool = Pool(4)
+    pool.map(process_trait, glob.glob(pheno_dir))
+    pool.close()
+    pool.join()
+
+    print("Done!")

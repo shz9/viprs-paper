@@ -37,7 +37,15 @@ for (chr in 1:22) {
     names(ss) <- c("chr", "pos", "rsid", "a0", "a1", "maf", "n", "beta", "z", "beta_se", "p")
   }
 
-  cor <- p2cor(p = ss$p, n = 60000, sign=ss$beta)
+  cor <- p2cor(p = ss$p, n = max(ss$n), sign = ss$beta)
+
+  # Remove SNPs with undefined correlations:
+  na_idx <- which(is.na(cor))
+
+  if (length(na_idx) != 0) {
+    cor <- cor[-na_idx]
+    ss <- ss[-na_idx,]
+  }
 
   out_chr <- lassosum.pipeline(cor=cor, chr=ss$CHR, pos=ss$pos, A1=ss$a1, snp=ss$rsid,
                                ref.bfile=file.path(ref_dir, sprintf("chr_%d", chr)),
