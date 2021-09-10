@@ -88,6 +88,8 @@ dir.create(sprintf("data/model_fit/external/Lassosum/%s/%s/", config, trait),
 
 for (chr in 1:22) {
   chr_sumstats <- final_res_df[final_res_df$CHR == chr,]
-  write.table(chr_sumstats, sprintf("data/model_fit/external/Lassosum/%s/%s/chr_%d.fit", config, trait, chr),
-              row.names = F)
+  write.table(chr_sumstats,
+              sprintf("data/model_fit/external/Lassosum/%s/%s/chr_%d.fit", config, trait, chr),
+              row.names = F,
+              sep = "\t")
 }

@@ -175,16 +175,22 @@ for (chr in 1:22) {
 
   # Write out the beta_inf results:
   chr_sumstats$BETA <- beta_inf[snp_cond]
-  write.table(chr_sumstats, sprintf("data/model_fit/external/LDPred2-inf/%s/%s/chr_%d.fit", config, trait, chr),
-              row.names = F)
+  write.table(chr_sumstats,
+              sprintf("data/model_fit/external/LDPred2-inf/%s/%s/chr_%d.fit", config, trait, chr),
+              row.names = F,
+              sep = "\t")
 
   # Write out the grid search results:
   chr_sumstats$BETA <- best_beta_grid[snp_cond]
-  write.table(chr_sumstats, sprintf("data/model_fit/external/LDPred2-grid/%s/%s/chr_%d.fit", config, trait, chr),
-              row.names = F)
+  write.table(chr_sumstats,
+              sprintf("data/model_fit/external/LDPred2-grid/%s/%s/chr_%d.fit", config, trait, chr),
+              row.names = F,
+              sep = "\t")
 
   # Write out the auto results:
   chr_sumstats$BETA <- final_beta_auto[snp_cond]
-  write.table(chr_sumstats, sprintf("data/model_fit/external/LDPred2-auto/%s/%s/chr_%d.fit", config, trait, chr),
-              row.names = F)
+  write.table(chr_sumstats,
+              sprintf("data/model_fit/external/LDPred2-auto/%s/%s/chr_%d.fit", config, trait, chr),
+              row.names = F,
+              sep = "\t")
 }
