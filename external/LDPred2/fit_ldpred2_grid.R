@@ -24,8 +24,7 @@ trait_config <- gsub("_fold_[0-9]*", "", config)
 
 if (trait_config == "real"){
   validation_subset_path <- sprintf("data/keep_files/ukbb_cv/%s/%s/validation.keep", trait, gsub("real_", "", config))
-}
-else{
+} else{
   validation_subset_path <- "data/keep_files/ukbb_valid_subset.keep"
 }
 
@@ -48,7 +47,7 @@ obj.bigSNP <- snp_attach(subset(obj.bigSNP,
                                 ind.row = ind_subset,
                                 backingfile = backing_file))
 
-G   <- obj.bigSNP$genotypes
+G   <- snp_fastImputeSimple(obj.bigSNP$genotypes)
 CHR <- obj.bigSNP$map$chromosome
 POS <- obj.bigSNP$map$physical.pos
 
@@ -71,15 +70,13 @@ for (chr in 1:22){
   if (ss_type == "plink"){
     names(ss) <- c("chr", "pos", "rsid", "REF", "ALT1", "a1", "maf", "n_eff", "beta", "beta_se", "z", "p")
     ss$a0 <- mapply(function(ref, alt, a1) {if (ref == a1) alt else ref}, ss$REF, ss$ALT, ss$a1)
-  }
-  else{
+  } else{
     names(ss) <- c("chr", "pos", "rsid", "a0", "a1", "maf", "n_eff", "beta", "z", "beta_se", "p")
   }
 
   if (chr == 1){
     sumstats <- ss
-  }
-  else{
+  } else{
     sumstats <- rbind(sumstats, ss)
   }
 }
@@ -103,9 +100,8 @@ for (chr in 1:22) {
   ind.chr <- which(sumstats$chr == chr)
   ## indices in 'corr'
   ind.chr2 <- sumstats$`_NUM_ID_`[ind.chr]
-  ## indices in 'G'
-  ind.chr3 <- match(ind.chr2, which(CHR == chr))
-  #ind.chr3 <- ind.chr3[!is.na(ind.chr3)]
+  ## indices in 'corr'
+  ind.chr3 <- match(ind.chr2, which(map_ldref$chr == chr))
 
   corr0 <- readRDS(sprintf("~/projects/def-sgravel/data/ld/ukb_eur_ldpred2_ld/LD_chr%d.rds", chr))[ind.chr3, ind.chr3]
 
@@ -120,6 +116,8 @@ for (chr in 1:22) {
   }
 }
 
+subset_map_ldref <- map_ldref[df_beta$`_NUM_ID_`,]
+
 # ----------------------------------------------------------
 # Step 4: Perform model fitting
 
@@ -127,23 +125,19 @@ for (chr in 1:22) {
                                 sample_size = n_eff, blocks = NULL)))
 h2_est <- ldsc[["h2"]]
 
-# -------------------------
-# Step 4.1: LDpred2-inf
-beta_inf <- snp_ldpred2_inf(corr, df_beta, h2_est)
-
-# -------------------------
-# Step 4.2: LDpred2-grid
 (h2_seq <- round(h2_est * c(0.7, 1, 1.4), 4))
 (p_seq <- signif(seq_log(1e-5, 1, length.out = 21), 2))
-(params <- expand.grid(p = p_seq, h2 = h2_seq))
+(params <- expand.grid(p = p_seq, h2 = h2_seq, sparse = c(TRUE)))
 
 beta_grid <- snp_ldpred2_grid(corr, df_beta, params, ncores = NCORES)
 params$sparsity <- colMeans(beta_grid == 0)
 
 bigparallelr::set_blas_ncores(NCORES)
-pred_grid <- big_prodMat(G, beta_grid, ind.row = ind.val2,
-                         ind.col = df_beta[["_NUM_ID_"]])
-params$score <- big_univLogReg(as_FBM(pred_grid), y[ind.val2])$score
+pred_grid <- big_prodMat(G,
+                         beta_grid,
+                         ind.col = which(obj.bigSNP$map$marker.ID %in% subset_map_ldref$rsid),
+                         ncores = NCORES)
+params$score <- big_univLinReg(as_FBM(pred_grid), y[ind.val2])$score
 
 
 best_beta_grid <- params %>%
@@ -153,44 +147,28 @@ best_beta_grid <- params %>%
   pull(id) %>%
   beta_grid[, .]
 
-# -------------------------
-# Step 4.3: LDpred2-auto
-multi_auto <- snp_ldpred2_auto(corr, df_beta, h2_init = h2_est,
-                               vec_p_init = seq_log(1e-4, 0.9, 30),
-                               ncores = NCORES)
-beta_auto <- sapply(multi_auto, function(auto) auto$beta_est)
-pred_auto <- big_prodMat(G, beta_auto, ind.row = ind.val,
-                         ind.col = df_beta[["_NUM_ID_"]])
-sc <- apply(pred_auto, 2, sd)
-keep <- abs(sc - median(sc)) < 3 * mad(sc)
-final_beta_auto <- rowMeans(beta_auto[, keep])
-
 # ----------------------------------------------------------
-# Step 5: Write the posterior effect sizes according to the 3 models:
+# Step 5: Write the posterior effect sizes
+
+# Create the output directory:
+
+dir.create(sprintf("data/model_fit/external/LDPred2-grid/%s/%s/", config, trait),
+           showWarnings = FALSE,
+           recursive = TRUE)
+
+# Write out the effect sizes:
 
 for (chr in 1:22) {
-  snp_cond <- sumstats$chr == chr
-  chr_sumstats <- sumstats[snp_cond, c("chr", "rsid", "a1", "a0")]
+
+  chr_snp_cond <- subset_map_ldref$chr == chr
+  chr_sumstats <- subset_map_ldref[chr_snp_cond, c("chr", "rsid", "a1", "a0")]
   chr_sumstats$PIP <- NA
 
-  # Write out the beta_inf results:
-  chr_sumstats$BETA <- beta_inf[snp_cond]
-  write.table(chr_sumstats,
-              sprintf("data/model_fit/external/LDPred2-inf/%s/%s/chr_%d.fit", config, trait, chr),
-              row.names = F,
-              sep = "\t")
-
   # Write out the grid search results:
-  chr_sumstats$BETA <- best_beta_grid[snp_cond]
+  chr_sumstats$BETA <- best_beta_grid[chr_snp_cond]
+  names(chr_sumstats) <- c("CHR", "SNP", "A1", "A2", "PIP", "BETA")
   write.table(chr_sumstats,
               sprintf("data/model_fit/external/LDPred2-grid/%s/%s/chr_%d.fit", config, trait, chr),
-              row.names = F,
-              sep = "\t")
-
-  # Write out the auto results:
-  chr_sumstats$BETA <- final_beta_auto[snp_cond]
-  write.table(chr_sumstats,
-              sprintf("data/model_fit/external/LDPred2-auto/%s/%s/chr_%d.fit", config, trait, chr),
               row.names = F,
               sep = "\t")
 }

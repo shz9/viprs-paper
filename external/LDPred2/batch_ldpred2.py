@@ -8,7 +8,7 @@ sys.path.append(osp.dirname(osp.dirname(osp.dirname(__file__))))
 from utils import makedir
 
 
-parser = argparse.ArgumentParser(description='Deploy Lassosum model fitting jobs on the cluster')
+parser = argparse.ArgumentParser(description='Deploy LDPred2 model fitting jobs on the cluster')
 
 parser.add_argument('-p', '--phenotype', dest='pheno_name', type=str,
                     help='The name of the phenotype.')
@@ -17,6 +17,8 @@ parser.add_argument('-c', '--config', dest='config', type=str,
 parser.add_argument('-a', '--application', dest='application', type=str,
                     choices={'real', 'simulation'},
                     help='The category of phenotypes to consider')
+parser.add_argument('-m', '--model', dest='model', type=str, default='inf',
+                    choices={'inf', 'grid', 'auto'})
 args = parser.parse_args()
 
 gwas_dir = "data/gwas/"
@@ -42,7 +44,7 @@ for gd in glob.glob(gwas_dir):
 
     jobs.append({
         'Trait': gd,
-        'Name': f"external/LDPred2/{config}/{trait}"
+        'Name': f"external/LDPred2-{args.model}/{config}/{trait}"
     })
 
 if len(jobs) > 500:
@@ -58,7 +60,7 @@ for job in jobs:
     except Exception as e:
         pass
 
-    cmd = ["sbatch", "-J", job['Name'], "external/LDPred2/ldpred2_job.sh", job['Trait']]
+    cmd = ["sbatch", "-J", job['Name'], "external/LDPred2/ldpred2_job.sh", job['Trait'], args.model]
     print(" ".join(cmd))
     result = subprocess.run(" ".join(cmd), shell=True, capture_output=True)
     print(result.stdout)
