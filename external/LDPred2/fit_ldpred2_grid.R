@@ -122,16 +122,19 @@ subset_map_ldref <- map_ldref[df_beta$`_NUM_ID_`,]
 # Step 4: Perform model fitting
 
 (ldsc <- with(df_beta, snp_ldsc(ld, length(ld), chi2 = (beta / beta_se)^2,
-                                sample_size = n_eff, blocks = NULL)))
+                                sample_size = n_eff, blocks = NULL,
+                                ncores = NCORES)))
 h2_est <- ldsc[["h2"]]
 
 (h2_seq <- round(h2_est * c(0.7, 1, 1.4), 4))
 (p_seq <- signif(seq_log(1e-5, 1, length.out = 21), 2))
 (params <- expand.grid(p = p_seq, h2 = h2_seq, sparse = c(TRUE)))
 
+print("Performing model fit...")
 beta_grid <- snp_ldpred2_grid(corr, df_beta, params, ncores = NCORES)
 params$sparsity <- colMeans(beta_grid == 0)
 
+print("Extracting best betas...")
 bigparallelr::set_blas_ncores(NCORES)
 pred_grid <- big_prodMat(G,
                          beta_grid,
@@ -157,6 +160,7 @@ dir.create(sprintf("data/model_fit/external/LDPred2-grid/%s/%s/", config, trait)
            recursive = TRUE)
 
 # Write out the effect sizes:
+print("Writing the results to file...")
 
 for (chr in 1:22) {
 

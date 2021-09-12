@@ -77,10 +77,12 @@ subset_map_ldref <- map_ldref[df_beta$`_NUM_ID_`,]
 # Step 3: Perform model fitting
 
 (ldsc <- with(df_beta, snp_ldsc(ld, length(ld), chi2 = (beta / beta_se)^2,
-                                sample_size = n_eff, blocks = NULL)))
+                                sample_size = n_eff, blocks = NULL,
+                                ncores = NCORES)))
 h2_est <- ldsc[["h2"]]
 
-beta_inf <- snp_ldpred2_inf(corr, df_beta, h2_est)
+print("Performing model fit...")
+beta_inf <- snp_ldpred2_inf(corr, df_beta, h2_est, ncores = NCORES)
 
 # ----------------------------------------------------------
 # Step 4: Write the posterior effect sizes
@@ -92,6 +94,7 @@ dir.create(sprintf("data/model_fit/external/LDPred2-inf/%s/%s/", config, trait),
            recursive = TRUE)
 
 # Write out the effect sizes:
+print("Writing the results to file...")
 
 for (chr in 1:22) {
   chr_snp_cond <- subset_map_ldref$chr == chr
