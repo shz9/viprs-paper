@@ -10,6 +10,7 @@ ss_type <- args[2]
 
 # Get the number of available cores:
 NCORES <- nb_cores()
+print(paste("Using up to", NCORES, "threads."))
 
 # Extract information about the trait and configuration:
 trait <- basename(ss_dir_path)

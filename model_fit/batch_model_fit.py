@@ -77,8 +77,7 @@ for job in jobs:
         pass
 
     if args.strategy in ('BMA', 'GS'):
-        cmd = ["sbatch", "-J", job['Name'],
-               "--cpus-per-task 12", "--time 4:0:0", "--mem-per-cpu 4GB",
+        cmd = ["sbatch", "-J", job['Name'], "--time 4:0:0", "--mem-per-cpu 4GB",
                "model_fit/model_fit_job.sh",
                job['Trait'], job['Model'], job['LD panel'], job['Strategy']]
     elif args.strategy == 'BO':

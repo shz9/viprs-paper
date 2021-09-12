@@ -10,6 +10,7 @@ ss_type <- args[2]
 
 # Get the number of available cores:
 NCORES <- nb_cores()
+print(paste("Using up to", NCORES, "threads."))
 
 # Extract information about the trait and configuration:
 trait <- basename(ss_dir_path)
@@ -82,7 +83,7 @@ subset_map_ldref <- map_ldref[df_beta$`_NUM_ID_`,]
 h2_est <- ldsc[["h2"]]
 
 print("Performing model fit...")
-beta_inf <- snp_ldpred2_inf(corr, df_beta, h2_est, ncores = NCORES)
+beta_inf <- snp_ldpred2_inf(corr, df_beta, h2_est)
 
 # ----------------------------------------------------------
 # Step 4: Write the posterior effect sizes

@@ -122,9 +122,9 @@ def main():
             if args.fitting_strategy == 'BO':
                 m = BayesOpt(gdl, m)
             elif args.fitting_strategy == 'GS':
-                m = GridSearch(gdl, m, n_proc=10)
+                m = GridSearch(gdl, m, n_proc=7)
             elif args.fitting_strategy == 'BMA':
-                m = BMA(gdl, m, n_proc=10)
+                m = BMA(gdl, m, n_proc=7)
 
             m = m.fit(max_iter=max_iter)
         except Exception as e:

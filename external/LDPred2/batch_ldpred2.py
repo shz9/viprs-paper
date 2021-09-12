@@ -60,7 +60,10 @@ for job in jobs:
     except Exception as e:
         pass
 
-    cmd = ["sbatch", "-J", job['Name'], "external/LDPred2/ldpred2_job.sh", job['Trait'], args.model]
+    if args.model == 'inf':
+        cmd = ["sbatch", "-J", job['Name'], "--time 01:30:00", "external/LDPred2/ldpred2_job.sh", job['Trait'], args.model]
+    else:
+        cmd = ["sbatch", "-J", job['Name'], "external/LDPred2/ldpred2_job.sh", job['Trait'], args.model]
     print(" ".join(cmd))
     result = subprocess.run(" ".join(cmd), shell=True, capture_output=True)
     print(result.stdout)

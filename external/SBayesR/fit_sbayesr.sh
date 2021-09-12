@@ -8,6 +8,8 @@
 #SBATCH --mail-type=FAIL
 
 echo "Job started at: `date`"
+echo "Job ID: $SLURM_JOBID"
+
 echo "Performing model fit..."
 echo "Dataset: $1"
 echo "Model: SBayesR"

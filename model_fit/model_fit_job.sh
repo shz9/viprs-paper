@@ -8,6 +8,7 @@
 #SBATCH --mail-type=FAIL
 
 echo "Job started at: `date`"
+echo "Job ID: $SLURM_JOBID"
 
 model=${2:-"VIPRS"}
 ld_panel=${3-"ukbb_50k_windowed"}

@@ -7,6 +7,9 @@
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
 
+echo "Job started at: `date`"
+echo "Job ID: $SLURM_JOBID"
+
 module load plink
 source "$HOME/pyenv/bin/activate"
 
