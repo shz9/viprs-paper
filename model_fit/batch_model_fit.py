@@ -85,7 +85,7 @@ for job in jobs:
 
     # Time specification:
     if args.strategy in ('BMA', 'GS', 'BO'):
-        cmd = ["--time 4:0:0"]
+        cmd += ["--time 4:0:0"]
     elif 'sample' in args.ld_panel:
         cmd += ["--time 30:0:0"]
 
