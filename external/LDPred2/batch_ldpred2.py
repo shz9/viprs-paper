@@ -61,7 +61,7 @@ for job in jobs:
         pass
 
     if args.model == 'inf':
-        cmd = ["sbatch", "-J", job['Name'], "--time 01:30:00", "external/LDPred2/ldpred2_job.sh", job['Trait'], args.model]
+        cmd = ["sbatch", "-J", job['Name'], "--time 01:00:00", "external/LDPred2/ldpred2_job.sh", job['Trait'], args.model]
     else:
         cmd = ["sbatch", "-J", job['Name'], "external/LDPred2/ldpred2_job.sh", job['Trait'], args.model]
     print(" ".join(cmd))

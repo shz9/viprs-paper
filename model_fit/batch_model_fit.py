@@ -26,6 +26,8 @@ parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb
                              'ukbb_1k_sample', 'ukbb_1k_shrinkage', 'ukbb_1k_windowed', 'ukbb_1k_block',
                              'ukbb_10k_sample', 'ukbb_10k_shrinkage', 'ukbb_10k_windowed', 'ukbb_10k_block',
                              'ukbb_50k_sample', 'ukbb_50k_shrinkage', 'ukbb_50k_windowed', 'ukbb_50k_block'})
+parser.add_argument('--genomewide', dest='genomewide', action='store_true', default=False,
+                    help='Fit all chromosomes jointly')
 
 args = parser.parse_args()
 
@@ -76,21 +78,31 @@ for job in jobs:
     except Exception as e:
         pass
 
-    if args.strategy in ('BMA', 'GS'):
-        cmd = ["sbatch", "-J", job['Name'], "--time 4:0:0", "--mem-per-cpu 4GB",
-               "model_fit/model_fit_job.sh",
-               job['Trait'], job['Model'], job['LD panel'], job['Strategy']]
-    elif args.strategy == 'BO':
-        cmd = ["sbatch", "-J", job['Name'], "--time 4:0:0",
-               "model_fit/model_fit_job.sh",
-               job['Trait'], job['Model'], job['LD panel'], job['Strategy']]
+    cmd = ["sbatch", "-J", job['Name']]
+
+    # Time specification:
+    if args.strategy in ('BMA', 'GS', 'BO'):
+        cmd = ["--time 4:0:0"]
     elif 'sample' in args.ld_panel:
-        cmd = ["sbatch", "-J", job['Name'], "--time 30:0:0", "--mem-per-cpu 10GB",
-               "model_fit/model_fit_job.sh",
-               job['Trait'], job['Model'], job['LD panel'], job['Strategy']]
-    else:
-        cmd = ["sbatch", "-J", job['Name'], "model_fit/model_fit_job.sh",
-               job['Trait'], job['Model'], job['LD panel'], job['Strategy']]
+        cmd += ["--time 30:0:0"]
+
+    # Memory specification:
+    if args.strategy in ('EM', 'BO') and args.genomewide:
+        cmd += ["--mem-per-cpu 3GB"]
+    elif args.strategy in ('BMA', 'GS'):
+        if args.genomewide:
+            cmd += ["--mem-per-cpu 15GB"]
+        else:
+            cmd += ["--mem-per-cpu 4GB"]
+    elif 'sample' in args.ld_panel:
+        cmd += ["--mem-per-cpu 10GB"]
+
+    cmd += ["model_fit/model_fit_job.sh",
+            job['Trait'], job['Model'], job['LD panel'], job['Strategy']]
+
+    if args.genomewide:
+        cmd += ['true']
+
     print(" ".join(cmd))
     result = subprocess.run(" ".join(cmd), shell=True, capture_output=True)
     print(result.stdout)

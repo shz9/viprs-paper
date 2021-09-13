@@ -13,6 +13,7 @@ echo "Job ID: $SLURM_JOBID"
 model=${2:-"VIPRS"}
 ld_panel=${3-"ukbb_50k_windowed"}
 fitting_method=${4-"EM"}
+genomewide=${5-false}
 
 if [ "${fitting_method}" == "GS" ] || [ "${fitting_method}" == "BMA" ]; then
   source setup_python_environment.sh
@@ -31,7 +32,11 @@ echo "LD Panel: $ld_panel"
 
 SECONDS=0
 
-python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method"
+if [ "$genomewide" = true ]; then
+  python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --genomewide
+else
+  python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method"
+fi
 
 MINUTES=$(echo "scale=2; $SECONDS/60" | bc)
 
