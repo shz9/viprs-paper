@@ -50,6 +50,9 @@ model_name = args.model
 if args.strategy != 'EM':
     model_name += f'-{args.strategy}'
 
+if args.genomewide:
+    model_name += '-genomewide'
+
 jobs = []
 
 for gd in glob.glob(gwas_dir):
