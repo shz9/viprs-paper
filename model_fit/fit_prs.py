@@ -119,8 +119,11 @@ def main():
             validation_gdl = GWASDataLoader(bed_files=[f"data/ukbb_qc_genotypes/chr_{chrom}.bed"
                                                        for chrom in gdl.chromosomes],
                                             keep_individuals=validation_keep,
+                                            min_maf=None,
+                                            min_mac=None,
                                             phenotype_file=f"data/phenotypes/{re.sub('_fold_[0-9]', '', config)}/{trait}.txt",
-                                            compute_ld=False)
+                                            compute_ld=False,
+                                            use_plink=True)
         else:
             validation_gdl = None
 
