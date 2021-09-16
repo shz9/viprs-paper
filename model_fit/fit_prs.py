@@ -71,7 +71,10 @@ def main():
     if args.fitting_strategy == 'EM':
         output_dir = f"data/model_fit/{args.ld_panel}/{args.model}"
     else:
-        output_dir = f"data/model_fit/{args.ld_panel}/{args.model}-{args.fitting_strategy}"
+        if args.fitting_strategy == 'GS' and args.grid_metric == 'validation':
+            output_dir = f"data/model_fit/{args.ld_panel}/{args.model}-GSv"
+        else:
+            output_dir = f"data/model_fit/{args.ld_panel}/{args.model}-{args.fitting_strategy}"
 
     if args.genomewide:
         output_dir = osp.join(output_dir + "-genomewide", config, trait)
@@ -104,8 +107,14 @@ def main():
                              temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 
         if args.fitting_strategy == 'GS' and args.grid_metric == 'validation':
+            if 'real' in config:
+                validation_keep = f"data/keep_files/ukbb_cv/{trait}/{config.replace('real_', '')}/validation.keep"
+            else:
+                validation_keep = "data/keep_files/ukbb_valid_subset.keep"
+
             validation_gdl = GWASDataLoader(bed_files=[f"data/ukbb_qc_genotypes/chr_{chrom}.bed"
                                                        for chrom in gdl.chromosomes],
+                                            keep_individuals=validation_keep,
                                             compute_ld=False)
         else:
             validation_gdl = None
