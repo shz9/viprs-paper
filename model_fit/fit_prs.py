@@ -37,6 +37,9 @@ def main():
                         help='The summary statistics directory')
     parser.add_argument('--genomewide', dest='genomewide', action='store_true', default=False,
                         help='Fit all chromosomes jointly')
+    parser.add_argument('--grid-metric', dest='grid_metric', type=str, default='ELBO',
+                        help='The metric for selecting best performing model in grid search',
+                        choices={'ELBO', 'validation'})
 
     args = parser.parse_args()
 
@@ -100,6 +103,13 @@ def main():
                              sumstats_format='plink',
                              temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 
+        if args.fitting_strategy == 'GS' and args.grid_metric == 'validation':
+            validation_gdl = GWASDataLoader(bed_files=[f"data/ukbb_qc_genotypes/chr_{chrom}.bed"
+                                                       for chrom in gdl.chromosomes],
+                                            compute_ld=False)
+        else:
+            validation_gdl = None
+
         if load_ld:
             gdl.load_ld()
 
@@ -122,7 +132,8 @@ def main():
             if args.fitting_strategy == 'BO':
                 m = BayesOpt(gdl, m)
             elif args.fitting_strategy == 'GS':
-                m = GridSearch(gdl, m, n_proc=7)
+                m = GridSearch(gdl, m, validation_gdl=validation_gdl,
+                               objective=args.grid_metric, n_proc=7)
             elif args.fitting_strategy == 'BMA':
                 m = BMA(gdl, m, n_proc=7)
 
@@ -155,6 +166,7 @@ def main():
             gdl.release_ld()
 
         gdl.cleanup()
+        validation_gdl.cleanup()
 
         if args.fitting_strategy != 'BMA':
             h2g.append(m_h2g)

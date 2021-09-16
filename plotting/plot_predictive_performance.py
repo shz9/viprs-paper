@@ -9,6 +9,7 @@ import os.path as osp
 import sys
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 import matplotlib.pyplot as plt
+from plot_utils import add_labels_to_bars
 import seaborn as sns
 from utils import makedir
 import functools
@@ -72,9 +73,13 @@ if len(real_dfs) > 0:
         r_df = final_real_df.loc[final_real_df['LD Panel'].isin([ld_panel, 'external'])]
 
         for metric in pred_metrics:
-            plt.figure(figsize=(9, 6))
+            fig = plt.figure(figsize=(9, 6))
             g = sns.catplot(x="Model", y=metric, col="Trait",
-                            data=r_df, kind="box", col_wrap=4, showfliers=False)
+                            data=r_df, kind="bar", col_wrap=4, showfliers=False)
+            add_labels_to_bars(g)
+
+            for i, ax in enumerate(g.fig.axes):
+                ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
 
             makedir(f"plots/predictive_performance/real/{ld_panel}")
             plt.savefig(f"plots/predictive_performance/real/{ld_panel}/{metric}_predictive_performance.pdf".replace(" ", "_"),
