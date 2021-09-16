@@ -9,6 +9,7 @@ import os.path as osp
 import glob
 import numpy as np
 import pandas as pd
+import re
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 sys.path.append("vemPRS/")
 from gwasimulator.GWASDataLoader import GWASDataLoader
@@ -107,6 +108,9 @@ def main():
                              temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 
         if args.fitting_strategy == 'GS' and args.grid_metric == 'validation':
+
+            print("> Reading validation dataset...")
+
             if 'real' in config:
                 validation_keep = f"data/keep_files/ukbb_cv/{trait}/{config.replace('real_', '')}/validation.keep"
             else:
@@ -115,6 +119,7 @@ def main():
             validation_gdl = GWASDataLoader(bed_files=[f"data/ukbb_qc_genotypes/chr_{chrom}.bed"
                                                        for chrom in gdl.chromosomes],
                                             keep_individuals=validation_keep,
+                                            phenotype_file=f"data/phenotypes/{re.sub('_fold_[0-9]', '', config)}/{trait}.txt",
                                             compute_ld=False)
         else:
             validation_gdl = None
