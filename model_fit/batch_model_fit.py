@@ -28,6 +28,11 @@ parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb
                              'ukbb_50k_sample', 'ukbb_50k_shrinkage', 'ukbb_50k_windowed', 'ukbb_50k_block'})
 parser.add_argument('--genomewide', dest='genomewide', action='store_true', default=False,
                     help='Fit all chromosomes jointly')
+parser.add_argument('--grid-metric', dest='grid_metric', type=str, default='ELBO',
+                    help='The metric for selecting best performing model in grid search/Bayesian optimization',
+                    choices={'ELBO', 'validation'})
+parser.add_argument('--local-grid', dest='localgrid', action='store_true', default=False,
+                    help='Whether to use localized grid in GS/BMA')
 
 args = parser.parse_args()
 
@@ -49,6 +54,12 @@ else:
 model_name = args.model
 if args.strategy != 'EM':
     model_name += f'-{args.strategy}'
+
+if args.strategy in ('GS', 'BO') and args.grid_metric == 'validation':
+    model_name += 'v'
+
+if args.strategy in ('GS', 'BMA') and args.localgrid:
+    model_name += 'l'
 
 if args.genomewide:
     model_name += '-genomewide'
@@ -105,6 +116,15 @@ for job in jobs:
 
     if args.genomewide:
         cmd += ['true']
+    else:
+        cmd += ['false']
+
+    if args.localgrid:
+        cmd += ['true']
+    else:
+        cmd += ['false']
+
+    cmd += [args.grid_metric]
 
     print(" ".join(cmd))
     result = subprocess.run(" ".join(cmd), shell=True, capture_output=True)

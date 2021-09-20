@@ -14,6 +14,8 @@ model=${2:-"VIPRS"}
 ld_panel=${3-"ukbb_50k_windowed"}
 fitting_method=${4-"EM"}
 genomewide=${5-false}
+local_grid=${6-false}
+grid_metric=${7-"ELBO"}
 
 if [ "${fitting_method}" == "GS" ] || [ "${fitting_method}" == "BMA" ]; then
   source setup_python_environment.sh
@@ -29,13 +31,22 @@ echo "Performing model fit..."
 echo "Dataset: $1"
 echo "Model: $model"
 echo "LD Panel: $ld_panel"
+echo "Fitting strategy: $fitting_method"
 
 SECONDS=0
 
 if [ "$genomewide" = true ]; then
-  python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --genomewide
+  if [ "$local_grid" = true ]; then
+    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric" --local-grid --genomewide
+  else
+    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric" --genomewide
+  fi
 else
-  python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method"
+  if [ "$local_grid" = true ]; then
+    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric" --local-grid
+  else
+    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric"
+  fi
 fi
 
 MINUTES=$(echo "scale=2; $SECONDS/60" | bc)

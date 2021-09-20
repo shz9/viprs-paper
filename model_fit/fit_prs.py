@@ -41,6 +41,8 @@ def main():
     parser.add_argument('--grid-metric', dest='grid_metric', type=str, default='ELBO',
                         help='The metric for selecting best performing model in grid search',
                         choices={'ELBO', 'validation'})
+    parser.add_argument('--local-grid', dest='localgrid', action='store_true', default=False,
+                        help='Whether to use localized grid in GS/BMA')
 
     args = parser.parse_args()
 
@@ -72,10 +74,13 @@ def main():
     if args.fitting_strategy == 'EM':
         output_dir = f"data/model_fit/{args.ld_panel}/{args.model}"
     else:
-        if args.fitting_strategy == 'GS' and args.grid_metric == 'validation':
-            output_dir = f"data/model_fit/{args.ld_panel}/{args.model}-GSv"
-        else:
-            output_dir = f"data/model_fit/{args.ld_panel}/{args.model}-{args.fitting_strategy}"
+        output_dir = f"data/model_fit/{args.ld_panel}/{args.model}-{args.fitting_strategy}"
+
+    if args.fitting_strategy in ('GS', 'BO') and args.grid_metric == 'validation':
+        output_dir += "v"
+
+    if args.fitting_strategy in ('GS', 'BMA') and args.localgrid:
+        output_dir += "l"
 
     if args.genomewide:
         output_dir = osp.join(output_dir + "-genomewide", config, trait)
@@ -107,7 +112,7 @@ def main():
                              sumstats_format='plink',
                              temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 
-        if args.fitting_strategy == 'GS' and args.grid_metric == 'validation':
+        if args.fitting_strategy in ('GS', 'BO') and args.grid_metric == 'validation':
 
             print("> Reading validation dataset...")
 
@@ -131,13 +136,13 @@ def main():
             gdl.load_ld()
 
         if args.model == 'VIPRS':
-            m = VIPRS(gdl, load_ld=load_ld)
+            prs_m = VIPRS(gdl, load_ld=load_ld)
         elif args.model == 'VIPRSSBayes':
-            m = VIPRSSBayes(gdl, load_ld=load_ld)
+            prs_m = VIPRSSBayes(gdl, load_ld=load_ld)
         elif args.model == 'GibbsPRS':
-            m = GibbsPRS(gdl, load_ld=load_ld)
+            prs_m = GibbsPRS(gdl, load_ld=load_ld)
         elif args.model == 'GibbsPRSSBayes':
-            m = GibbsPRSSBayes(gdl, load_ld=load_ld)
+            prs_m = GibbsPRSSBayes(gdl, load_ld=load_ld)
 
         # Fit the model to the data:
         if args.genomewide:
@@ -147,14 +152,23 @@ def main():
 
         try:
             if args.fitting_strategy == 'BO':
-                m = BayesOpt(gdl, m)
+                hs_m = BayesOpt(gdl, prs_m,
+                                validation_gdl=validation_gdl,
+                                objective=args.grid_metric)
             elif args.fitting_strategy == 'GS':
-                m = GridSearch(gdl, m, validation_gdl=validation_gdl,
-                               objective=args.grid_metric, n_proc=7)
+                hs_m = GridSearch(gdl, prs_m,
+                                  validation_gdl=validation_gdl,
+                                  objective=args.grid_metric,
+                                  localized_grid=args.localgrid,
+                                  n_proc=7)
             elif args.fitting_strategy == 'BMA':
-                m = BMA(gdl, m, n_proc=7)
+                hs_m = BMA(gdl, prs_m,
+                           localized_grid=args.localgrid,
+                           n_proc=7)
+            else:
+                hs_m = prs_m
 
-            m = m.fit(max_iter=max_iter)
+            final_m = hs_m.fit(max_iter=max_iter)
         except Exception as e:
             print(e)
             if e.__class__.__name__ != 'OptimizationDivergence':
@@ -163,12 +177,12 @@ def main():
         print("> Writing out the inference results...")
 
         # Write inferred model parameters:
-        m.write_inferred_params(output_dir, per_chromosome=True)
+        final_m.write_inferred_params(output_dir, per_chromosome=True)
 
         # Write the estimated hyperparameters:
 
-        m_h2g = m.get_heritability()
-        m_p = m.get_proportion_causal()
+        m_h2g = final_m.get_heritability()
+        m_p = final_m.get_proportion_causal()
 
         if not args.genomewide and args.fitting_strategy != 'BMA':
 
@@ -179,6 +193,14 @@ def main():
                 'Prop. Causal': m_p
             }, orient='index').to_csv(osp.join(output_dir, f'chr_{chrom}.hyp'))
 
+        # Write the validation results:
+        if args.fitting_strategy in ('GS', 'BO'):
+            if args.genomewide:
+                hs_m.write_validation_result(osp.join(output_dir, 'combined.validation'))
+            else:
+                hs_m.write_validation_result(osp.join(output_dir, f'chr_{chrom}.validation'))
+
+        # Cleanup:
         if load_ld:
             gdl.release_ld()
 
