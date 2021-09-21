@@ -205,7 +205,8 @@ def main():
             gdl.release_ld()
 
         gdl.cleanup()
-        validation_gdl.cleanup()
+        if validation_gdl is not None:
+            validation_gdl.cleanup()
 
         if args.fitting_strategy != 'BMA':
             h2g.append(m_h2g)

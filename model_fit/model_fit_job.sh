@@ -23,6 +23,8 @@ else
   source "$HOME/pyenv/bin/activate"
 fi
 
+module load plink
+
 export MKL_NUM_THREADS=8
 export NUMEXPR_NUM_THREADS=8
 export OMP_NUM_THREADS=8
