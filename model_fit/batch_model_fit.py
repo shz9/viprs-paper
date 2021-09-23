@@ -96,7 +96,10 @@ for job in jobs:
 
     # Time specification:
     if args.strategy in ('BMA', 'GS', 'BO'):
-        cmd += ["--time 5:0:0"]
+        if args.strategy in ('GS', 'BO') and args.grid_metric == 'validation':
+            cmd += ["--time 7:0:0"]
+        else:
+            cmd += ["--time 4:0:0"]
     elif 'sample' in args.ld_panel:
         cmd += ["--time 30:0:0"]
 

@@ -81,7 +81,7 @@ if len(real_dfs) > 0:
     final_real_df = pd.concat(real_dfs)
 
     plt.figure(figsize=(9, 6))
-    g = sns.catplot(x="Model", y="Estimated Heritability", col="Trait", col_wrap=4,
+    g = sns.catplot(x="Model", y="Estimated Heritability", col="Trait", col_wrap=3,
                     data=final_real_df, kind="box", showfliers=False)
 
     makedir("plots/hyperparameters/real/h2g/")
@@ -89,7 +89,7 @@ if len(real_dfs) > 0:
     plt.close()
 
     plt.figure(figsize=(9, 6))
-    g = sns.catplot(x="Model", y="Estimated Prop. Causal", col="Trait", col_wrap=4,
+    g = sns.catplot(x="Model", y="Estimated Prop. Causal", col="Trait", col_wrap=3,
                     data=final_real_df, kind="box", showfliers=False)
     makedir("plots/hyperparameters/real/pi/")
     plt.savefig(f"plots/hyperparameters/real/pi/{args.ld_panel}_estimates.pdf", bbox_inches='tight')

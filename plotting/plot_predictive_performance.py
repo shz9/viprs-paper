@@ -75,7 +75,7 @@ if len(real_dfs) > 0:
         for metric in pred_metrics:
             fig = plt.figure(figsize=(9, 6))
             g = sns.catplot(x="Model", y=metric, col="Trait",
-                            data=r_df, kind="bar", col_wrap=4, showfliers=False)
+                            data=r_df, kind="bar", col_wrap=3, showfliers=False)
             add_labels_to_bars(g)
 
             for i, ax in enumerate(g.fig.axes):
