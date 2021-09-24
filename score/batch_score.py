@@ -19,7 +19,8 @@ parser.add_argument('-a', '--application', dest='application', type=str,
                     help='The category of phenotypes to consider')
 parser.add_argument('-m', '--model', dest='model', type=str, default='all',
                     choices={'VIPRS', 'VIPRSSBayes', 'GibbsPRS', 'GibbsPRSSBayes',
-                             'VIPRS-BMA', 'VIPRS-BO', 'VIPRS-GS',
+                             'VIPRS-BMA', 'VIPRS-BO', 'VIPRS-BOv',
+                             'VIPRS-GS', 'VIPRS-GSl', 'VIPRS-GSv', 'VIPRS-GSvl',
                              'VIPRSSBayes-BMA', 'VIPRSSBayes-BO', 'VIPRSSBayes-GS',
                              'SBayesR', 'PRSice2', 'LDPred2-inf', 'LDPred2-grid', 'LDPred2-auto',
                              'PRScs', 'Lassosum', 'all'})
