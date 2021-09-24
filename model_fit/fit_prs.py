@@ -128,7 +128,8 @@ def main():
                                             min_mac=None,
                                             phenotype_file=f"data/phenotypes/{re.sub('_fold_[0-9]', '', config)}/{trait}.txt",
                                             compute_ld=False,
-                                            use_plink=True)
+                                            use_plink=True,
+                                            temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
         else:
             validation_gdl = None
 
@@ -160,11 +161,11 @@ def main():
                                   validation_gdl=validation_gdl,
                                   objective=args.grid_metric,
                                   localized_grid=args.localgrid,
-                                  n_proc=7)
+                                  n_jobs=7)
             elif args.fitting_strategy == 'BMA':
                 hs_m = BMA(gdl, prs_m,
                            localized_grid=args.localgrid,
-                           n_proc=7)
+                           n_jobs=7)
             else:
                 hs_m = prs_m
 
