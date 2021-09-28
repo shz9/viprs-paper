@@ -16,7 +16,8 @@ ss_df = pd.read_csv(args.ss_file, sep="\t")
 if args.type == 'pystatgen':
     ss_df = ss_df[['SNP', 'A1', 'A2', 'BETA', 'PVAL']]
 elif args.type == 'plink':
-    ss_df = ss_df[['ID', 'ALT1', 'REF', 'BETA', 'P']]
+    ss_df['A2'] = ss_df.apply(lambda x: [x['ALT1'], x['REF']][x['A1'] == x['ALT1']], axis=1)
+    ss_df = ss_df[['ID', 'A1', 'A2', 'BETA', 'P']]
 
 ss_df.columns = ['SNP', 'A1', 'A2', 'BETA', 'P']
 ss_df.to_csv(args.ss_file.replace(".PHENO1.glm.linear", ".prscs.ss"), sep="\t", index=False)

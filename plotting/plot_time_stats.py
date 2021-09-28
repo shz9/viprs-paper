@@ -7,10 +7,31 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import glob
 import functools
+import argparse
+from plot_utils import update_model_names
 print = functools.partial(print, flush=True)
 
 
+parser = argparse.ArgumentParser(description='Plot time statistics for PRS models')
+parser.add_argument('-m', '--models', dest='models', type=str)
+parser.add_argument('--prefix', dest='prefix', type=str)
+parser.add_argument('--extension', dest='ext', type=str, default='eps')
+args = parser.parse_args()
+
 print("> Plotting time statistics for PRS methods...")
+
+order = [
+    'VIPRS',
+    'VIPRSSBayes',
+    'VIPRS-GS', 'VIPRS-GSv', 'VIPRS-GSl', 'VIPRS-GSvl',
+    'VIPRS-BO', 'VIPRS-BOv',
+    'VIPRS-BMA',
+    'SBayesR',
+    'Lassosum',
+    'LDPred2-inf', 'LDPred2-auto', 'LDPred2-grid',
+    'PRScs',
+    'PRSice2',
+]
 
 time_df = []
 
@@ -19,6 +40,11 @@ time_df = []
 for log_f in glob.glob("log/model_fit/*/*/*/*.out"):
 
     _, _, panel, model, config, trait = log_f.split('/')
+
+    if args.models is not None:
+        if model not in args.models.split(","):
+            continue
+
     trait = trait.replace('.out', '')
     if 'real' in config:
         config = config.split('_')[0]
@@ -43,6 +69,9 @@ for log_f in glob.glob("log/model_fit/*/*/*/*.out"):
 # Concatenate the entries into a single dataframe:
 time_df = pd.DataFrame(time_df)
 
+# Update model names:
+time_df = update_model_names(time_df)
+
 sns.set_style("darkgrid")
 sns.set_context("paper")
 
@@ -62,15 +91,20 @@ for ldp in ldp_time_df['LD Panel'].unique():
 
     df = ldp_time_df.loc[ldp_time_df['LD Panel'].isin(['external', ldp])]
 
-    plt.figure(figsize=(9, 6))
-    ax = sns.boxplot(x="Model", y="Duration", data=df, showfliers=False)
+    plt.figure(figsize=(7, 4))
+    ax = sns.boxplot(x="Model", y="Duration", data=df,
+                     showfliers=False, palette='Set2', order=[m for m in order if m in df['Model'].unique()])
     ax.set_yscale('log')
     ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
     plt.ylabel("Runtime log(Minutes)")
 
-    makedir(f"plots/runtime_stats/ld_panel/{ldp}")
+    if args.prefix is None:
+        final_output_dir = f"plots/runtime_stats/{ldp}"
+    else:
+        final_output_dir = f"plots/runtime_stats/{ldp}/{args.prefix}"
 
-    plt.savefig(f"plots/runtime_stats/ld_panel/{ldp}/simulation_runtime.pdf", bbox_inches='tight')
+    makedir(final_output_dir)
+    plt.savefig(osp.join(final_output_dir, "simulation." + args.ext), bbox_inches='tight')
     plt.close()
 
 # ---------------------------------------------------------
@@ -89,11 +123,19 @@ for ldp in ldp_time_df['LD Panel'].unique():
 
     df = ldp_time_df.loc[ldp_time_df['LD Panel'].isin(['external', ldp])]
 
-    plt.figure(figsize=(9, 6))
-    ax = sns.boxplot(x="Model", y="Duration", data=df, showfliers=False)
+    plt.figure(figsize=(7, 4))
+    ax = sns.boxplot(x="Model", y="Duration", data=df, showfliers=False,
+                     palette='Set2',
+                     order=[m for m in order if m in df['Model'].unique()])
     ax.set_yscale('log')
     ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
     plt.ylabel("Runtime log(Minutes)")
 
-    plt.savefig(f"plots/runtime_stats/ld_panel/{ldp}/real_runtime.pdf", bbox_inches='tight')
+    if args.prefix is None:
+        final_output_dir = f"plots/runtime_stats/{ldp}"
+    else:
+        final_output_dir = f"plots/runtime_stats/{ldp}/{args.prefix}"
+
+    makedir(final_output_dir)
+    plt.savefig(osp.join(final_output_dir, "real." + args.ext), bbox_inches='tight')
     plt.close()

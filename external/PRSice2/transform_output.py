@@ -26,7 +26,8 @@ for chrom in range(1, 23):
     ss_table = pd.read_csv(osp.join(args.ss_dir, f"chr_{chrom}.PHENO1.glm.linear"), sep="\s+")
 
     if args.type == 'plink':
-        ss_table = ss_table.rename(columns={'ID': 'SNP', '#CHROM': 'CHR', 'REF': 'A2', 'P': 'PVAL'})
+        ss_table['A2'] = ss_table.apply(lambda x: [x['ALT1'], x['REF']][x['A1'] == x['ALT1']], axis=1)
+        ss_table = ss_table.rename(columns={'ID': 'SNP', '#CHROM': 'CHR', 'P': 'PVAL'})
 
     # Merge the summary statistics table with the clumped SNPs table:
     merged_df = clumped_snps.merge(ss_table, how='right')
