@@ -19,6 +19,7 @@ from plot_utils import add_labels_to_bars, update_model_names
 
 parser = argparse.ArgumentParser(description='Plot hyperparameter estimates')
 parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_50k_windowed')
+parser.add_argument('--extension', dest='ext', type=str, default='eps')
 args = parser.parse_args()
 
 order = [
@@ -83,7 +84,7 @@ if len(simulation_dfs) > 0:
                     palette='Set2')
 
     makedir("plots/hyperparameters/simulation/h2g/")
-    plt.savefig(f"plots/hyperparameters/simulation/h2g/{args.ld_panel}_estimates.pdf", bbox_inches='tight')
+    plt.savefig(f"plots/hyperparameters/simulation/h2g/{args.ld_panel}_estimates." + args.ext, bbox_inches='tight')
     plt.close()
 
     plt.figure(figsize=(9, 6))
@@ -92,8 +93,10 @@ if len(simulation_dfs) > 0:
                     data=final_simulation_df, kind="box", showfliers=False,
                     hue_order=model_order,
                     palette='Set2')
+    for i, ax in enumerate(g.fig.axes):
+        ax.set_yscale('log')
     makedir("plots/hyperparameters/simulation/pi/")
-    plt.savefig(f"plots/hyperparameters/simulation/pi/{args.ld_panel}_estimates.pdf", bbox_inches='tight')
+    plt.savefig(f"plots/hyperparameters/simulation/pi/{args.ld_panel}_estimates." + args.ext, bbox_inches='tight')
     plt.close()
 
 if len(real_dfs) > 0:
@@ -111,9 +114,11 @@ if len(real_dfs) > 0:
                     data=final_real_df, kind="box", showfliers=False,
                     order=model_order, row_order=trait_order,
                     palette='Set2')
+    for i, ax in enumerate(g.fig.axes):
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
 
     makedir("plots/hyperparameters/real/h2g/")
-    plt.savefig(f"plots/hyperparameters/real/h2g/{args.ld_panel}_estimates.pdf", bbox_inches='tight')
+    plt.savefig(f"plots/hyperparameters/real/h2g/{args.ld_panel}_estimates." + args.ext, bbox_inches='tight')
     plt.close()
 
     plt.figure(figsize=(9, 6))
@@ -122,7 +127,10 @@ if len(real_dfs) > 0:
                     order=model_order,
                     row_order=trait_order,
                     palette='Set2')
+    for i, ax in enumerate(g.fig.axes):
+        ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
+        ax.set_yscale('log')
     makedir("plots/hyperparameters/real/pi/")
-    plt.savefig(f"plots/hyperparameters/real/pi/{args.ld_panel}_estimates.pdf", bbox_inches='tight')
+    plt.savefig(f"plots/hyperparameters/real/pi/{args.ld_panel}_estimates." + args.ext, bbox_inches='tight')
     plt.close()
 

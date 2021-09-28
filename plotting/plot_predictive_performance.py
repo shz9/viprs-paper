@@ -86,7 +86,8 @@ if len(simulation_dfs) > 0:
                             hue="Model", col="Prop. Causal",
                             data=s_df, kind="box",
                             showfliers=False,
-                            hue_order=model_order)
+                            hue_order=model_order,
+                            palette='Set2')
 
             if args.prefix is None:
                 final_output_dir = f"plots/predictive_performance/simulation/{ld_panel}"
@@ -120,7 +121,8 @@ if len(real_dfs) > 0:
                             data=r_df, kind="bar", col_wrap=3,
                             order=model_order,
                             row_order=trait_order,
-                            col_order=trait_order)
+                            col_order=trait_order,
+                            palette='Set2')
             add_labels_to_bars(g)
 
             for i, ax in enumerate(g.fig.axes):
