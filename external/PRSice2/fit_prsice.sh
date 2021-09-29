@@ -59,6 +59,7 @@ do
           --keep "$keep_file" \
           --pvalue "$p_pval" \
           --snp "$p_snp" \
+          --A1 "A1" \
           --stat BETA \
           --binary-target F \
           --print-snp \
