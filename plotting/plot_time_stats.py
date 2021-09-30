@@ -80,9 +80,7 @@ sns.set_context("paper")
 
 print("> Plotting time statistics by LD panel for simulations...")
 
-ldp_time_df = time_df.loc[time_df['Configuration'] != 'real'].groupby(
-    ['LD Panel', 'Configuration', 'Trait', 'Model']
-).sum().reset_index()
+ldp_time_df = time_df.loc[time_df['Configuration'] != 'real']
 
 for ldp in ldp_time_df['LD Panel'].unique():
 
@@ -111,9 +109,7 @@ for ldp in ldp_time_df['LD Panel'].unique():
 
 print("> Plotting time statistics by LD panel for real data...")
 
-ldp_time_df = time_df.loc[time_df['Configuration'] == 'real'].groupby(
-    ['LD Panel', 'Configuration', 'Trait', 'Model']
-).sum().reset_index()
+ldp_time_df = time_df.loc[time_df['Configuration'] == 'real']
 
 for ldp in ldp_time_df['LD Panel'].unique():
 
