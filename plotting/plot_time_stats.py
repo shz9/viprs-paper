@@ -58,7 +58,7 @@ for log_f in glob.glob("log/model_fit/*/*/*/*.out"):
                         'Configuration': config,
                         'Trait': trait,
                         'Model': model,
-                        'Duration': duration})
+                        'Duration': duration / 60})
 
     except Exception as e:
         print("Error parsing the log file:", log_f)
@@ -94,9 +94,8 @@ for ldp in ldp_time_df['LD Panel'].unique():
     plt.figure(figsize=(7, 4))
     ax = sns.boxplot(x="Model", y="Duration", data=df,
                      showfliers=False, palette='Set2', order=[m for m in order if m in df['Model'].unique()])
-    ax.set_yscale('log')
     ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
-    plt.ylabel("Runtime log(Minutes)")
+    plt.ylabel("Runtime (Hours)")
 
     if args.prefix is None:
         final_output_dir = f"plots/runtime_stats/{ldp}"
@@ -127,9 +126,8 @@ for ldp in ldp_time_df['LD Panel'].unique():
     ax = sns.boxplot(x="Model", y="Duration", data=df, showfliers=False,
                      palette='Set2',
                      order=[m for m in order if m in df['Model'].unique()])
-    ax.set_yscale('log')
     ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
-    plt.ylabel("Runtime log(Minutes)")
+    plt.ylabel("Runtime (Hours)")
 
     if args.prefix is None:
         final_output_dir = f"plots/runtime_stats/{ldp}"
