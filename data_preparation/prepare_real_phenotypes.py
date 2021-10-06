@@ -212,10 +212,10 @@ asthma_like_idx = np.where(np.logical_or(
 
 asthma_df = df_disease[['FID', 'IID']]
 asthma_df['phenotype'] = 0
-asthma_df.values[asthma_like_idx, -1] = np.nan
+asthma_df.values[asthma_like_idx, -1] = -9
 asthma_df.values[asthma_idx, -1] = 1
 
-asthma_df.dropna(inplace=True)
+asthma_df = asthma_df.loc[asthma_df['phenotype'] != -9]
 asthma_df.to_csv("data/phenotypes/binary/real/ASTHMA.txt", sep="\t", index=False, header=False, na_rep='NA')
 
 # ------------------ T1D & T2D ------------------
@@ -241,21 +241,21 @@ t2d_idx = np.where(np.logical_or(
 # T1D:
 t1d_df = df_disease[['FID', 'IID']]
 t1d_df['phenotype'] = 0
-t1d_df.values[diabetes_like_idx, -1] = np.nan
+t1d_df.values[diabetes_like_idx, -1] = -9
 t1d_df.values[t1d_idx, -1] = 1
-t1d_df.values[t2d_idx, -1] = np.nan
+t1d_df.values[t2d_idx, -1] = -9
 
-t1d_df.dropna(inplace=True)
+t1d_df = t1d_df.loc[t1d_df['phenotype'] != -9]
 t1d_df.to_csv("data/phenotypes/binary/real/T1D.txt", sep="\t", index=False, header=False, na_rep='NA')
 
 # T2D:
 t2d_df = df_disease[['FID', 'IID']]
 t2d_df['phenotype'] = 0
-t2d_df.values[diabetes_like_idx, -1] = np.nan
+t2d_df.values[diabetes_like_idx, -1] = -9
 t2d_df.values[t2d_idx, -1] = 1
-t2d_df.values[t1d_idx, -1] = np.nan
+t2d_df.values[t1d_idx, -1] = -9
 
-t2d_df.dropna(inplace=True)
+t2d_df = t2d_df.loc[t2d_df['phenotype'] != -9]
 t2d_df.to_csv("data/phenotypes/binary/real/T2D.txt", sep="\t", index=False, header=False, na_rep='NA')
 
 # ------------------ RA ------------------
@@ -274,9 +274,9 @@ ra_like_idx = np.where(np.logical_or(
 
 ra_df = df_disease[['FID', 'IID']]
 ra_df['phenotype'] = 0
-ra_df.values[ra_like_idx, -1] = np.nan
+ra_df.values[ra_like_idx, -1] = -9
 ra_df.values[ra_idx, -1] = 1
 
-ra_df.dropna(inplace=True)
+ra_df = ra_df.loc[ra_df['phenotype'] != -9]
 ra_df.to_csv("data/phenotypes/binary/real/RA.txt", sep="\t", index=False, header=False, na_rep='NA')
 

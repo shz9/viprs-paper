@@ -24,7 +24,7 @@ parser.add_argument('-p', dest='prop_causal', type=float, default=0.01,
 parser.add_argument('-r', dest='replicate', type=int, default=1,
                     help='replicate number')
 parser.add_argument('-t', dest='type', type=str, default='quantitative',
-                    choice={'quantitative', 'binary'},
+                    choices={'quantitative', 'binary'},
                     help='Type of phenotype')
 
 args = parser.parse_args()
