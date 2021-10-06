@@ -24,8 +24,17 @@ if test -z "$pheno_file"; then
 fi
 
 config_dir=$(dirname "$pheno_file")
+reg_type=$(basename $(dirname "$config_dir")) # The regression type (logistic/linear)
 config_name=$(basename "$config_dir")  # The name of the simulation configuration
 pheno_id=$(basename "$pheno_file" .txt)  # Extract the phenotype ID
+
+if [ "${reg_type}" == "binary" ]; then
+  reg_type="logistic"
+  phenotype_code="--1"
+else
+  reg_type="linear"
+  phenotype_code=""
+fi
 
 cd /home/szabad/projects/def-sgravel/szabad/viprs-paper || exit
 
@@ -35,23 +44,25 @@ for chr in $(seq 1 22)
 do
   if [ "${standardize}" == 1 ]; then
     plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
-          --linear hide-covar cols=chrom,pos,alt1,ref,a1freq,nobs,beta,se,tz,p \
+          --"$reg_type" hide-covar cols=chrom,pos,alt1,ref,a1freq,nobs,beta,se,tz,p \
           --variance-standardize \
           --keep "$keep_file" \
           --allow-no-sex \
           --maf 0.01 \
           --mac 5 \
           --pheno "$pheno_file"  \
-          --out "$output_dir/chr_$chr"
+          --out "$output_dir/chr_$chr" \
+          "$phenotype_code"
   else
     plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
-          --linear hide-covar cols=chrom,pos,alt1,ref,a1freq,nobs,beta,se,tz,p \
+          --"$reg_type" hide-covar cols=chrom,pos,alt1,ref,a1freq,nobs,beta,se,tz,p \
           --keep "$keep_file" \
           --allow-no-sex \
           --maf 0.01 \
           --mac 5 \
           --pheno "$pheno_file"  \
-          --out "$output_dir/chr_$chr"
+          --out "$output_dir/chr_$chr" \
+          "$phenotype_code"
   fi
 done
 

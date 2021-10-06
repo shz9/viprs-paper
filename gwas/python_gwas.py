@@ -30,6 +30,7 @@ args = parser.parse_args()
 print(f"> Generating GWAS summary statistics for {args.pheno_file}")
 
 gdl = GWASDataLoader(f"data/ukbb_qc_genotypes/chr_{args.chromosome}",
+                     phenotype_likelihood=["gaussian", "binomial"]["binary" in args.pheno_file],
                      keep_individuals=args.keep_file,
                      compute_ld=False,
                      min_mac=5,
@@ -49,5 +50,6 @@ print(f"> Saving the results to: {args.output_dir}")
 
 ss_tables = gdl.to_sumstats_table(per_chromosome=True)
 for c, tab in ss_tables.items():
-    tab.to_csv(osp.join(args.output_dir, f"chr_{c}.PHENO1.glm.linear"), index=False, sep="\t")
+    file_ext = ["linear", "logistic"]["binary" in args.pheno_file]
+    tab.to_csv(osp.join(args.output_dir, f"chr_{c}.PHENO1.glm.{file_ext}"), index=False, sep="\t")
 

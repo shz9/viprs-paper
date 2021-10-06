@@ -19,10 +19,13 @@ parser.add_argument('-s', '--software', dest='software', type=str, default='plin
 parser.add_argument('-a', '--application', dest='application', type=str,
                     choices={'real', 'simulation'},
                     help='The category of phenotypes to consider')
+parser.add_argument('-t', '--type', dest='type', type=str, default='quantitative',
+                    choices={'quantitative', 'binary'},
+                    help='The type of phenotype to consider')
 
 args = parser.parse_args()
 
-pheno_dir = "data/phenotypes"
+pheno_dir = f"data/phenotypes/{args.type}"
 keepfile_dir = "data/keep_files"
 
 if args.pheno_name is not None:
@@ -50,15 +53,15 @@ for trait_f in glob.glob(pheno_dir):
             jobs.append({
                 'Trait': trait_f,
                 'Keep': keep_f,
-                'Name': f"{args.software}/{config}_{fold}/{trait}",
-                'Output': f"data/gwas/{config}_{fold}/{trait}"
+                'Name': f"{args.software}/{args.type}/{config}_{fold}/{trait}",
+                'Output': f"data/gwas/{args.type}/{config}_{fold}/{trait}"
             })
     else:
         jobs.append({
             'Trait': trait_f,
             'Keep': osp.join(keepfile_dir, "ukbb_train_subset.keep"),
-            'Name': f"{args.software}/{config}/{trait}",
-            'Output': f"data/gwas/{config}/{trait}"
+            'Name': f"{args.software}/{args.type}/{config}/{trait}",
+            'Output': f"data/gwas/{args.type}/{config}/{trait}"
         })
 
 if len(jobs) > 500:

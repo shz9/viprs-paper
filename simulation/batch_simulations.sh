@@ -1,7 +1,9 @@
 #!/bin/bash
 
-rm -rf ./log/simulation/ || true
-mkdir -p ./log/simulation/
+pheno_type=${1:-"quantitative"}
+
+rm -rf "./log/simulation/$pheno_type" || true
+mkdir -p "./log/simulation/$pheno_type"
 
 echo "Submitting jobs for performing phenotype simulation..."
 
@@ -15,7 +17,7 @@ do
   do
     for r in $(seq 1 $n_replicates)
     do
-      sbatch simulation/submit_sim_job.sh "$h" "$p" "$r"
+      sbatch -J "$pheno_type" simulation/submit_sim_job.sh "$h" "$p" "$r" "$pheno_type"
     done
   done
 done
