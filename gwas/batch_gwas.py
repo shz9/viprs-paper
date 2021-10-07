@@ -48,7 +48,7 @@ for trait_f in glob.glob(pheno_dir):
     config = osp.basename(osp.dirname(trait_f))
 
     if config == 'real':
-        for keep_f in glob.glob(osp.join(keepfile_dir, 'ukbb_cv', trait, "*/train.keep")):
+        for keep_f in glob.glob(osp.join(keepfile_dir, 'ukbb_cv', args.type, trait, "*/train.keep")):
             fold = osp.basename(osp.dirname(keep_f))
             jobs.append({
                 'Trait': trait_f,
