@@ -28,12 +28,18 @@ reg_type=$(basename $(dirname "$config_dir")) # The regression type (logistic/li
 config_name=$(basename "$config_dir")  # The name of the simulation configuration
 pheno_id=$(basename "$pheno_file" .txt)  # Extract the phenotype ID
 
+# Parse optional parameters:
+opt_params=()
+
 if [ "${reg_type}" == "binary" ]; then
   reg_type="logistic"
-  phenotype_code="--1"
+  opt_params+=(--1)
 else
   reg_type="linear"
-  phenotype_code=""
+fi
+
+if [ "${standardize}" == 1 ]; then
+  opt_params+=(--variance-standardize)
 fi
 
 cd /home/szabad/projects/def-sgravel/szabad/viprs-paper || exit
@@ -42,28 +48,15 @@ mkdir -p "$output_dir"  # Create the output directory
 
 for chr in $(seq 1 22)
 do
-  if [ "${standardize}" == 1 ]; then
-    plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
-          --"$reg_type" hide-covar cols=chrom,pos,alt1,ref,a1freq,nobs,beta,se,tz,p \
-          --variance-standardize \
-          --keep "$keep_file" \
-          --allow-no-sex \
-          --maf 0.01 \
-          --mac 5 \
-          --pheno "$pheno_file"  \
-          --out "$output_dir/chr_$chr" \
-          "$phenotype_code"
-  else
-    plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
-          --"$reg_type" hide-covar cols=chrom,pos,alt1,ref,a1freq,nobs,beta,se,tz,p \
-          --keep "$keep_file" \
-          --allow-no-sex \
-          --maf 0.01 \
-          --mac 5 \
-          --pheno "$pheno_file"  \
-          --out "$output_dir/chr_$chr" \
-          "$phenotype_code"
-  fi
+  plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
+         --"$reg_type" hide-covar cols=chrom,pos,alt1,ref,a1freq,nobs,beta,se,tz,p \
+         --keep "$keep_file" \
+         --allow-no-sex \
+         --maf 0.01 \
+         --mac 5 \
+         --pheno "$pheno_file"  \
+         --out "$output_dir/chr_$chr" \
+         "${opt_params[@]}"
 done
 
 echo "Job finished with exit code $? at: `date`"
