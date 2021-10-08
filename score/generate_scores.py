@@ -25,10 +25,12 @@ args = parser.parse_args()
 
 fit_dir = osp.normpath(args.fit_dir)
 trait = osp.basename(fit_dir)
-config = osp.basename(osp.dirname(fit_dir))
+config_dir = osp.dirname(fit_dir)
+config = osp.basename(config_dir)
+trait_type = osp.basename(osp.dirname(config_dir))
 
 if 'real' in config:
-    keep_file = f"data/keep_files/ukbb_cv/{trait}/{config.replace('real_', '')}/test.keep"
+    keep_file = f"data/keep_files/ukbb_cv/{trait_type}/{trait}/{config.replace('real_', '')}/test.keep"
 else:
     keep_file = "data/keep_files/ukbb_test_subset.keep"
 
@@ -44,7 +46,7 @@ prs_m.read_inferred_params(glob.glob(osp.join(fit_dir, "*.fit")))
 
 # Predict on the test set:
 print("> Generating polygenic scores...")
-prs = test_data.predict_plink(prs_m.inf_beta)
+prs = test_data.score_plink(prs_m.inf_beta)
 
 print("> Saving results...")
 # Save the PRS for this chromosome as a table:
