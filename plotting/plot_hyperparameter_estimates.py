@@ -90,7 +90,7 @@ if len(simulation_dfs) > 0:
 
     plt.figure(figsize=(9, 6))
     g = sns.catplot(x="Prop. Causal", y="Estimated Prop. Causal",
-                    hue="Model", col="Heritability", row='Class',
+                    hue="Model", col="Heritability",
                     data=final_simulation_df, kind="box", showfliers=False,
                     hue_order=model_order,
                     palette='Set2')
