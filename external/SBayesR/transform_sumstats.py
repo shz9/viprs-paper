@@ -9,6 +9,7 @@ parser.add_argument('-t', '--type', dest='type', type=str, default='plink',
                     choices={'plink', 'pystatgen'})
 args = parser.parse_args()
 
+print(f"> Transforming summary statistics file: {args.ss_file}")
 # Read the sumstats file:
 ss_df = pd.read_csv(args.ss_file, sep="\t")
 

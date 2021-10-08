@@ -12,10 +12,6 @@ source "$HOME/pyenv/bin/activate"
 echo "Transforming summary statistics to the GCTA-COJO .ma format..."
 echo "Start time: `date`"
 
-for ss_file in data/gwas/*/*/*/*.PHENO1.glm.*
-do
-  echo "> Transforming summary statistics file: $ss_file"
-  python external/SBayesR/transform_sumstats.py -s "$ss_file" -t "plink"
-done
+find data/gwas/*/*/*/ -type f -name *.PHENO1.glm.* | xargs -I @ -P 7 python external/SBayesR/transform_sumstats.py -s "@" -t "plink"
 
 echo "Job finished with exit code $? at: `date`"
