@@ -9,7 +9,7 @@ import os.path as osp
 import sys
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 import matplotlib.pyplot as plt
-from plot_utils import add_labels_to_bars, update_model_names
+from plot_utils import add_labels_to_bars, update_model_names, real_trait_order
 import seaborn as sns
 from utils import makedir
 import functools
@@ -19,13 +19,21 @@ print = functools.partial(print, flush=True)
 
 parser = argparse.ArgumentParser(description='Plot predictive performance')
 parser.add_argument('-m', '--models', dest='models', type=str)
+parser.add_argument('-t', '--type', dest='type', type=str, default='quantitative',
+                    choices={'quantitative', 'binary'},
+                    help='The type of phenotype to consider')
 parser.add_argument('--prefix', dest='prefix', type=str)
 parser.add_argument('--extension', dest='ext', type=str, default='eps')
 args = parser.parse_args()
 
 print("> Plotting predictive performance for different PRS methods...")
 
-pred_metrics = ['R2', 'Alt R2', 'Full R2', 'Naive R2', 'Pearson Correlation', 'Partial Correlation']
+if args.type == 'binary':
+    pred_metrics = ['ROC-AUC', 'Average Precision', 'PR-AUC']
+else:
+    pred_metrics = ['R2', 'Alt R2', 'Full R2', 'Naive R2', 'Pearson Correlation', 'Partial Correlation']
+
+
 order = [
     'VIPRS',
     'VIPRSSBayes',
@@ -38,19 +46,12 @@ order = [
     'PRScs',
     'PRSice2',
 ]
-trait_order = [
-    'HEIGHT', 'HDL', 'BMI',
-    'FVC', 'FEV1', 'HC',
-    'WC', 'LDL', 'BW',
-    'ASTHMA', 'T2D', 'T1D', 'RA'
-]
-
-# TODO: Put quantitative and binary phenotypes in separate panels.
+trait_order = real_trait_order(args.type)
 
 simulation_dfs = []
 real_dfs = []
 
-for f in glob.glob("data/evaluation/*/*/*.csv"):
+for f in glob.glob(f"data/evaluation/{args.type}/*/*.csv"):
 
     config = osp.basename(osp.dirname(f))
     df = pd.read_csv(f)
@@ -88,16 +89,15 @@ if len(simulation_dfs) > 0:
             g = sns.catplot(x="Heritability", y=metric,
                             hue="Model",
                             col="Prop. Causal",
-                            row="Class",
                             data=s_df, kind="box",
                             showfliers=False,
                             hue_order=model_order,
                             palette='Set2')
 
             if args.prefix is None:
-                final_output_dir = f"plots/predictive_performance/simulation/{ld_panel}"
+                final_output_dir = f"plots/predictive_performance/{args.type}/simulation/{ld_panel}"
             else:
-                final_output_dir = f"plots/predictive_performance/simulation/{ld_panel}/{args.prefix}"
+                final_output_dir = f"plots/predictive_performance/{args.type}/simulation/{ld_panel}/{args.prefix}"
 
             makedir(final_output_dir)
             plt.savefig(osp.join(final_output_dir, f"{metric}".replace(" ", "_") + "." + args.ext),
@@ -134,9 +134,9 @@ if len(real_dfs) > 0:
                 ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
 
             if args.prefix is None:
-                final_output_dir = f"plots/predictive_performance/real/{ld_panel}"
+                final_output_dir = f"plots/predictive_performance/{args.type}/real/{ld_panel}"
             else:
-                final_output_dir = f"plots/predictive_performance/real/{ld_panel}/{args.prefix}"
+                final_output_dir = f"plots/predictive_performance/{args.type}/real/{ld_panel}/{args.prefix}"
 
             makedir(final_output_dir)
             plt.savefig(osp.join(final_output_dir, f"{metric}".replace(" ", "_") + "." + args.ext),

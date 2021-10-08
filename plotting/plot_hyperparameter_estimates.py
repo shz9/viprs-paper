@@ -14,12 +14,15 @@ from utils import makedir
 import argparse
 import functools
 print = functools.partial(print, flush=True)
-from plot_utils import add_labels_to_bars, update_model_names
+from plot_utils import update_model_names, real_trait_order
 
 
 parser = argparse.ArgumentParser(description='Plot hyperparameter estimates')
 parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_50k_windowed')
 parser.add_argument('--extension', dest='ext', type=str, default='eps')
+parser.add_argument('-t', '--type', dest='type', type=str, default='quantitative',
+                    choices={'quantitative', 'binary'},
+                    help='The type of phenotype to consider')
 args = parser.parse_args()
 
 order = [
@@ -27,22 +30,15 @@ order = [
     'VIPRS-GS', 'VIPRS-GSv', 'VIPRS-GSl', 'VIPRS-GSvl',
     'VIPRS-BO', 'VIPRS-BOv',
     'SBayesR']
-trait_order = [
-    'HEIGHT', 'HDL', 'BMI',
-    'FVC', 'FEV1', 'HC',
-    'WC', 'LDL', 'BW',
-    'ASTHMA', 'T2D', 'T1D', 'RA'
-]
+trait_order = real_trait_order(args.type)
 
-# TODO: Put quantitative and binary phenotypes in separate panels.
-
-print("> Plotting hyperparameter estimates...")
+print(f"> Plotting hyperparameter estimates for {args.type} traits...")
 
 simulation_dfs = []
 real_dfs = []
 
-for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/*/*/*/combined.hyp") + \
-         glob.glob(f"data/model_fit/external/*/*/*/*/combined.hyp"):
+for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/{args.type}/*/*/combined.hyp") + \
+         glob.glob(f"data/model_fit/external/*/{args.type}/*/*/combined.hyp"):
 
     _, _, _, model, trait_type, config, trait, _ = f.split("/")
 
@@ -51,7 +47,6 @@ for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/*/*/*/combined.hyp") + \
 
     df['Model'] = model
     df['Trait'] = trait
-    df['Class'] = ['Quantitative', 'Binary'][trait_type == 'binary']
 
     if 'real' in config:
         real_dfs.append(df)
@@ -81,14 +76,16 @@ if len(simulation_dfs) > 0:
     model_order = [m for m in order if m in final_simulation_df['Model'].unique()]
 
     plt.figure(figsize=(9, 6))
-    g = sns.catplot(x="Heritability", y="Estimated Heritability",
-                    hue="Model", col="Prop. Causal", row="Class",
+    g = sns.catplot(x="Heritability",
+                    y="Estimated Heritability",
+                    hue="Model", col="Prop. Causal",
                     data=final_simulation_df, kind="box", showfliers=False,
                     hue_order=model_order,
                     palette='Set2')
 
-    makedir("plots/hyperparameters/simulation/h2g/")
-    plt.savefig(f"plots/hyperparameters/simulation/h2g/{args.ld_panel}_estimates." + args.ext, bbox_inches='tight')
+    makedir(f"plots/hyperparameters/{args.type}/simulation/h2g/")
+    plt.savefig(f"plots/hyperparameters/{args.type}/simulation/h2g/{args.ld_panel}_estimates." + args.ext,
+                bbox_inches='tight')
     plt.close()
 
     plt.figure(figsize=(9, 6))
@@ -99,8 +96,9 @@ if len(simulation_dfs) > 0:
                     palette='Set2')
     for i, ax in enumerate(g.fig.axes):
         ax.set_yscale('log')
-    makedir("plots/hyperparameters/simulation/pi/")
-    plt.savefig(f"plots/hyperparameters/simulation/pi/{args.ld_panel}_estimates." + args.ext, bbox_inches='tight')
+    makedir(f"plots/hyperparameters/{args.type}/simulation/pi/")
+    plt.savefig(f"plots/hyperparameters/{args.type}/simulation/pi/{args.ld_panel}_estimates." + args.ext,
+                bbox_inches='tight')
     plt.close()
 
 if len(real_dfs) > 0:
@@ -114,19 +112,20 @@ if len(real_dfs) > 0:
     model_order = [m for m in order if m in final_real_df['Model'].unique()]
 
     plt.figure(figsize=(9, 6))
-    g = sns.catplot(x="Model", y="Estimated Heritability", col="Trait", col_wrap=3,
+    g = sns.catplot(x="Model", y="Estimated Heritability", col="Trait", col_wrap=[3, 4][args.type == 'binary'],
                     data=final_real_df, kind="box", showfliers=False,
                     order=model_order, row_order=trait_order,
                     palette='Set2')
     for i, ax in enumerate(g.fig.axes):
         ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
 
-    makedir("plots/hyperparameters/real/h2g/")
-    plt.savefig(f"plots/hyperparameters/real/h2g/{args.ld_panel}_estimates." + args.ext, bbox_inches='tight')
+    makedir(f"plots/hyperparameters/{args.type}/real/h2g/")
+    plt.savefig(f"plots/hyperparameters/{args.type}/real/h2g/{args.ld_panel}_estimates." + args.ext,
+                bbox_inches='tight')
     plt.close()
 
     plt.figure(figsize=(9, 6))
-    g = sns.catplot(x="Model", y="Estimated Prop. Causal", col="Trait", col_wrap=4,
+    g = sns.catplot(x="Model", y="Estimated Prop. Causal", col="Trait", col_wrap=[3, 4][args.type == 'binary'],
                     data=final_real_df, kind="box", showfliers=False,
                     order=model_order,
                     row_order=trait_order,
@@ -134,7 +133,8 @@ if len(real_dfs) > 0:
     for i, ax in enumerate(g.fig.axes):
         ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
         ax.set_yscale('log')
-    makedir("plots/hyperparameters/real/pi/")
-    plt.savefig(f"plots/hyperparameters/real/pi/{args.ld_panel}_estimates." + args.ext, bbox_inches='tight')
+    makedir(f"plots/hyperparameters/{args.type}/real/pi/")
+    plt.savefig(f"plots/hyperparameters/{args.type}/real/pi/{args.ld_panel}_estimates." + args.ext,
+                bbox_inches='tight')
     plt.close()
 

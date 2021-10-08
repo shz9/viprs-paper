@@ -59,3 +59,15 @@ def add_labels_to_bars(g, rotation=90):
                     color='black',
                     rotation=rotation,
                     ha='center')
+
+
+def real_trait_order(trait_type):
+
+    if trait_type == 'quantitative':
+        return [
+            'HEIGHT', 'HDL', 'BMI',
+            'FVC', 'FEV1', 'HC',
+            'WC', 'LDL', 'BW'
+        ]
+    else:
+        return ['ASTHMA', 'T2D', 'T1D', 'RA']
