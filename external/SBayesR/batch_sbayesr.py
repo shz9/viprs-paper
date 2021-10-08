@@ -17,9 +17,12 @@ parser.add_argument('-c', '--config', dest='config', type=str,
 parser.add_argument('-a', '--application', dest='application', type=str,
                     choices={'real', 'simulation'},
                     help='The category of phenotypes to consider')
+parser.add_argument('-t', '--type', dest='type', type=str, default='quantitative',
+                    choices={'quantitative', 'binary'},
+                    help='The type of phenotype to consider')
 args = parser.parse_args()
 
-gwas_dir = "data/gwas/"
+gwas_dir = f"data/gwas/{args.type}"
 
 if args.pheno_name is not None:
     gwas_dir = osp.join(gwas_dir, "real_fold_*", args.pheno_name)
@@ -42,7 +45,7 @@ for gd in glob.glob(gwas_dir):
 
     jobs.append({
         'Trait': gd,
-        'Name': f"external/SBayesR/{config}/{trait}"
+        'Name': f"external/SBayesR/{args.type}/{config}/{trait}"
     })
 
 if len(jobs) > 500:

@@ -25,16 +25,18 @@ export OMP_NUM_THREADS=8
 ss_dir=$(readlink -e "$1") # Summary statistics directory
 
 trait=$(basename "$ss_dir")
-config=$(basename "$(dirname "$ss_dir")")
+config_dir=$(dirname "$ss_dir")
+config=$(basename "$config_dir")
+trait_type=$(basename $(dirname "$config_dir")) # The regression type (binary/quantitative)
 
 if [[ $config == *"real"* ]]; then
   fold_name="${config/real_/}"
-  N=$(wc -l < "data/keep_files/ukbb_cv/$trait/$fold_name/train.keep")
+  N=$(wc -l < "data/keep_files/ukbb_cv/$trait_type/$trait/$fold_name/train.keep")
 else
   N=$(wc -l < "data/keep_files/ukbb_train_subset.keep")
 fi
 
-output_dir="data/model_fit/external/PRScs/$config/$trait"
+output_dir="data/model_fit/external/PRScs/$trait_type/$config/$trait"
 
 mkdir -p "$output_dir"
 

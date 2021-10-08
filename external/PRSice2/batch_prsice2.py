@@ -17,9 +17,12 @@ parser.add_argument('-c', '--config', dest='config', type=str,
 parser.add_argument('-a', '--application', dest='application', type=str,
                     choices={'real', 'simulation'},
                     help='The category of phenotypes to consider')
+parser.add_argument('-t', '--type', dest='type', type=str, default='quantitative',
+                    choices={'quantitative', 'binary'},
+                    help='The type of phenotype to consider')
 args = parser.parse_args()
 
-gwas_dir = "data/gwas/"
+gwas_dir = f"data/gwas/{args.type}"
 
 if args.pheno_name is not None:
     gwas_dir = osp.join(gwas_dir, "real_fold_*", args.pheno_name)
@@ -41,14 +44,14 @@ for gd in glob.glob(gwas_dir):
     config = osp.basename(osp.dirname(gd))
 
     if 'real' in config:
-        keep_file = f"data/keep_files/ukbb_cv/{trait}/{config.replace('real_', '')}/validation.keep"
+        keep_file = f"data/keep_files/ukbb_cv/{args.type}/{trait}/{config.replace('real_', '')}/validation.keep"
     else:
         keep_file = "data/keep_files/ukbb_valid_subset.keep"
 
     jobs.append({
         'Trait': gd,
         'Keep': keep_file,
-        'Name': f"external/PRSice2/{config}/{trait}"
+        'Name': f"external/PRSice2/{args.type}/{config}/{trait}"
     })
 
 

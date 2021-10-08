@@ -20,4 +20,10 @@ elif args.type == 'plink':
 
 # Write the results to the same directory:
 ss_df.columns = ['SNP', 'A1', 'A2', 'freq', 'b', 'se', 'p', 'n']
-ss_df.to_csv(args.ss_file.replace(".PHENO1.glm.linear", ".ma"), sep="\t", index=False)
+
+if 'linear' in args.ss_file:
+    new_f_name = args.ss_file.replace(".PHENO1.glm.linear", ".ma")
+else:
+    new_f_name = args.ss_file.replace(".PHENO1.glm.logistic", ".ma")
+
+ss_df.to_csv(new_f_name, sep="\t", index=False)

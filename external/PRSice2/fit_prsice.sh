@@ -29,10 +29,12 @@ keep_file=$2   # Individual keep file for samples in the validation set
 sumstats_type=${3:-"plink"}
 
 trait=$(basename "$ss_dir")
-config=$(basename "$(dirname "$ss_dir")")
+config_dir=$(dirname "$ss_dir")
+config=$(basename "$config_dir")
+trait_type=$(basename $(dirname "$config_dir")) # The regression type (binary/quantitative)
 pheno_config="${config/_fold_*/}"
 
-output_dir="data/model_fit/external/PRSice2/$config/$trait/"
+output_dir="data/model_fit/external/PRSice2/$trait_type/$config/$trait/"
 
 mkdir -p "$output_dir"
 
@@ -44,6 +46,14 @@ else
   p_snp="SNP"
 fi
 
+if [ "${trait_type}" == "binary" ]; then
+  reg_type="logistic"
+  binary_target="T"
+else
+  reg_type="linear"
+  binary_target="F"
+fi
+
 SECONDS=0
 
 for chrom in $(seq 1 22)
@@ -51,17 +61,17 @@ do
   Rscript "$PRSiceHome/PRSice.R" \
           --dir "$R_LIBS" \
           --prsice "$PRSiceHome/PRSice_linux" \
-          --base "$ss_dir/chr_${chrom}.PHENO1.glm.linear" \
+          --base "$ss_dir/chr_${chrom}.PHENO1.glm.${reg_type}" \
           --ld "data/ukbb_qc_genotypes/chr_${chrom}" \
           --ld-keep "data/keep_files/ukbb_ld_50k_subset.keep" \
           --target "data/ukbb_qc_genotypes/chr_${chrom}" \
-          --pheno "data/phenotypes/$pheno_config/$trait.txt" \
+          --pheno "data/phenotypes/$trait_type/$pheno_config/$trait.txt" \
           --keep "$keep_file" \
           --pvalue "$p_pval" \
           --snp "$p_snp" \
           --A1 "A1" \
           --stat BETA \
-          --binary-target F \
+          --binary-target "$binary_target" \
           --print-snp \
           --out "$output_dir/chr_${chrom}"
 done

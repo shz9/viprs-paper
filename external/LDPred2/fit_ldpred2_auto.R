@@ -9,19 +9,27 @@ ss_dir_path <- args[1]
 ss_type <- args[2]
 
 # Get the number of available cores:
-NCORES <- nb_cores()
+NCORES <- 7
 print(paste("Using up to", NCORES, "threads."))
 
 # Extract information about the trait and configuration:
 trait <- basename(ss_dir_path)
-config <- basename(dirname(ss_dir_path))
+config_dir <- dirname(ss_dir_path)
+config <- basename(config_dir)
+trait_type <- basename(dirname(config_dir))
 trait_config <- gsub("_fold_[0-9]*", "", config)
+
+if (trait_type == "binary"){
+  reg_type <- "logistic"
+} else {
+  reg_type <- "logistic"
+}
 
 # ----------------------------------------------------------
 # Step 1: Prepare the GWAS summary statistics:
 
 for (chr in 1:22){
-  ss <- read.table(file.path(ss_dir_path, sprintf("chr_%d.PHENO1.glm.linear", chr)), header=TRUE)
+  ss <- read.table(file.path(ss_dir_path, sprintf("chr_%d.PHENO1.glm.%s", chr, reg_type)), header=TRUE)
 
   if (ss_type == "plink"){
     names(ss) <- c("chr", "pos", "rsid", "REF", "ALT1", "a1", "maf", "n_eff", "beta", "beta_se", "z", "p")
@@ -96,7 +104,7 @@ final_beta_auto <- rowMeans(beta_auto)
 
 # Create the output directory:
 
-dir.create(sprintf("data/model_fit/external/LDPred2-auto/%s/%s/", config, trait),
+dir.create(sprintf("data/model_fit/external/LDPred2-auto/%s/%s/%s/", trait_type, config, trait),
            showWarnings = FALSE,
            recursive = TRUE)
 
@@ -112,7 +120,7 @@ for (chr in 1:22) {
   chr_sumstats$BETA <- final_beta_auto[chr_snp_cond]
   names(chr_sumstats) <- c("CHR", "SNP", "A1", "A2", "PIP", "BETA")
   write.table(chr_sumstats,
-              sprintf("data/model_fit/external/LDPred2-auto/%s/%s/chr_%d.fit", config, trait, chr),
+              sprintf("data/model_fit/external/LDPred2-auto/%s/%s/%s/chr_%d.fit", trait_type, config, trait, chr),
               row.names = F,
               sep = "\t")
 }

@@ -23,7 +23,16 @@ for chrom in range(1, 23):
     best_p_threshold = best_fit['Threshold'][0]
 
     # Read the summary statistics table:
-    ss_table = pd.read_csv(osp.join(args.ss_dir, f"chr_{chrom}.PHENO1.glm.linear"), sep="\s+")
+    ss_filename = osp.join(args.ss_dir, f"chr_{chrom}.PHENO1.glm")
+
+    if osp.isfile(ss_filename + ".linear"):
+        ss_filename += ".linear"
+    elif osp.isfile(ss_filename + ".logistic"):
+        ss_filename += ".logistic"
+    else:
+        raise FileNotFoundError
+
+    ss_table = pd.read_csv(ss_filename, sep="\s+")
 
     if args.type == 'plink':
         ss_table['A2'] = ss_table.apply(lambda x: [x['ALT1'], x['REF']][x['A1'] == x['ALT1']], axis=1)

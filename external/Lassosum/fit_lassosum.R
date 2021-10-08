@@ -8,7 +8,9 @@ ss_type <- args[2]
 
 # Extract information about the trait and configuration:
 trait <- basename(ss_dir_path)
-config <- basename(dirname(ss_dir_path))
+config_dir <- dirname(ss_dir_path)
+config <- basename(config_dir)
+trait_type <- basename(dirname(config_dir))
 trait_config <- gsub("_fold_[0-9]*", "", config)
 
 # Options for Lassosum:
@@ -18,7 +20,8 @@ ref_keep <- "data/keep_files/ukbb_ld_10k_subset.keep"
 validation_dir <- "data/ukbb_qc_genotypes"
 
 if (trait_config == "real"){
-  validation_keep <- sprintf("data/keep_files/ukbb_cv/%s/%s/validation.keep", trait, gsub("real_", "", config))
+  validation_keep <- sprintf("data/keep_files/ukbb_cv/%s/%s/%s/validation.keep",
+                             trait_type, trait, gsub("real_", "", config))
 } else{
   validation_keep <- "data/keep_files/ukbb_valid_subset.keep"
 }
@@ -66,7 +69,7 @@ for (chr in 1:22) {
 }
 
 # Read the phenotype for the validation set:
-pheno <- read.table(paste0("data/phenotypes/", trait_config, "/", trait, ".txt"),
+pheno <- read.table(paste0("data/phenotypes/", trait_type, "/", trait_config, "/", trait, ".txt"),
                     header=FALSE, col.names=c('FID', 'IID', 'phenotype'))
 valid_df <- read.table(validation_keep, header=FALSE, col.names=c('FID', 'IID'))
 pheno <- merge(pheno, valid_df)
@@ -88,7 +91,7 @@ names(final_res_df) <- c("CHR", "SNP", "A1", "A2", "PIP", "BETA")
 
 # Create the output directory:
 
-dir.create(sprintf("data/model_fit/external/Lassosum/%s/%s/", config, trait),
+dir.create(sprintf("data/model_fit/external/Lassosum/%s/%s/%s/", trait_type, config, trait),
            showWarnings = FALSE,
            recursive = TRUE)
 
@@ -97,7 +100,7 @@ dir.create(sprintf("data/model_fit/external/Lassosum/%s/%s/", config, trait),
 for (chr in 1:22) {
   chr_sumstats <- final_res_df[final_res_df$CHR == chr,]
   write.table(chr_sumstats,
-              sprintf("data/model_fit/external/Lassosum/%s/%s/chr_%d.fit", config, trait, chr),
+              sprintf("data/model_fit/external/Lassosum/%s/%s/%s/chr_%d.fit", trait_type, config, trait, chr),
               row.names = F,
               sep = "\t")
 }

@@ -2,7 +2,7 @@
 #SBATCH --account=def-sgravel
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=2GB
-#SBATCH --time=01:30:00
+#SBATCH --time=04:00:00
 #SBATCH --output=./log/model_fit/%x.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
@@ -24,9 +24,11 @@ export OMP_NUM_THREADS=8
 ss_dir=$(readlink -e "$1") # Summary statistics directory
 
 trait=$(basename "$ss_dir")
-config=$(basename "$(dirname "$ss_dir")")
+config_dir=$(dirname "$ss_dir")
+config=$(basename "$config_dir")
+trait_type=$(basename $(dirname "$config_dir")) # The regression type (binary/quantitative)
 
-output_dir="data/model_fit/external/SBayesR/$config/$trait"
+output_dir="data/model_fit/external/SBayesR/$trait_type/$config/$trait"
 
 mkdir -p "$output_dir"
 

@@ -12,7 +12,7 @@ source "$HOME/pyenv/bin/activate"
 echo "Transforming summary statistics to the PRScs format..."
 echo "Start time: `date`"
 
-for ss_file in data/gwas/*/*/*.linear
+for ss_file in data/gwas/*/*/*/*.linear
 do
   echo "> Transforming summary statistics file: $ss_file"
   python external/PRScs/transform_sumstats.py -s "$ss_file" -t "plink"

@@ -17,6 +17,9 @@ parser.add_argument('-c', '--config', dest='config', type=str,
 parser.add_argument('-a', '--application', dest='application', type=str,
                     choices={'real', 'simulation'},
                     help='The category of phenotypes to consider')
+parser.add_argument('-t', '--type', dest='type', type=str, default='quantitative',
+                    choices={'quantitative', 'binary'},
+                    help='The type of phenotype to consider')
 parser.add_argument('--strategy', dest='strategy', type=str, default='EM',
                     choices={'EM', 'BMA', 'BO', 'GS'})
 parser.add_argument('-m', '--model', dest='model', type=str, default='VIPRS',
@@ -36,7 +39,7 @@ parser.add_argument('--local-grid', dest='localgrid', action='store_true', defau
 
 args = parser.parse_args()
 
-gwas_dir = "data/gwas/"
+gwas_dir = f"data/gwas/{args.type}"
 
 if args.pheno_name is not None:
     gwas_dir = osp.join(gwas_dir, "real_fold_*", args.pheno_name)
@@ -73,7 +76,7 @@ for gd in glob.glob(gwas_dir):
 
     jobs.append({
         'Trait': gd,
-        'Name': f"{args.ld_panel}/{model_name}/{config}/{trait}",
+        'Name': f"{args.ld_panel}/{model_name}/{args.type}/{config}/{trait}",
         'Model': args.model,
         'LD panel': args.ld_panel,
         'Strategy': args.strategy

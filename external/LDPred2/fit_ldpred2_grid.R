@@ -9,13 +9,21 @@ ss_dir_path <- args[1]
 ss_type <- args[2]
 
 # Get the number of available cores:
-NCORES <- nb_cores()
+NCORES <- 7
 print(paste("Using up to", NCORES, "threads."))
 
 # Extract information about the trait and configuration:
 trait <- basename(ss_dir_path)
-config <- basename(dirname(ss_dir_path))
+config_dir <- dirname(ss_dir_path)
+config <- basename(config_dir)
+trait_type <- basename(dirname(config_dir))
 trait_config <- gsub("_fold_[0-9]*", "", config)
+
+if (trait_type == "binary"){
+  reg_type <- "logistic"
+} else {
+  reg_type <- "logistic"
+}
 
 # ----------------------------------------------------------
 # Step 1: Prepare the validation dataset:
@@ -24,7 +32,8 @@ trait_config <- gsub("_fold_[0-9]*", "", config)
 # 1.1: Read the validation subset file:
 
 if (trait_config == "real"){
-  validation_subset_path <- sprintf("data/keep_files/ukbb_cv/%s/%s/validation.keep", trait, gsub("real_", "", config))
+  validation_subset_path <- sprintf("data/keep_files/ukbb_cv/%s/%s/%s/validation.keep",
+                                    trait_type, trait, gsub("real_", "", config))
 } else{
   validation_subset_path <- "data/keep_files/ukbb_valid_subset.keep"
 }
@@ -56,7 +65,7 @@ map_valid <- obj.bigSNP$map[-(2:3)]
 names(map_valid) <- c("chr", "pos", "a0", "a1")
 
 # Read the phenotypes for the validation set:
-y <- read.table(paste0("data/phenotypes/", trait_config, "/", trait, ".txt"),
+y <- read.table(paste0("data/phenotypes/", trait_type, "/", trait_config, "/", trait, ".txt"),
                 header=FALSE, col.names=c('FID', 'IID', 'phenotype'))
 y <- left_join(fam_list, y)$phenotype
 
@@ -66,7 +75,7 @@ ind.val2 <- ind_subset[!is.na(y[ind_subset])]
 # Step 2: Prepare the GWAS summary statistics:
 
 for (chr in 1:22){
-  ss <- read.table(file.path(ss_dir_path, sprintf("chr_%d.PHENO1.glm.linear", chr)), header=TRUE)
+  ss <- read.table(file.path(ss_dir_path, sprintf("chr_%d.PHENO1.glm.%s", chr, reg_type)), header=TRUE)
 
   if (ss_type == "plink"){
     names(ss) <- c("chr", "pos", "rsid", "REF", "ALT1", "a1", "maf", "n_eff", "beta", "beta_se", "z", "p")
@@ -141,7 +150,12 @@ pred_grid <- big_prodMat(G,
                          beta_grid,
                          ind.col = which(obj.bigSNP$map$marker.ID %in% subset_map_ldref$rsid),
                          ncores = NCORES)
-params$score <- big_univLinReg(as_FBM(pred_grid), y[ind.val2])$score
+
+if (trait_type == "binary"){
+  params$score <- big_univLogReg(as_FBM(pred_grid), y[ind.val2])$score
+} else {
+  params$score <- big_univLinReg(as_FBM(pred_grid), y[ind.val2])$score
+}
 
 
 best_beta_grid <- params %>%
@@ -156,7 +170,7 @@ best_beta_grid <- params %>%
 
 # Create the output directory:
 
-dir.create(sprintf("data/model_fit/external/LDPred2-grid/%s/%s/", config, trait),
+dir.create(sprintf("data/model_fit/external/LDPred2-grid/%s/%s/%s/", trait_type, config, trait),
            showWarnings = FALSE,
            recursive = TRUE)
 
@@ -173,7 +187,7 @@ for (chr in 1:22) {
   chr_sumstats$BETA <- best_beta_grid[chr_snp_cond]
   names(chr_sumstats) <- c("CHR", "SNP", "A1", "A2", "PIP", "BETA")
   write.table(chr_sumstats,
-              sprintf("data/model_fit/external/LDPred2-grid/%s/%s/chr_%d.fit", config, trait, chr),
+              sprintf("data/model_fit/external/LDPred2-grid/%s/%s/%s/chr_%d.fit", trait_type, config, trait, chr),
               row.names = F,
               sep = "\t")
 }

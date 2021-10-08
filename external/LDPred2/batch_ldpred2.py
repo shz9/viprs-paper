@@ -19,9 +19,12 @@ parser.add_argument('-a', '--application', dest='application', type=str,
                     help='The category of phenotypes to consider')
 parser.add_argument('-m', '--model', dest='model', type=str, default='inf',
                     choices={'inf', 'grid', 'auto'})
+parser.add_argument('-t', '--type', dest='type', type=str, default='quantitative',
+                    choices={'quantitative', 'binary'},
+                    help='The type of phenotype to consider')
 args = parser.parse_args()
 
-gwas_dir = "data/gwas/"
+gwas_dir = f"data/gwas/{args.type}"
 
 if args.pheno_name is not None:
     gwas_dir = osp.join(gwas_dir, "real_fold_*", args.pheno_name)
@@ -44,7 +47,7 @@ for gd in glob.glob(gwas_dir):
 
     jobs.append({
         'Trait': gd,
-        'Name': f"external/LDPred2-{args.model}/{config}/{trait}"
+        'Name': f"external/LDPred2-{args.model}/{args.type}/{config}/{trait}"
     })
 
 if len(jobs) > 500:
@@ -61,7 +64,7 @@ for job in jobs:
         pass
 
     if args.model == 'inf':
-        cmd = ["sbatch", "-J", job['Name'], "--time 00:30:00", "external/LDPred2/ldpred2_job.sh", job['Trait'], args.model]
+        cmd = ["sbatch", "-J", job['Name'], "--time 04:00:00", "external/LDPred2/ldpred2_job.sh", job['Trait'], args.model]
     else:
         cmd = ["sbatch", "-J", job['Name'], "external/LDPred2/ldpred2_job.sh", job['Trait'], args.model]
     print(" ".join(cmd))

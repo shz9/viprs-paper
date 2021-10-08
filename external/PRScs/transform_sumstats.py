@@ -20,4 +20,10 @@ elif args.type == 'plink':
     ss_df = ss_df[['ID', 'A1', 'A2', 'BETA', 'P']]
 
 ss_df.columns = ['SNP', 'A1', 'A2', 'BETA', 'P']
-ss_df.to_csv(args.ss_file.replace(".PHENO1.glm.linear", ".prscs.ss"), sep="\t", index=False)
+
+if 'linear' in args.ss_file:
+    new_f_name = args.ss_file.replace(".PHENO1.glm.linear", ".prscs.ss")
+else:
+    new_f_name = args.ss_file.replace(".PHENO1.glm.logistic", ".prscs.ss")
+
+ss_df.to_csv(new_f_name, sep="\t", index=False)

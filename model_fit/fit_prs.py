@@ -47,13 +47,14 @@ def main():
     args = parser.parse_args()
 
     ss_dir = osp.normpath(args.ss_dir)  # Get the summary statistics directory
+    trait_type = osp.basename(osp.dirname(osp.dirname(ss_dir)))
     config = osp.basename(osp.dirname(ss_dir))
     trait = osp.basename(ss_dir)
 
     print("> Processing GWAS summary statistics in:", ss_dir)
     print("> Loading the LD data and associated summary statistics file...")
 
-    ss_files = sorted(glob.glob(osp.join(ss_dir, "*.linear")),
+    ss_files = sorted(glob.glob(osp.join(ss_dir, "*.PHENO1.glm.*")),
                       key=lambda x: int(osp.basename(x).split('.')[0].split('_')[1]))
     ld_panel_files = [f"data/ld/{args.ld_panel}/ld/{osp.basename(ssf).split('.')[0]}" for ssf in ss_files]
 
@@ -83,9 +84,9 @@ def main():
         output_dir += "l"
 
     if args.genomewide:
-        output_dir = osp.join(output_dir + "-genomewide", config, trait)
+        output_dir = osp.join(output_dir + "-genomewide", trait_type, config, trait)
     else:
-        output_dir = osp.join(output_dir, config, trait)
+        output_dir = osp.join(output_dir, trait_type, config, trait)
 
     print("> Storing model fit results in:", output_dir)
     makedir(output_dir)
@@ -117,16 +118,17 @@ def main():
             print("> Reading validation dataset...")
 
             if 'real' in config:
-                validation_keep = f"data/keep_files/ukbb_cv/{trait}/{config.replace('real_', '')}/validation.keep"
+                validation_keep = f"data/keep_files/ukbb_cv/{trait_type}/{trait}/{config.replace('real_', '')}/validation.keep"
             else:
                 validation_keep = "data/keep_files/ukbb_valid_subset.keep"
 
             validation_gdl = GWASDataLoader(bed_files=[f"data/ukbb_qc_genotypes/chr_{chrom}.bed"
                                                        for chrom in gdl.chromosomes],
                                             keep_individuals=validation_keep,
+                                            phenotype_likelihood=['gaussian', 'binomial'][trait_type == 'binary'],
                                             min_maf=None,
                                             min_mac=None,
-                                            phenotype_file=f"data/phenotypes/{re.sub('_fold_[0-9]', '', config)}/{trait}.txt",
+                                            phenotype_file=f"data/phenotypes/{trait_type}/{re.sub('_fold_[0-9]', '', config)}/{trait}.txt",
                                             compute_ld=False,
                                             use_plink=True,
                                             temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
@@ -189,10 +191,7 @@ def main():
 
             # Write the per-chromosome estimates:
             chrom = gdl.chromosomes[0]
-            pd.DataFrame.from_dict({
-                'Heritability': m_h2g,
-                'Prop. Causal': m_p
-            }, orient='index').to_csv(osp.join(output_dir, f'chr_{chrom}.hyp'))
+            final_m.write_inferred_theta(osp.join(output_dir, f'chr_{chrom}.hyp'))
 
         # Write the validation results:
         if args.fitting_strategy in ('GS', 'BO'):
