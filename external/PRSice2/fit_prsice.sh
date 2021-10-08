@@ -71,6 +71,7 @@ do
           --snp "$p_snp" \
           --A1 "A1" \
           --stat BETA \
+          --thread 7 \
           --binary-target "$binary_target" \
           --print-snp \
           --out "$output_dir/chr_${chrom}"
