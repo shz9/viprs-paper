@@ -32,7 +32,7 @@ if (trait_config == "real"){
   validation_keep <- "data/keep_files/ukbb_valid_subset.keep"
 }
 
-cl <- makeCluster(6)
+cl <- makeCluster(7)
 
 for (chr in 1:22) {
 
