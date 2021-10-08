@@ -52,7 +52,7 @@ def process_trait(trait_f):
 
     pheno_df = pd.read_csv(trait_f, names=['FID', 'IID', 'phenotype'], sep="\s+")
     trait_type, config, trait = trait_f.split("/")[2:]
-    print("> Configuration:", config, " | Trait:", trait)
+    print("> Type:", trait_type, " | Configuration:", config, " | Trait:", trait)
     trait = trait.replace(".txt", "")
 
     if config == 'real':
@@ -83,6 +83,7 @@ def process_trait(trait_f):
             'Trait': trait,
             'LD Panel': ld_panel,
             'Model': model,
+            'Class': ['Quantitative', 'Binary'][trait_type == 'binary']
         })
         if config == 'real':
             res.update({'Fold': int(m_config.replace('real_fold_', ''))})

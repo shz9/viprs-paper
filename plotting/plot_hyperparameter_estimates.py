@@ -30,24 +30,28 @@ order = [
 trait_order = [
     'HEIGHT', 'HDL', 'BMI',
     'FVC', 'FEV1', 'HC',
-    'WC', 'LDL', 'BW'
+    'WC', 'LDL', 'BW',
+    'ASTHMA', 'T2D', 'T1D', 'RA'
 ]
+
+# TODO: Put quantitative and binary phenotypes in separate panels.
 
 print("> Plotting hyperparameter estimates...")
 
 simulation_dfs = []
 real_dfs = []
 
-for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/*/*/combined.hyp") + \
-         glob.glob(f"data/model_fit/external/*/*/*/combined.hyp"):
+for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/*/*/*/combined.hyp") + \
+         glob.glob(f"data/model_fit/external/*/*/*/*/combined.hyp"):
 
-    _, _, _, model, config, trait, _ = f.split("/")
+    _, _, _, model, trait_type, config, trait, _ = f.split("/")
 
     df = pd.read_csv(f, index_col=0).T
     df.columns = ['Estimated ' + c for c in df.columns]
 
     df['Model'] = model
     df['Trait'] = trait
+    df['Class'] = ['Quantitative', 'Binary'][trait_type == 'binary']
 
     if 'real' in config:
         real_dfs.append(df)
@@ -78,7 +82,7 @@ if len(simulation_dfs) > 0:
 
     plt.figure(figsize=(9, 6))
     g = sns.catplot(x="Heritability", y="Estimated Heritability",
-                    hue="Model", col="Prop. Causal",
+                    hue="Model", col="Prop. Causal", row="Class",
                     data=final_simulation_df, kind="box", showfliers=False,
                     hue_order=model_order,
                     palette='Set2')
@@ -89,7 +93,7 @@ if len(simulation_dfs) > 0:
 
     plt.figure(figsize=(9, 6))
     g = sns.catplot(x="Prop. Causal", y="Estimated Prop. Causal",
-                    hue="Model", col="Heritability",
+                    hue="Model", col="Heritability", row='Class',
                     data=final_simulation_df, kind="box", showfliers=False,
                     hue_order=model_order,
                     palette='Set2')
@@ -122,7 +126,7 @@ if len(real_dfs) > 0:
     plt.close()
 
     plt.figure(figsize=(9, 6))
-    g = sns.catplot(x="Model", y="Estimated Prop. Causal", col="Trait", col_wrap=3,
+    g = sns.catplot(x="Model", y="Estimated Prop. Causal", col="Trait", col_wrap=4,
                     data=final_real_df, kind="box", showfliers=False,
                     order=model_order,
                     row_order=trait_order,

@@ -41,13 +41,16 @@ order = [
 trait_order = [
     'HEIGHT', 'HDL', 'BMI',
     'FVC', 'FEV1', 'HC',
-    'WC', 'LDL', 'BW'
+    'WC', 'LDL', 'BW',
+    'ASTHMA', 'T2D', 'T1D', 'RA'
 ]
+
+# TODO: Put quantitative and binary phenotypes in separate panels.
 
 simulation_dfs = []
 real_dfs = []
 
-for f in glob.glob("data/evaluation/*/*.csv"):
+for f in glob.glob("data/evaluation/*/*/*.csv"):
 
     config = osp.basename(osp.dirname(f))
     df = pd.read_csv(f)
@@ -83,7 +86,9 @@ if len(simulation_dfs) > 0:
         for metric in pred_metrics:
             plt.figure(figsize=(9, 6))
             g = sns.catplot(x="Heritability", y=metric,
-                            hue="Model", col="Prop. Causal",
+                            hue="Model",
+                            col="Prop. Causal",
+                            row="Class",
                             data=s_df, kind="box",
                             showfliers=False,
                             hue_order=model_order,
@@ -118,7 +123,7 @@ if len(real_dfs) > 0:
         for metric in pred_metrics:
             fig = plt.figure(figsize=(9, 6))
             g = sns.catplot(x="Model", y=metric, col="Trait",
-                            data=r_df, kind="bar", col_wrap=3,
+                            data=r_df, kind="bar", col_wrap=4,
                             order=model_order,
                             row_order=trait_order,
                             col_order=trait_order,
