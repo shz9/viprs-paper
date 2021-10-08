@@ -123,7 +123,8 @@ if len(real_dfs) > 0:
         for metric in pred_metrics:
             fig = plt.figure(figsize=(9, 6))
             g = sns.catplot(x="Model", y=metric, col="Trait",
-                            data=r_df, kind="bar", col_wrap=4,
+                            data=r_df, kind="bar",
+                            col_wrap=[3, 4][args.type == 'binary'],
                             order=model_order,
                             row_order=trait_order,
                             col_order=trait_order,
