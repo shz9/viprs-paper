@@ -13,6 +13,12 @@ config <- basename(config_dir)
 trait_type <- basename(dirname(config_dir))
 trait_config <- gsub("_fold_[0-9]*", "", config)
 
+if (trait_type == "binary"){
+  reg_type <- "logistic"
+} else {
+  reg_type <- "logistic"
+}
+
 # Options for Lassosum:
 LDblocks <- "EUR.hg19"
 ref_dir <- "data/ukbb_qc_genotypes"
@@ -31,7 +37,7 @@ cl <- makeCluster(6)
 for (chr in 1:22) {
 
   print(sprintf("Processing Chromosome %d", chr))
-  ss <- read.table(file.path(ss_dir_path, sprintf("chr_%d.PHENO1.glm.linear", chr)), header=TRUE)
+  ss <- read.table(file.path(ss_dir_path, sprintf("chr_%d.PHENO1.glm.%s", chr, reg_type)), header=TRUE)
 
   if (ss_type == "plink"){
     names(ss) <- c("chr", "pos", "rsid", "REF", "ALT1", "a1", "maf", "n", "beta", "beta_se", "z", "p")
