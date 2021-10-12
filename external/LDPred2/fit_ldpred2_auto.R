@@ -22,7 +22,7 @@ trait_config <- gsub("_fold_[0-9]*", "", config)
 if (trait_type == "binary"){
   reg_type <- "logistic"
 } else {
-  reg_type <- "logistic"
+  reg_type <- "linear"
 }
 
 # ----------------------------------------------------------
