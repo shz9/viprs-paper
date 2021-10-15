@@ -95,7 +95,7 @@ if (trait_type == "binary"){
   neff_df <- read.table("metadata/n_eff_table.txt", header=1)
   n_eff <- neff_df[(neff_df$Trait == trait) &
                      (neff_df$Configuration == config) &
-                      (df$Class == trait_type), "N_eff"]
+                      (neff_df$Class == trait_type), "N_eff"]
   sumstats$n_eff <- n_eff
 }
 
