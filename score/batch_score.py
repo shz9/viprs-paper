@@ -22,7 +22,7 @@ parser.add_argument('-t', '--type', dest='type', type=str, default='quantitative
                     help='The type of phenotype to consider')
 parser.add_argument('-m', '--model', dest='model', type=str, default='all',
                     choices={'VIPRS', 'VIPRSSBayes', 'GibbsPRS', 'GibbsPRSSBayes',
-                             'VIPRS-BMA', 'VIPRS-BO', 'VIPRS-BOv',
+                             'VIPRS-BMA', 'VIPRS-BMAl', 'VIPRS-BO', 'VIPRS-BOv',
                              'VIPRS-GS', 'VIPRS-GSl', 'VIPRS-GSv', 'VIPRS-GSvl',
                              'VIPRSSBayes-BMA', 'VIPRSSBayes-BO', 'VIPRSSBayes-GS',
                              'SBayesR', 'PRSice2', 'LDPred2-inf', 'LDPred2-grid', 'LDPred2-auto',
