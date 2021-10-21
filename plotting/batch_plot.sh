@@ -19,6 +19,9 @@ python plotting/plot_predictive_performance.py -t "binary" -m "VIPRS,VIPRS-BOv,V
 # Figure that focuses on the grid metric:
 python plotting/plot_predictive_performance.py -m "VIPRS,VIPRS-BO,VIPRS-BOv,VIPRS-GSvl,VIPRS-GSl" --prefix "grid_metric"
 python plotting/plot_predictive_performance.py -t "binary" -m "VIPRS,VIPRS-BO,VIPRS-BOv,VIPRS-GSvl,VIPRS-GSl" --prefix "grid_metric"
+# Figure that focuses on Alpha model:
+python plotting/plot_predictive_performance.py -m "VIPRS,VIPRSAlpha,VIPRS-GSvl,VIPRSAlpha-GSvl,VIPRS-GSl,VIPRSAlpha-GSl" --prefix "alpha"
+python plotting/plot_predictive_performance.py -t "binary" -m "VIPRS,VIPRSAlpha,VIPRS-GSvl,VIPRSAlpha-GSvl,VIPRS-GSl,VIPRSAlpha-GSl" --prefix "alpha"
 
 # Main time figures in the manuscript:
 python plotting/plot_time_stats.py -m "PRSice2,Lassosum,LDPred2-grid,VIPRS,VIPRS-GSvl,SBayesR,PRScs" --prefix "main_figures"

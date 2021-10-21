@@ -60,9 +60,12 @@ def process_trait(trait_f):
     else:
         search_config = config
 
+    search_model = args.model.replace('all', '*')
+    search_panel = args.panel.replace('all', '*')
+
     pheno_res = []
 
-    for prs_file in glob.glob(f"data/test_scores/*/*/{trait_type}/{search_config}/{trait}.prs"):
+    for prs_file in glob.glob(f"data/test_scores/{search_panel}/{search_model}/{trait_type}/{search_config}/{trait}.prs"):
 
         ld_panel, model, _, m_config = prs_file.split("/")[2:6]
         print(f"> Evaluating {model} ({ld_panel})")
@@ -97,7 +100,28 @@ def process_trait(trait_f):
         eval_pheno_df['Heritability'] = float(h2)
         eval_pheno_df['Prop. Causal'] = float(p)
 
-    makedir(f"data/evaluation/{trait_type}/{config}/")
+    output_file = f"data/evaluation/{trait_type}/{config}/{trait}.csv"
+    makedir(osp.dirname(output_file))
+
+    if osp.isfile(output_file):
+        # If the file already exists, load it and merge the new results:
+        existing_df = pd.read_csv(output_file)
+
+        # Specify the columns to merge on:
+        merge_cols = ['Trait', 'LD Panel', 'Model', 'Class']
+        if config == 'real':
+            merge_cols += ['Fold']
+        else:
+            merge_cols += ['Heritability', 'Prop. Causal']
+
+        # Merge existing and new evaluation datasets:
+        eval_pheno_df = existing_df.merge(eval_pheno_df, how='outer', on=merge_cols)
+
+        # Update the dataframe to keep newer results:
+        for c in [col for col in eval_pheno_df.columns if '_y' in col]:
+            eval_pheno_df[c.replace('_y', '')] = eval_pheno_df[c].fillna(eval_pheno_df[c.replace('_y', '_x')])
+            eval_pheno_df.drop([c, c.replace('_y', '_x')], axis=1, inplace=True)
+
     eval_pheno_df.to_csv(f"data/evaluation/{trait_type}/{config}/{trait}.csv", index=False)
 
 
@@ -115,6 +139,27 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--type', dest='type', type=str, default='quantitative',
                         choices={'quantitative', 'binary'},
                         help='The type of phenotype to consider')
+    parser.add_argument('-m', '--model', dest='model', type=str, default='all',
+                        choices={'VIPRS', 'VIPRSAlpha', 'VIPRSSBayes',
+                                 'GibbsPRS', 'GibbsPRSSBayes',
+                                 'VIPRS-BMA', 'VIPRS-BMAl', 'VIPRS-BO', 'VIPRS-BOv',
+                                 'VIPRS-GS', 'VIPRS-GSl', 'VIPRS-GSv', 'VIPRS-GSvl',
+                                 'VIPRSAlpha-BMA', 'VIPRSAlpha-BMAl', 'VIPRSAlpha-BO', 'VIPRSAlpha-BOv',
+                                 'VIPRSAlpha-GS', 'VIPRSAlpha-GSl', 'VIPRSAlpha-GSv', 'VIPRSAlpha-GSvl',
+                                 'VIPRSSBayes-BMA', 'VIPRSSBayes-BMAl', 'VIPRSSBayes-BO', 'VIPRSSBayes-BOv',
+                                 'VIPRSSBayes-GS', 'VIPRSSBayes-GSl', 'VIPRSSBayes-GSv', 'VIPRSSBayes-GSvl',
+                                 'SBayesR',
+                                 'PRSice2',
+                                 'LDPred2-inf', 'LDPred2-grid', 'LDPred2-auto',
+                                 'PRScs',
+                                 'Lassosum',
+                                 'all'})
+    parser.add_argument('-l', '--panel', dest='panel', type=str, default='all',
+                        choices={'external', '1000G_sample', '1000G_shrinkage', '1000G_windowed', '1000G_block',
+                                 'ukbb_1k_sample', 'ukbb_1k_shrinkage', 'ukbb_1k_windowed', 'ukbb_1k_block',
+                                 'ukbb_10k_sample', 'ukbb_10k_shrinkage', 'ukbb_10k_windowed', 'ukbb_10k_block',
+                                 'ukbb_50k_sample', 'ukbb_50k_shrinkage', 'ukbb_50k_windowed', 'ukbb_50k_block',
+                                 'all'})
     args = parser.parse_args()
 
     pheno_dir = f"data/phenotypes/{args.type}"
