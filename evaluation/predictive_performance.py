@@ -93,6 +93,9 @@ def process_trait(trait_f):
 
         pheno_res.append(res)
 
+    if len(pheno_res) < 1:
+        return
+
     eval_pheno_df = pd.DataFrame(pheno_res)
 
     if config != 'real':

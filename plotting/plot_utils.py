@@ -4,8 +4,8 @@ def update_model_names(data_df):
     unique_models = data_df['Model'].unique()
     update_dict = {}
 
-    gs_models = [m for m in unique_models if 'VIPRS-GS' in m]
-    bo_models = [m for m in unique_models if 'VIPRS-BO' in m]
+    gs_models = [m for m in unique_models if '-GS' in m]
+    bo_models = [m for m in unique_models if '-BO' in m]
 
     if len(gs_models) > 0:
         if 'VIPRS-GS' in gs_models:

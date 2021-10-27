@@ -56,9 +56,20 @@ def main():
     print("> Processing GWAS summary statistics in:", ss_dir)
     print("> Loading the LD data and associated summary statistics file...")
 
-    ss_files = sorted(glob.glob(osp.join(ss_dir, "*.PHENO1.glm.*")),
-                      key=lambda x: int(osp.basename(x).split('.')[0].split('_')[1]))
-    ld_panel_files = [f"data/ld/{args.ld_panel}/ld/{osp.basename(ssf).split('.')[0]}" for ssf in ss_files]
+    if config == 'independent':
+        sumstats_format = 'LDSC'
+        if args.genomewide:
+            ss_files = osp.join(ss_dir, "combined.sumstats")
+        else:
+            ss_files = [osp.join(ss_dir, "combined.sumstats")]*22
+
+        ld_panel_files = [f"data/ld/{args.ld_panel}/ld/chr_{chrom}" for chrom in range(1, 23)]
+
+    else:
+        sumstats_format = 'plink'
+        ss_files = sorted(glob.glob(osp.join(ss_dir, "*.PHENO1.glm.*")),
+                          key=lambda x: int(osp.basename(x).split('.')[0].split('_')[1]))
+        ld_panel_files = [f"data/ld/{args.ld_panel}/ld/{osp.basename(ssf).split('.')[0]}" for ssf in ss_files]
 
     file_sets = []
 
@@ -93,9 +104,18 @@ def main():
     print("> Storing model fit results in:", output_dir)
     makedir(output_dir)
 
+    # Options to provide to the VIPRS objects:
+    run_opts = {}
+
     if args.fitting_strategy in ('BMA', 'GS'):
         load_ld = True
         max_iter = 100
+        if args.model == 'VIPRS':
+            run_opts = {'sigma_epsilon_steps': 9, 'pi_steps': 9}
+            opt_params = ['sigma_epsilon', 'pi']
+        elif args.model == 'VIPRSAlpha':
+            run_opts = {'sigma_epsilon_steps': 7, 'pi_steps': 7, 'alpha_steps': 5}
+            opt_params = ['sigma_epsilon', 'pi', 'alpha']
     elif 'sample' in args.ld_panel:
         load_ld = True
         max_iter = 500
@@ -112,7 +132,7 @@ def main():
 
         gdl = GWASDataLoader(ld_store_files=fs['LD'],
                              sumstats_files=fs['SS'],
-                             sumstats_format='plink',
+                             sumstats_format=sumstats_format,
                              temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 
         if args.fitting_strategy in ('GS', 'BO') and args.grid_metric == 'validation':
@@ -159,23 +179,29 @@ def main():
 
         try:
             if args.fitting_strategy == 'BO':
-                hs_m = BayesOpt(gdl, prs_m,
+                hs_m = BayesOpt(gdl,
+                                prs_m,
+                                opt_params=opt_params,
                                 validation_gdl=validation_gdl,
                                 objective=args.grid_metric)
             elif args.fitting_strategy == 'GS':
-                hs_m = GridSearch(gdl, prs_m,
+                hs_m = GridSearch(gdl,
+                                  prs_m,
+                                  opt_params=opt_params,
                                   validation_gdl=validation_gdl,
                                   objective=args.grid_metric,
                                   localized_grid=args.localgrid,
                                   n_jobs=7)
             elif args.fitting_strategy == 'BMA':
-                hs_m = BMA(gdl, prs_m,
+                hs_m = BMA(gdl,
+                           prs_m,
+                           opt_params=opt_params,
                            localized_grid=args.localgrid,
                            n_jobs=7)
             else:
                 hs_m = prs_m
 
-            final_m = hs_m.fit(max_iter=max_iter)
+            final_m = hs_m.fit(max_iter=max_iter, **run_opts)
         except Exception as e:
             print(e)
             if e.__class__.__name__ != 'OptimizationDivergence':
