@@ -105,3 +105,11 @@ mkdir -p ./data/gwas/binary/independent/PASS_ASTHMA
 
 wget https://storage.googleapis.com/broad-alkesgroup-public/LDSCORE/all_sumstats/UKB_460K.disease_ASTHMA_DIAGNOSED.sumstats \
     -O ./data/gwas/binary/independent/PASS_ASTHMA/combined.sumstats
+
+
+# ----------------------------------
+
+# Transform some of the summary statistics file:
+
+source "$HOME/pyenv/bin/activate"
+python data_preparation/transform_independent_sumstats.py
