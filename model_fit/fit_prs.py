@@ -148,13 +148,20 @@ def main():
             else:
                 validation_keep = "data/keep_files/ukbb_valid_subset.keep"
 
+            if 'real' in config:
+                phenotype_file = f"data/phenotypes/{trait_type}/real/{trait}.txt"
+            elif config == 'independent':
+                phenotype_file = f"data/phenotypes/{trait_type}/real/{trait.split('_')[-1]}.txt"
+            else:
+                phenotype_file = f"data/phenotypes/{trait_type}/{config}/{trait}.txt"
+
             validation_gdl = GWASDataLoader(bed_files=[f"data/ukbb_qc_genotypes/chr_{chrom}.bed"
                                                        for chrom in gdl.chromosomes],
                                             keep_individuals=validation_keep,
                                             phenotype_likelihood=['gaussian', 'binomial'][trait_type == 'binary'],
                                             min_maf=None,
                                             min_mac=None,
-                                            phenotype_file=f"data/phenotypes/{trait_type}/{re.sub('_fold_[0-9]', '', config)}/{trait}.txt",
+                                            phenotype_file=phenotype_file,
                                             compute_ld=False,
                                             use_plink=True,
                                             temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
