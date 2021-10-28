@@ -107,10 +107,10 @@ def main():
     # Options to provide to the VIPRS objects:
     run_opts = {}
 
-    if args.model == 'VIPRS':
-        opt_params = ['sigma_epsilon', 'pi']
-    else:
+    if args.model == 'VIPRSAlpha':
         opt_params = ['sigma_epsilon', 'pi', 'alpha']
+    else:
+        opt_params = ['sigma_epsilon', 'pi']
 
     if args.fitting_strategy in ('BMA', 'GS', 'BO'):
         load_ld = True
@@ -119,7 +119,7 @@ def main():
             if args.model == 'VIPRS':
                 run_opts = {'sigma_epsilon_steps': 9, 'pi_steps': 9}
             elif args.model == 'VIPRSAlpha':
-                run_opts = {'sigma_epsilon_steps': 7, 'pi_steps': 7, 'alpha_steps': 5}
+                run_opts = {'sigma_epsilon_steps': 9, 'pi_steps': 9, 'alpha_steps': 5}
     elif 'sample' in args.ld_panel:
         load_ld = True
         max_iter = 500

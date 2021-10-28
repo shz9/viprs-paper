@@ -101,7 +101,9 @@ for job in jobs:
 
     # Time specification:
     if args.strategy in ('BMA', 'GS', 'BO'):
-        if args.strategy in ('GS', 'BO') and args.grid_metric == 'validation':
+        if args.strategy == 'BO' and args.grid_metric == 'validation':
+            cmd += ["--time 7:0:0"]
+        elif args.model == 'VIPRSAlpha' and args.strategy in ('GS', 'BMA'):
             cmd += ["--time 7:0:0"]
         else:
             cmd += ["--time 4:0:0"]
