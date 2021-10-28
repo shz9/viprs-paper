@@ -78,10 +78,11 @@ for gd in glob.glob(gwas_dir):
 
     trait = osp.basename(gd)
     config = osp.basename(osp.dirname(gd))
+    trait_type = osp.basename(osp.dirname(osp.dirname(gd)))
 
     jobs.append({
         'Trait': gd,
-        'Name': f"{args.ld_panel}/{model_name}/{args.type}/{config}/{trait}",
+        'Name': f"{args.ld_panel}/{model_name}/{trait_type}/{config}/{trait}",
         'Model': args.model,
         'LD panel': args.ld_panel,
         'Strategy': args.strategy
@@ -107,7 +108,7 @@ for job in jobs:
         if args.strategy == 'BO' and args.grid_metric == 'validation':
             cmd += ["--time 7:0:0"]
         elif args.model == 'VIPRSAlpha' and args.strategy in ('GS', 'BMA'):
-            cmd += ["--time 7:0:0"]
+            cmd += ["--time 10:0:0"]
         else:
             cmd += ["--time 4:0:0"]
     elif 'sample' in args.ld_panel:
