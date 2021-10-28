@@ -17,8 +17,8 @@ parser.add_argument('-c', '--config', dest='config', type=str,
 parser.add_argument('-a', '--application', dest='application', type=str,
                     choices={'real', 'simulation', 'independent'},
                     help='The category of phenotypes to consider')
-parser.add_argument('-t', '--type', dest='type', type=str, default='quantitative',
-                    choices={'quantitative', 'binary'},
+parser.add_argument('-t', '--type', dest='type', type=str, default='all',
+                    choices={'quantitative', 'binary', 'all'},
                     help='The type of phenotype to consider')
 parser.add_argument('-m', '--model', dest='model', type=str, default='all',
                     choices={'VIPRS', 'VIPRSAlpha', 'VIPRSSBayes',
@@ -56,7 +56,10 @@ if args.model == 'all':
 else:
     model_fit_dir = osp.join(model_fit_dir, args.model)
 
-model_fit_dir = osp.join(model_fit_dir, args.type)
+if args.type == 'all':
+    model_fit_dir = osp.join(model_fit_dir, "*")
+else:
+    model_fit_dir = osp.join(model_fit_dir, args.type)
 
 if args.pheno_name is not None:
     model_fit_dir = osp.join(model_fit_dir, "real_fold_*", args.pheno_name)

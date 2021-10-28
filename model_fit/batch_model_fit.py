@@ -17,8 +17,8 @@ parser.add_argument('-c', '--config', dest='config', type=str,
 parser.add_argument('-a', '--application', dest='application', type=str,
                     choices={'real', 'simulation', 'independent'},
                     help='The category of phenotypes to consider')
-parser.add_argument('-t', '--type', dest='type', type=str, default='quantitative',
-                    choices={'quantitative', 'binary'},
+parser.add_argument('-t', '--type', dest='type', type=str, default='all',
+                    choices={'quantitative', 'binary', 'all'},
                     help='The type of phenotype to consider')
 parser.add_argument('--strategy', dest='strategy', type=str, default='EM',
                     choices={'EM', 'BMA', 'BO', 'GS'})
@@ -39,7 +39,10 @@ parser.add_argument('--local-grid', dest='localgrid', action='store_true', defau
 
 args = parser.parse_args()
 
-gwas_dir = f"data/gwas/{args.type}"
+if args.type == 'all':
+    gwas_dir = f"data/gwas/*"
+else:
+    gwas_dir = f"data/gwas/{args.type}"
 
 if args.pheno_name is not None:
     gwas_dir = osp.join(gwas_dir, "real_fold_*", args.pheno_name)
