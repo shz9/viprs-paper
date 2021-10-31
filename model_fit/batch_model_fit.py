@@ -72,6 +72,18 @@ if args.strategy in ('GS', 'BO') and args.grid_metric == 'validation':
 if args.strategy in ('GS', 'BMA') and args.localgrid:
     model_name += 'l'
 
+if args.fitting_strategy in ('BMA', 'GS', 'BO'):
+    model_name += '_'
+    for p in sorted(args.opt_params.split(',')):
+        if p == 'sigma_epsilon':
+            model_name += 'e'
+        elif p == 'sigma_beta':
+            model_name += 'b'
+        elif p == 'pi':
+            model_name += 'p'
+        elif p == 'alpha':
+            model_name += 'a'
+
 if args.genomewide:
     model_name += '-genomewide'
 
