@@ -45,6 +45,9 @@ def main():
                         choices={'ELBO', 'validation'})
     parser.add_argument('--local-grid', dest='localgrid', action='store_true', default=False,
                         help='Whether to use localized grid in GS/BMA')
+    parser.add_argument('--optimize-params', dest='opt_params', type=str,
+                        default='sigma_epsilon,pi',
+                        help='The hyperparameters to optimize using GridSearch/BMA/Bayesian optimization')
 
     args = parser.parse_args()
 
@@ -52,6 +55,7 @@ def main():
     trait_type = osp.basename(osp.dirname(osp.dirname(ss_dir)))
     config = osp.basename(osp.dirname(ss_dir))
     trait = osp.basename(ss_dir)
+    opt_params = args.opt_params.split(',')
 
     print("> Processing GWAS summary statistics in:", ss_dir)
     print("> Loading the LD data and associated summary statistics file...")
@@ -96,6 +100,18 @@ def main():
     if args.fitting_strategy in ('GS', 'BMA') and args.localgrid:
         output_dir += "l"
 
+    if args.fitting_strategy in ('BMA', 'GS', 'BO'):
+        output_dir += '_'
+        for p in sorted(opt_params):
+            if p == 'sigma_epsilon':
+                output_dir += 'e'
+            elif p == 'sigma_beta':
+                output_dir += 'b'
+            elif p == 'pi':
+                output_dir += 'p'
+            elif p == 'alpha':
+                output_dir += 'a'
+
     if args.genomewide:
         output_dir = osp.join(output_dir + "-genomewide", trait_type, config, trait)
     else:
@@ -107,19 +123,13 @@ def main():
     # Options to provide to the VIPRS objects:
     run_opts = {}
 
-    if args.model == 'VIPRSAlpha':
-        opt_params = ['sigma_epsilon', 'pi', 'alpha']
-    else:
-        opt_params = ['sigma_epsilon', 'pi']
-
     if args.fitting_strategy in ('BMA', 'GS', 'BO'):
         load_ld = True
         max_iter = 100
         if args.fitting_strategy in ('BMA', 'GS'):
-            if args.model == 'VIPRS':
-                run_opts = {'sigma_epsilon_steps': 9, 'pi_steps': 9}
-            elif args.model == 'VIPRSAlpha':
-                run_opts = {'sigma_epsilon_steps': 9, 'pi_steps': 9, 'alpha_steps': 5}
+            if len(opt_params) == 1:
+                for p in opt_params:
+                    run_opts = {p + '_steps': 30}
     elif 'sample' in args.ld_panel:
         load_ld = True
         max_iter = 500

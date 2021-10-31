@@ -16,6 +16,7 @@ fitting_method=${4-"EM"}
 genomewide=${5-false}
 local_grid=${6-false}
 grid_metric=${7-"ELBO"}
+opt_params=$8
 
 if [ "${fitting_method}" == "GS" ] || [ "${fitting_method}" == "BMA" ]; then
   source setup_python_environment.sh
@@ -39,15 +40,15 @@ SECONDS=0
 
 if [ "$genomewide" = true ]; then
   if [ "$local_grid" = true ]; then
-    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric" --local-grid --genomewide
+    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric" --local-grid --genomewide --opt-params "$opt_params"
   else
-    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric" --genomewide
+    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric" --genomewide --opt-params "$opt_params"
   fi
 else
   if [ "$local_grid" = true ]; then
-    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric" --local-grid
+    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric" --local-grid --opt-params "$opt_params"
   else
-    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric"
+    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric" --opt-params "$opt_params"
   fi
 fi
 

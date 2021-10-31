@@ -36,13 +36,13 @@ else:
 
 order = [
     'VIPRS', 'VIPRSAlpha', 'VIPRSSBayes',
-    'VIPRS-GS', 'VIPRSAlpha-GS' 
-    'VIPRS-GSv', 'VIPRSAlpha-GSv',
-    'VIPRS-GSl', 'VIPRSAlpha-GSl',
-    'VIPRS-GSvl', 'VIPRSAlpha-GSvl',
-    'VIPRS-BO',  'VIPRSAlpha-BO',
-    'VIPRS-BOv', 'VIPRSAlpha-BOv',
-    'VIPRS-BMA', 'VIPRSAlpha-BMA',
+    'VIPRS-GS', 'VIPRSAlpha-GS', 'VIPRSSBayes-GS',
+    'VIPRS-GSv', 'VIPRSAlpha-GSv', 'VIPRSSBayes-GSv',
+    'VIPRS-GSl', 'VIPRSAlpha-GSl', 'VIPRSSBayes-GSl',
+    'VIPRS-GSvl', 'VIPRSAlpha-GSvl', 'VIPRSSBayes-GSvl',
+    'VIPRS-BO',  'VIPRSAlpha-BO', 'VIPRSSBayes-BO',
+    'VIPRS-BOv', 'VIPRSAlpha-BOv', 'VIPRSSBayes-BOv',
+    'VIPRS-BMA', 'VIPRSAlpha-BMA', 'VIPRSSBayes-BMA',
     'SBayesR',
     'Lassosum',
     'LDPred2-inf', 'LDPred2-auto', 'LDPred2-grid',

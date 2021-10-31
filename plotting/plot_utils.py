@@ -4,26 +4,30 @@ def update_model_names(data_df):
     unique_models = data_df['Model'].unique()
     update_dict = {}
 
-    gs_models = [m for m in unique_models if '-GS' in m]
-    bo_models = [m for m in unique_models if '-BO' in m]
+    base_models = ['VIPRS', 'VIPRSAlpha', 'VIPRSSBayes']
 
-    if len(gs_models) > 0:
-        if 'VIPRS-GS' in gs_models:
-            update_dict.update({m: m for m in gs_models})
-        else:
-            u_gs_models = [gsm.replace('l', '') for gsm in gs_models]
-            if len(u_gs_models) == 1:
-                update_dict.update({gs_models[0]: u_gs_models[0].replace('v', '')})
+    for bm in base_models:
+
+        gs_models = [m for m in unique_models if f'{bm}-GS' in m]
+        bo_models = [m for m in unique_models if f'{bm}-BO' in m]
+
+        if len(gs_models) > 0:
+            if f'{bm}-GS' in gs_models:
+                update_dict.update({m: m for m in gs_models})
             else:
-                update_dict.update(dict(zip(gs_models, u_gs_models)))
+                u_gs_models = [bm + '-' + gsm.split('-')[-1].replace('l', '') for gsm in gs_models]
+                if len(u_gs_models) == 1:
+                    update_dict.update({gs_models[0]: u_gs_models[0].replace('v', '')})
+                else:
+                    update_dict.update(dict(zip(gs_models, u_gs_models)))
 
-    if len(bo_models) > 1:
-        update_dict.update({m: m for m in bo_models})
-    elif len(bo_models) == 1:
-        update_dict.update({bo_models[0]: bo_models[0].replace('v', '')})
+        if len(bo_models) > 1:
+            update_dict.update({m: m for m in bo_models})
+        elif len(bo_models) == 1:
+            update_dict.update({bo_models[0]: bo_models[0].replace('v', '')})
 
     for m in unique_models:
-        if m not in gs_models and m not in bo_models:
+        if m not in update_dict:
             update_dict.update({m: m})
 
     data_df['Model'] = data_df['Model'].map(update_dict)

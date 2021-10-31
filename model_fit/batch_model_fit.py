@@ -36,6 +36,9 @@ parser.add_argument('--grid-metric', dest='grid_metric', type=str, default='ELBO
                     choices={'ELBO', 'validation'})
 parser.add_argument('--local-grid', dest='localgrid', action='store_true', default=False,
                     help='Whether to use localized grid in GS/BMA')
+parser.add_argument('--optimize-params', dest='opt_params', type=str,
+                    default='sigma_epsilon,pi',
+                    help='The hyperparameters to optimize using GridSearch/BMA/Bayesian optimization')
 
 args = parser.parse_args()
 
@@ -107,8 +110,6 @@ for job in jobs:
     if args.strategy in ('BMA', 'GS', 'BO'):
         if args.strategy == 'BO' and args.grid_metric == 'validation':
             cmd += ["--time 7:0:0"]
-        elif args.model == 'VIPRSAlpha' and args.strategy in ('GS', 'BMA'):
-            cmd += ["--time 10:0:0"]
         else:
             cmd += ["--time 4:0:0"]
     elif 'sample' in args.ld_panel:
@@ -139,6 +140,7 @@ for job in jobs:
         cmd += ['false']
 
     cmd += [args.grid_metric]
+    cmd += [args.opt_params]
 
     print(" ".join(cmd))
     result = subprocess.run(" ".join(cmd), shell=True, capture_output=True)
