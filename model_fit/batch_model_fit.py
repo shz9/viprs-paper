@@ -36,7 +36,7 @@ parser.add_argument('--grid-metric', dest='grid_metric', type=str, default='ELBO
                     choices={'ELBO', 'validation'})
 parser.add_argument('--local-grid', dest='localgrid', action='store_true', default=False,
                     help='Whether to use localized grid in GS/BMA')
-parser.add_argument('--optimize-params', dest='opt_params', type=str,
+parser.add_argument('--opt-params', dest='opt_params', type=str,
                     default='sigma_epsilon,pi',
                     help='The hyperparameters to optimize using GridSearch/BMA/Bayesian optimization')
 
