@@ -72,7 +72,7 @@ if args.strategy in ('GS', 'BO') and args.grid_metric == 'validation':
 if args.strategy in ('GS', 'BMA') and args.localgrid:
     model_name += 'l'
 
-if args.fitting_strategy in ('BMA', 'GS', 'BO'):
+if args.strategy in ('BMA', 'GS', 'BO'):
     model_name += '_'
     for p in sorted(args.opt_params.split(',')):
         if p == 'sigma_epsilon':
