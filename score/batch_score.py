@@ -20,21 +20,7 @@ parser.add_argument('-a', '--application', dest='application', type=str,
 parser.add_argument('-t', '--type', dest='type', type=str, default='all',
                     choices={'quantitative', 'binary', 'all'},
                     help='The type of phenotype to consider')
-parser.add_argument('-m', '--model', dest='model', type=str, default='all',
-                    choices={'VIPRS', 'VIPRSAlpha', 'VIPRSSBayes',
-                             'GibbsPRS', 'GibbsPRSSBayes',
-                             'VIPRS-BMA', 'VIPRS-BMAl', 'VIPRS-BO', 'VIPRS-BOv',
-                             'VIPRS-GS', 'VIPRS-GSl', 'VIPRS-GSv', 'VIPRS-GSvl',
-                             'VIPRSAlpha-BMA', 'VIPRSAlpha-BMAl', 'VIPRSAlpha-BO', 'VIPRSAlpha-BOv',
-                             'VIPRSAlpha-GS', 'VIPRSAlpha-GSl', 'VIPRSAlpha-GSv', 'VIPRSAlpha-GSvl',
-                             'VIPRSSBayes-BMA', 'VIPRSSBayes-BMAl', 'VIPRSSBayes-BO', 'VIPRSSBayes-BOv',
-                             'VIPRSSBayes-GS', 'VIPRSSBayes-GSl', 'VIPRSSBayes-GSv', 'VIPRSSBayes-GSvl',
-                             'SBayesR',
-                             'PRSice2',
-                             'LDPred2-inf', 'LDPred2-grid', 'LDPred2-auto',
-                             'PRScs',
-                             'Lassosum',
-                             'all'})
+parser.add_argument('-m', '--model', dest='model', type=str, required=True)
 parser.add_argument('-l', '--panel', dest='panel', type=str, default='all',
                     choices={'external', '1000G_sample', '1000G_shrinkage', '1000G_windowed', '1000G_block',
                              'ukbb_1k_sample', 'ukbb_1k_shrinkage', 'ukbb_1k_windowed', 'ukbb_1k_block',
@@ -84,6 +70,9 @@ for mdir in glob.glob(model_fit_dir):
         'Trait': mdir,
         'Name': mdir.replace('data/model_fit/', '')
     })
+
+if len(jobs) < 1:
+    raise Exception("No model fits were found with the required characteristics:", model_fit_dir)
 
 for job in jobs:
 
