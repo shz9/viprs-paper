@@ -21,7 +21,7 @@ parser.add_argument('-t', '--type', dest='type', type=str, default='all',
                     choices={'quantitative', 'binary', 'all'},
                     help='The type of phenotype to consider')
 parser.add_argument('-m', '--model', dest='model', type=str, required=True)
-parser.add_argument('-l', '--panel', dest='panel', type=str, default='all',
+parser.add_argument('-l', '--panel', dest='panel', type=str, default='ukbb_50k_windowed',
                     choices={'external', '1000G_sample', '1000G_shrinkage', '1000G_windowed', '1000G_block',
                              'ukbb_1k_sample', 'ukbb_1k_shrinkage', 'ukbb_1k_windowed', 'ukbb_1k_block',
                              'ukbb_10k_sample', 'ukbb_10k_shrinkage', 'ukbb_10k_windowed', 'ukbb_10k_block',
@@ -37,10 +37,7 @@ if args.panel == 'all':
 else:
     model_fit_dir = osp.join(model_fit_dir, args.panel)
 
-if args.model == 'all':
-    model_fit_dir = osp.join(model_fit_dir, "*")
-else:
-    model_fit_dir = osp.join(model_fit_dir, args.model)
+model_fit_dir = osp.join(model_fit_dir, args.model)
 
 if args.type == 'all':
     model_fit_dir = osp.join(model_fit_dir, "*")
