@@ -22,6 +22,8 @@ parser.add_argument('-m', '--models', dest='models', type=str)
 parser.add_argument('-t', '--type', dest='type', type=str, default='quantitative',
                     choices={'quantitative', 'binary'},
                     help='The type of phenotype to consider')
+parser.add_argument('--rename', dest='rename', action='store_false', default=True,
+                    help='Rename the models if necessary')
 parser.add_argument('--prefix', dest='prefix', type=str)
 parser.add_argument('--extension', dest='ext', type=str, default='eps')
 args = parser.parse_args()
@@ -77,7 +79,8 @@ if len(simulation_dfs) > 0:
     final_simulation_df = pd.concat(simulation_dfs)
 
     # Update the names of the model for final display in the plot:
-    final_simulation_df = update_model_names(final_simulation_df)
+    if args.rename:
+        final_simulation_df = update_model_names(final_simulation_df)
 
     for ld_panel in final_simulation_df['LD Panel'].unique():
 
@@ -85,7 +88,11 @@ if len(simulation_dfs) > 0:
             continue
 
         s_df = final_simulation_df.loc[final_simulation_df['LD Panel'].isin([ld_panel, 'external'])]
-        model_order = [m for m in order if m in s_df['Model'].unique()]
+
+        if args.rename:
+            model_order = [m for m in order if m in s_df['Model'].unique()]
+        else:
+            model_order = s_df['Model'].unique()
 
         for metric in pred_metrics:
             plt.figure(figsize=(9, 6))
@@ -113,7 +120,8 @@ if len(real_dfs) > 0:
     final_real_df = pd.concat(real_dfs)
 
     # Update the names of the model for final display in the plot:
-    final_real_df = update_model_names(final_real_df)
+    if args.rename:
+        final_real_df = update_model_names(final_real_df)
 
     for ld_panel in final_real_df['LD Panel'].unique():
 
@@ -121,7 +129,11 @@ if len(real_dfs) > 0:
             continue
 
         r_df = final_real_df.loc[final_real_df['LD Panel'].isin([ld_panel, 'external'])]
-        model_order = [m for m in order if m in r_df['Model'].unique()]
+
+        if args.rename:
+            model_order = [m for m in order if m in r_df['Model'].unique()]
+        else:
+            model_order = r_df['Model'].unique()
 
         for metric in pred_metrics:
             fig = plt.figure(figsize=(9, 6))

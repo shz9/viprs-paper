@@ -4,7 +4,7 @@ def update_model_names(data_df):
     unique_models = data_df['Model'].unique()
     update_dict = {}
 
-    base_models = ['VIPRS', 'VIPRSAlpha', 'VIPRSSBayes']
+    base_models = ['VIPRS', 'VIPRSAlpha', 'VIPRSSBayes', 'VIPRSSBayesAlpha']
 
     for bm in base_models:
 
