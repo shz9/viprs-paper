@@ -16,6 +16,7 @@ from gwasimulator.GWASDataLoader import GWASDataLoader
 from vemPRS.prs.src.VIPRS import VIPRS
 from vemPRS.prs.src.VIPRSAlpha import VIPRSAlpha
 from vemPRS.prs.src.VIPRSSBayes import VIPRSSBayes
+from vemPRS.prs.src.VIPRSSBayesAlpha import VIPRSSBayesAlpha
 from vemPRS.prs.src.GibbsPRS import GibbsPRS
 from vemPRS.prs.src.GibbsPRSSBayes import GibbsPRSSBayes
 from vemPRS.prs.src.HyperparameterSearch import BMA, GridSearch, BayesOpt
@@ -31,7 +32,8 @@ def main():
 
     parser.add_argument('-m', '--model', dest='model', type=str, default='VIPRS',
                         help='The PRS model to fit',
-                        choices={'VIPRS', 'VIPRSAlpha', 'VIPRSSBayes', 'GibbsPRS', 'GibbsPRSSBayes'})
+                        choices={'VIPRS', 'VIPRSAlpha', 'VIPRSSBayes',
+                                 'VIPRSSBayesAlpha', 'GibbsPRS', 'GibbsPRSSBayes'})
     parser.add_argument('-f', '--fitting-strategy', dest='fitting_strategy', type=str, default='EM',
                         help='The strategy for fitting the hyperparameters', choices={'EM', 'BO', 'GS', 'BMA'})
     parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_50k_windowed',
@@ -187,6 +189,8 @@ def main():
             prs_m = VIPRSAlpha(gdl, load_ld=load_ld)
         elif args.model == 'VIPRSSBayes':
             prs_m = VIPRSSBayes(gdl, load_ld=load_ld)
+        elif args.model == 'VIPRSSBayesAlpha':
+            prs_m = VIPRSSBayesAlpha(gdl, load_ld=load_ld)
         elif args.model == 'GibbsPRS':
             prs_m = GibbsPRS(gdl, load_ld=load_ld)
         elif args.model == 'GibbsPRSSBayes':

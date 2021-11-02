@@ -23,6 +23,13 @@ python plotting/plot_predictive_performance.py -t "binary" -m "VIPRS,VIPRS-BO,VI
 python plotting/plot_predictive_performance.py -m "VIPRS,VIPRSAlpha,VIPRS-GSvl,VIPRSAlpha-GSvl,VIPRS-GSl,VIPRSAlpha-GSl" --prefix "alpha"
 python plotting/plot_predictive_performance.py -t "binary" -m "VIPRS,VIPRSAlpha,VIPRS-GSvl,VIPRSAlpha-GSvl,VIPRS-GSl,VIPRSAlpha-GSl" --prefix "alpha"
 
+
+# Experimental: Examining effect of different VIPRS formulations:
+python plotting/plot_predictive_performance.py -m "SBayesR,VIPRS,VIPRS-GSvl,VIPRS_GSv_p,VIPRS-GSvl_e,VIPRS-GSv_e" --prefix "viprs_gs_v"
+python plotting/plot_predictive_performance.py -m "SBayesR,VIPRS,VIPRS-GSl,VIPRS_GS_p,VIPRS-GSl_e,VIPRS-GS_e" --prefix "viprs_gs"
+python plotting/plot_predictive_performance.py -m "SBayesR,VIPRS,VIPRSSBayes,VIPRSSBayes-GS_p,VIPRSSBayes-GSv_p,VIPRSSBayes-GSl_pb,VIPRSSBayes-GSvl_pb" --prefix "viprssbayes_gs"
+
+
 # Main time figures in the manuscript:
 python plotting/plot_time_stats.py -m "PRSice2,Lassosum,LDPred2-grid,VIPRS,VIPRS-GSvl,SBayesR,PRScs" --prefix "main_figures"
 # Expanded figure (includes more model variations)
