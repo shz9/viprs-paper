@@ -132,6 +132,10 @@ def main():
             if len(opt_params) == 1:
                 for p in opt_params:
                     run_opts = {p + '_steps': 30}
+            elif len(opt_params) == 2 and 'alpha' in opt_params:
+                for p in opt_params:
+                    if p != 'alpha':
+                        run_opts = {p + '_steps': 20}
     elif 'sample' in args.ld_panel:
         load_ld = True
         max_iter = 500

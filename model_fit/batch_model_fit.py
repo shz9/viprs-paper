@@ -122,6 +122,8 @@ for job in jobs:
     if args.strategy in ('BMA', 'GS', 'BO'):
         if args.strategy == 'BO' and args.grid_metric == 'validation':
             cmd += ["--time 7:0:0"]
+        elif args.opt_params.count(',') > 1:
+            cmd += ["--time 8:0:0"]
         else:
             cmd += ["--time 4:0:0"]
     elif 'sample' in args.ld_panel:
