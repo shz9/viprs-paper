@@ -1,6 +1,6 @@
 [submodule "gwasimulator"]
 	path = gwasimulator
 	url = https://github.com/shz9/gwasimulator.git
-[submodule "vemPRS"]
-	path = vemPRS
-	url = https://github.com/shz9/vemPRS.git
+[submodule "viprs"]
+	path = viprs
+	url = https://github.com/shz9/viprs.git

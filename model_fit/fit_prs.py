@@ -13,13 +13,14 @@ import re
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 sys.path.append("vemPRS/")
 from gwasimulator.GWASDataLoader import GWASDataLoader
-from vemPRS.prs.src.VIPRS import VIPRS
-from vemPRS.prs.src.VIPRSAlpha import VIPRSAlpha
-from vemPRS.prs.src.VIPRSSBayes import VIPRSSBayes
-from vemPRS.prs.src.VIPRSSBayesAlpha import VIPRSSBayesAlpha
-from vemPRS.prs.src.GibbsPRS import GibbsPRS
-from vemPRS.prs.src.GibbsPRSSBayes import GibbsPRSSBayes
-from vemPRS.prs.src.HyperparameterSearch import BMA, GridSearch, BayesOpt
+from viprs.prs.src.VIPRS import VIPRS
+from viprs.prs.src.VIPRSMix import VIPRSMix
+from viprs.prs.src.VIPRSAlpha import VIPRSAlpha
+from viprs.prs.src.VIPRSSBayes import VIPRSSBayes
+from viprs.prs.src.VIPRSSBayesAlpha import VIPRSSBayesAlpha
+from viprs.prs.src.GibbsPRS import GibbsPRS
+from viprs.prs.src.GibbsPRSSBayes import GibbsPRSSBayes
+from viprs.prs.src.HyperparameterSearch import BMA, GridSearch, BayesOpt
 from utils import makedir
 import argparse
 import functools
@@ -32,7 +33,7 @@ def main():
 
     parser.add_argument('-m', '--model', dest='model', type=str, default='VIPRS',
                         help='The PRS model to fit',
-                        choices={'VIPRS', 'VIPRSAlpha', 'VIPRSSBayes',
+                        choices={'VIPRS', 'VIPRSMix', 'VIPRSAlpha', 'VIPRSSBayes',
                                  'VIPRSSBayesAlpha', 'GibbsPRS', 'GibbsPRSSBayes'})
     parser.add_argument('-f', '--fitting-strategy', dest='fitting_strategy', type=str, default='EM',
                         help='The strategy for fitting the hyperparameters', choices={'EM', 'BO', 'GS', 'BMA'})
@@ -189,6 +190,8 @@ def main():
 
         if args.model == 'VIPRS':
             prs_m = VIPRS(gdl, load_ld=load_ld)
+        elif args.model == 'VIPRSMix':
+            prs_m = VIPRSMix(gdl, K=3, prior_multipliers=[0.01, 0.1, 1.], load_ld=load_ld)
         elif args.model == 'VIPRSAlpha':
             prs_m = VIPRSAlpha(gdl, load_ld=load_ld)
         elif args.model == 'VIPRSSBayes':

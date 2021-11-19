@@ -24,20 +24,24 @@ parser.add_argument('-s', '--sumstats', dest='ss_dir', nargs='+', required=True,
                     help='The summary statistics directory')
 parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_50k_windowed',
                     help='The LD panel to use in model fit')
+parser.add_argument('--sumstats-format', dest='sumstats_format', type=str, default='LDSC',
+                    help='The format for the summary statistics')
 
 args = parser.parse_args()
 
-gdls = []
+chr_gdls = {chrom: [] for chrom in range(1, 23)}
 
 for ss_dir in args.ss_dir:
-    gdls.append(GWASDataLoader(ld_store_files=[f"data/ld/{args.ld_panel}/ld/chr_{chrom}" for chrom in range(1, 23)],
+    for chrom in range(1, 23):
+        chr_gdls[chrom].append(GWASDataLoader(ld_store_files=f"data/ld/{args.ld_panel}/ld/chr_{chrom}",
                                sumstats_files=osp.join(ss_dir, "combined.sumstats"),
-                               sumstats_format='LDSC',
+                               sumstats_format=args.sumstats_format,
                                temp_dir=os.getenv('SLURM_TMPDIR', 'temp')))
 
-prs_models = [VIPRS(gdl) for gdl in gdls]
+for c, gdls in chr_gdls.items():
+    prs_models = [VIPRS(gdl) for gdl in gdls]
 
-vmc = VIPRSMultiCohort(prs_models)
-vmc.fit()
+    vmc = VIPRSMultiCohort(prs_models)
+    vmc.fit()
 
 
