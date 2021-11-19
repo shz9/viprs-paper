@@ -8,7 +8,7 @@ import os
 import os.path as osp
 import glob
 sys.path.append(osp.dirname(osp.dirname(__file__)))
-sys.path.append("vemPRS/")
+sys.path.append("viprs/")
 from gwasimulator.GWASDataLoader import GWASDataLoader
 from vemPRS.prs.src.PRSModel import PRSModel
 from utils import makedir

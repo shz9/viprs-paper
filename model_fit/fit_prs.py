@@ -9,9 +9,8 @@ import os.path as osp
 import glob
 import numpy as np
 import pandas as pd
-import re
 sys.path.append(osp.dirname(osp.dirname(__file__)))
-sys.path.append("vemPRS/")
+sys.path.append("viprs/")
 from gwasimulator.GWASDataLoader import GWASDataLoader
 from viprs.prs.src.VIPRS import VIPRS
 from viprs.prs.src.VIPRSMix import VIPRSMix
