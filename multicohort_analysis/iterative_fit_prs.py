@@ -6,13 +6,13 @@ import numpy as np
 import pandas as pd
 import re
 sys.path.append(osp.dirname(osp.dirname(__file__)))
-sys.path.append("vemPRS/")
+sys.path.append("viprs/")
 from gwasimulator.GWASDataLoader import GWASDataLoader
-from vemPRS.prs.src.VIPRS import VIPRS
-from vemPRS.prs.src.VIPRSAlpha import VIPRSAlpha
-from vemPRS.prs.src.VIPRSSBayes import VIPRSSBayes
-from vemPRS.prs.src.VIPRSMultiCohort import VIPRSMultiCohort
-from vemPRS.prs.src.HyperparameterSearch import BMA, GridSearch, BayesOpt
+from viprs.prs.src.VIPRS import VIPRS
+from viprs.prs.src.VIPRSAlpha import VIPRSAlpha
+from viprs.prs.src.VIPRSSBayes import VIPRSSBayes
+from viprs.prs.src.VIPRSMultiCohort import VIPRSMultiCohort
+from viprs.prs.src.HyperparameterSearch import BMA, GridSearch, BayesOpt
 from utils import makedir
 import argparse
 import functools
