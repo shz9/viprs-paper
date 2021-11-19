@@ -37,14 +37,14 @@ else:
 
 
 order = [
-    'VIPRS', 'VIPRSAlpha', 'VIPRSSBayes',
-    'VIPRS-GS', 'VIPRSAlpha-GS', 'VIPRSSBayes-GS',
-    'VIPRS-GSv', 'VIPRSAlpha-GSv', 'VIPRSSBayes-GSv',
-    'VIPRS-GSl', 'VIPRSAlpha-GSl', 'VIPRSSBayes-GSl',
-    'VIPRS-GSvl', 'VIPRSAlpha-GSvl', 'VIPRSSBayes-GSvl',
-    'VIPRS-BO',  'VIPRSAlpha-BO', 'VIPRSSBayes-BO',
-    'VIPRS-BOv', 'VIPRSAlpha-BOv', 'VIPRSSBayes-BOv',
-    'VIPRS-BMA', 'VIPRSAlpha-BMA', 'VIPRSSBayes-BMA',
+    'VIPRS', 'VIPRSMix', 'VIPRSAlpha', 'VIPRSSBayes',
+    'VIPRS-GS', 'VIPRSMix-GS', 'VIPRSAlpha-GS', 'VIPRSSBayes-GS',
+    'VIPRS-GSv', 'VIPRSMix-GSv', 'VIPRSAlpha-GSv', 'VIPRSSBayes-GSv',
+    'VIPRS-GSl', 'VIPRSMix-GSl', 'VIPRSAlpha-GSl', 'VIPRSSBayes-GSl',
+    'VIPRS-GSvl', 'VIPRSMix-GSvl', 'VIPRSAlpha-GSvl', 'VIPRSSBayes-GSvl',
+    'VIPRS-BO',  'VIPRSMix-BO', 'VIPRSAlpha-BO', 'VIPRSSBayes-BO',
+    'VIPRS-BOv', 'VIPRSMix-BOv', 'VIPRSAlpha-BOv', 'VIPRSSBayes-BOv',
+    'VIPRS-BMA', 'VIPRSMix-BMA', 'VIPRSAlpha-BMA', 'VIPRSSBayes-BMA',
     'SBayesR',
     'Lassosum',
     'LDPred2-inf', 'LDPred2-auto', 'LDPred2-grid',

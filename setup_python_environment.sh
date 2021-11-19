@@ -8,5 +8,5 @@ source $SLURM_TMPDIR/env/bin/activate
 pip install --no-index --upgrade pip
 
 pip install --no-index -r gwasimulator/requirements.txt
-pip install --no-index -r vemPRS/requirements.txt
+pip install --no-index -r viprs/requirements.txt
 
