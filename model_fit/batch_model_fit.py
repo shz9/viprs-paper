@@ -23,7 +23,7 @@ parser.add_argument('-t', '--type', dest='type', type=str, default='all',
 parser.add_argument('--strategy', dest='strategy', type=str, default='EM',
                     choices={'EM', 'BMA', 'BO', 'GS'})
 parser.add_argument('-m', '--model', dest='model', type=str, default='VIPRS',
-                    choices={'VIPRS', 'VIPRSMix', 'VIPRSAlpha', 'VIPRSSBayes',
+                    choices={'VIPRS', 'VIPRSMix', 'VIPRSAlpha', 'VIPRSSBayes', 'VIPRSMixSBayes',
                              'VIPRSSBayesAlpha', 'GibbsPRS', 'GibbsPRSSBayes'})
 parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_50k_windowed',
                     choices={'1000G_sample', '1000G_shrinkage', '1000G_windowed', '1000G_block',

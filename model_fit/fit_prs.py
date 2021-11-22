@@ -16,6 +16,7 @@ from viprs.prs.src.VIPRS import VIPRS
 from viprs.prs.src.VIPRSMix import VIPRSMix
 from viprs.prs.src.VIPRSAlpha import VIPRSAlpha
 from viprs.prs.src.VIPRSSBayes import VIPRSSBayes
+from viprs.prs.src.VIPRSMixSBayes import VIPRSMixSBayes
 from viprs.prs.src.VIPRSSBayesAlpha import VIPRSSBayesAlpha
 from viprs.prs.src.GibbsPRS import GibbsPRS
 from viprs.prs.src.GibbsPRSSBayes import GibbsPRSSBayes
@@ -32,7 +33,7 @@ def main():
 
     parser.add_argument('-m', '--model', dest='model', type=str, default='VIPRS',
                         help='The PRS model to fit',
-                        choices={'VIPRS', 'VIPRSMix', 'VIPRSAlpha', 'VIPRSSBayes',
+                        choices={'VIPRS', 'VIPRSMix', 'VIPRSAlpha', 'VIPRSSBayes', 'VIPRSMixSBayes',
                                  'VIPRSSBayesAlpha', 'GibbsPRS', 'GibbsPRSSBayes'})
     parser.add_argument('-f', '--fitting-strategy', dest='fitting_strategy', type=str, default='EM',
                         help='The strategy for fitting the hyperparameters', choices={'EM', 'BO', 'GS', 'BMA'})
@@ -195,6 +196,8 @@ def main():
             prs_m = VIPRSAlpha(gdl, load_ld=load_ld)
         elif args.model == 'VIPRSSBayes':
             prs_m = VIPRSSBayes(gdl, load_ld=load_ld)
+        elif args.model == 'VIPRSMixSBayes':
+            prs_m = VIPRSMixSBayes(gdl, K=3, prior_multipliers=[0.01, 0.1, 1.], load_ld=load_ld)
         elif args.model == 'VIPRSSBayesAlpha':
             prs_m = VIPRSSBayesAlpha(gdl, load_ld=load_ld)
         elif args.model == 'GibbsPRS':
