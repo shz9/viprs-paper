@@ -5,22 +5,22 @@ snp_set=${2:-"hm3"}
 
 if [ $data_source == "ukbb" ]; then
   if [ $snp_set == "hm3" ]; then
-    log_dir="log/data_preparation/ukbb_qc/hm3/"
+    log_dir="ukbb_qc/hm3"
   else
-    log_dir="log/data_preparation/ukbb_qc/all/"
+    log_dir="ukbb_qc/all"
   fi
   qc_script="data_preparation/ukbb_qc_job.sh"
 else
   if [ $snp_set == "hm3" ]; then
-    log_dir="log/data_preparation/1000G_qc/hm3/"
+    log_dir="1000G_qc/hm3"
   else
-    log_dir="log/data_preparation/1000G_qc/all/"
+    log_dir="1000G_qc/all"
   fi
   qc_script="data_preparation/1000G_qc_job.sh"
 fi
 
-rm -rf "$log_dir" || true
-mkdir -p "$log_dir"
+rm -rf "./log/data_preparation/$log_dir" || true
+mkdir -p "./log/data_preparation/$log_dir"
 
 echo "Submitting QC jobs..."
 
