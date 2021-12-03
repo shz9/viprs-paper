@@ -19,7 +19,7 @@ if [ $snp_set == "hm3" ]; then
   output_dir="data/1000G_qc_genotypes"
 else
   snp_keep="data/keep_files/ukbb_qc_variants.keep"
-  output_dir="data/1000G_qc_genotypes_all"
+  output_dir="/scratch/szabad/data/1000G_qc_genotypes_all"
 fi
 
 mkdir -p "$output_dir"
@@ -32,6 +32,8 @@ plink2 --bfile "$HOME/projects/def-sgravel/data/genotypes/1000G_EUR_Phase3_plink
       --mind 0.05 \
       --geno 0.05 \
       --mac 5 \
+      --maf 0.0001 \
+      --max-maf 0.9999 \
       --snps-only \
       --max-alleles 2 \
       --out "$output_dir/chr_${CHR}"
@@ -43,6 +45,9 @@ module load plink/1.9b_4.1-x86_64
 plink --bfile "$output_dir/chr_${CHR}" \
       --cm-map "$HOME/projects/def-sgravel/data/genetic_maps/1000GP_Phase3/genetic_map_chr@_combined_b37.txt" \
       --make-bed \
+      --mac 5 \
+      --maf 0.0001 \
+      --max-maf 0.9999 \
       --out "$output_dir/chr_${CHR}"
 
 rm -r "$output_dir"/*~

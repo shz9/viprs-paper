@@ -22,12 +22,12 @@ if [ $snp_set == "hm3" ]; then
   output_dir="data/ukbb_qc_genotypes"
 else
   snp_keep="data/keep_files/ukbb_qc_variants.keep"
-  output_dir="data/ukbb_qc_genotypes_all"
+  output_dir="/scratch/szabad/data/ukbb_qc_genotypes_all"
 fi
 
 mkdir -p "$output_dir"
 
-plink2 --bgen "/lustre03/project/6004777/projects/uk_biobank/imputed_data/full_UKBB/v3_bgen12/ukb_imp_chr${CHR}_v3.bgen" \
+plink2 --bgen "/lustre03/project/6004777/projects/uk_biobank/imputed_data/full_UKBB/v3_bgen12/ukb_imp_chr${CHR}_v3.bgen" ref-first \
       --sample "/lustre03/project/6004777/projects/uk_biobank/imputed_data/full_UKBB/v3_bgen12/ukb6728_imp_chr${CHR}_v3_s487395.sample" \
       --make-bed \
       --allow-no-sex \
@@ -37,6 +37,8 @@ plink2 --bgen "/lustre03/project/6004777/projects/uk_biobank/imputed_data/full_U
       --mind 0.05 \
       --geno 0.05 \
       --mac 5 \
+      --maf 0.0001 \
+      --max-maf 0.9999 \
       --snps-only \
       --max-alleles 2 \
       --hard-call-threshold 0.1 \
@@ -45,9 +47,14 @@ plink2 --bgen "/lustre03/project/6004777/projects/uk_biobank/imputed_data/full_U
 module load nixpkgs/16.09
 module load plink/1.9b_4.1-x86_64
 # Update the SNP cM position using the HapMap3 genetic map:
+# NOTE: We filter on mac/maf again because plink2 sometimes doesn't filter SNPs
+# properly in the first step (to be checked later).
 plink --bfile "$output_dir/chr_${CHR}" \
       --cm-map "$HOME/projects/def-sgravel/data/genetic_maps/1000GP_Phase3/genetic_map_chr@_combined_b37.txt" \
       --make-bed \
+      --mac 5 \
+      --maf 0.0001 \
+      --max-maf 0.9999 \
       --out "$output_dir/chr_${CHR}"
 
 rm -r "$output_dir"/*~

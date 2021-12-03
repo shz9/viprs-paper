@@ -26,6 +26,9 @@ do
   echo "------- Filtering individuals from chromosome $chr... -------"
   plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
          --make-bed \
+         --mac 5 \
+         --maf 0.0001 \
+         --max-maf 0.9999 \
          --remove data/ukbb_qc_genotypes/combined.mindrem.id \
          --out "data/ukbb_qc_genotypes/chr_$chr"
 done
