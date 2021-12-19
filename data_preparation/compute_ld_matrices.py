@@ -17,7 +17,7 @@ parser.add_argument('--panel-name', dest='name', type=str, required=True)
 parser.add_argument('--estimator', dest='estimator', type=str, default='windowed',
                     help='The LD estimator (windowed, shrinkage, sample)')
 parser.add_argument('--bfile', dest='bed_file', type=str, default="data/ukbb_qc_genotypes/chr_22",
-                    help='The chromosome for which to calculate LD')
+                    help='The path to the BED file')
 parser.add_argument('--keep-file', dest='keep_file', type=str, default=None,
                     help='A keep file for individuals used to compute the LD matrices')
 

@@ -2,7 +2,7 @@
 #SBATCH --account=def-sgravel
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=8GB
-#SBATCH --time=01:20:00
+#SBATCH --time=02:00:00
 #SBATCH --output=./log/data_preparation/%x/%j.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
@@ -54,7 +54,6 @@ plink --bfile "$output_dir/chr_${CHR}" \
       --make-bed \
       --mac 5 \
       --maf 0.0001 \
-      --max-maf 0.9999 \
       --out "$output_dir/chr_${CHR}"
 
 rm -r "$output_dir"/*~
