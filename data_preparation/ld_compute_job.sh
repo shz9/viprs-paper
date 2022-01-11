@@ -10,6 +10,8 @@
 echo "Job started at: `date`"
 echo "Job ID: $SLURM_JOBID"
 
+. global_config.sh
+
 source "$HOME/pyenv/bin/activate"
 
 LD_EST=${1:-"windowed"}  # LD estimator (default "windowed")
@@ -25,11 +27,15 @@ if [ -n "$KEEPFILE" ]; then
   python data_preparation/compute_ld_matrices.py --estimator "$LD_EST" \
                                                  --bfile "$BEDFILE" \
                                                  --keep-file "$KEEPFILE" \
-                                                 --panel-name "$NAME"
+                                                 --panel-name "$NAME" \
+                                                 --min-mac "$MIN_MAC" \
+                                                 --min-maf "$MIN_MAF"
 else
   python data_preparation/compute_ld_matrices.py --estimator "$LD_EST" \
                                                  --bfile "$BEDFILE" \
-                                                 --panel-name "$NAME"
+                                                 --panel-name "$NAME" \
+                                                 --min-mac "$MIN_MAC" \
+                                                 --min-maf "$MIN_MAF"
 fi
 
 MINUTES=$(echo "scale=2; $SECONDS/60" | bc)

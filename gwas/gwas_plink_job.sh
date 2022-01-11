@@ -10,7 +10,11 @@
 echo "Job started at: `date`"
 echo "Job ID: $SLURM_JOBID"
 
+. global_config.sh
+
 module load plink
+
+cd "$VIPRS_PATH" || exit
 
 pheno_file=$1  # The input file path
 keep_file=${2:-"data/keep_files/ukbb_train_subset.keep"}
@@ -42,8 +46,6 @@ if [ "${standardize}" == 1 ]; then
   opt_params+=(--variance-standardize)
 fi
 
-cd /home/szabad/projects/def-sgravel/szabad/viprs-paper || exit
-
 mkdir -p "$output_dir"  # Create the output directory
 
 for chr in $(seq 1 22)
@@ -52,8 +54,8 @@ do
          --"$reg_type" hide-covar cols=chrom,pos,alt1,ref,a1freq,nobs,beta,se,tz,p \
          --keep "$keep_file" \
          --allow-no-sex \
-         --maf 0.01 \
-         --mac 5 \
+         --maf "$MIN_MAF" \
+         --mac "$MIN_MAC" \
          --pheno "$pheno_file"  \
          --out "$output_dir/chr_$chr" \
          "${opt_params[@]}"

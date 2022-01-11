@@ -110,6 +110,7 @@ def process_trait(trait_f):
     if osp.isfile(output_file):
         # If the file already exists, load it and merge the new results:
         existing_df = pd.read_csv(output_file)
+        existing_df['Trait'] = existing_df['Trait'].astype(str)
 
         # Specify the columns to merge on:
         merge_cols = ['Trait', 'LD Panel', 'Model', 'Class']

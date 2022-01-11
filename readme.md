@@ -1,5 +1,14 @@
 # Variational PRS paper
 
+## TODO List
+
+- [ ] Update code for external PRS methods to be self-contained and replicable.
+- [ ] Aggregate performance statistics and make them available on GitHub.
+- [ ] Modify plotting scripts to have a script per figure.
+- [ ] Re-run other variations of VIPRS method.
+- [ ] Include scripts for analysis with 10m SNPs.
+
+
 ## Data 
 
 In terms of the data that you need to reproduce the analyses, there 

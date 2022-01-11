@@ -7,9 +7,12 @@
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
 
+# Source the script with the global configurations:
+. global_config.sh
+
 module load plink
 
-cd /home/szabad/projects/def-sgravel/szabad/viprs-paper || exit
+cd "$VIPRS_PATH" || exit
 
 CHR=${1:-22}  # Chromosome number (default 22)
 snp_set=${2:-"hm3"} # The SNP set to use
@@ -24,16 +27,16 @@ fi
 
 mkdir -p "$output_dir"
 
-plink2 --bfile "$HOME/projects/def-sgravel/data/genotypes/1000G_EUR_Phase3_plink/1000G.EUR.QC.$CHR" \
+plink2 --bfile "$TGP_GENOTYPE_DIR/1000G.EUR.QC.$CHR" \
       --make-bed \
       --allow-no-sex \
       --extract "$snp_keep" \
-      --hwe 1e-10 \
-      --mind 0.05 \
-      --geno 0.05 \
-      --mac 5 \
-      --maf 0.0001 \
-      --max-maf 0.9999 \
+      --hwe "$HWE_CUTOFF" \
+      --mind "$MIND" \
+      --geno "$GENO" \
+      --mac "$MIN_MAC" \
+      --maf "$MIN_MAF" \
+      --max-maf "$MAX_MAF" \
       --snps-only \
       --max-alleles 2 \
       --out "$output_dir/chr_${CHR}"
@@ -43,11 +46,11 @@ module load plink/1.9b_4.1-x86_64
 
 # Update the SNP cM position using the HapMap3 genetic map:
 plink --bfile "$output_dir/chr_${CHR}" \
-      --cm-map "$HOME/projects/def-sgravel/data/genetic_maps/1000GP_Phase3/genetic_map_chr@_combined_b37.txt" \
+      --cm-map "$GENETIC_MAP_DIR/genetic_map_chr@_combined_b37.txt" \
       --make-bed \
-      --mac 5 \
-      --maf 0.0001 \
-      --max-maf 0.9999 \
+      --mac "$MIN_MAC" \
+      --maf "$MIN_MAF" \
+      --max-maf "$MAX_MAF" \
       --out "$output_dir/chr_${CHR}"
 
 rm -r "$output_dir"/*~

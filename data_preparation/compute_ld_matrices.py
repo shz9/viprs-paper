@@ -20,6 +20,10 @@ parser.add_argument('--bfile', dest='bed_file', type=str, default="data/ukbb_qc_
                     help='The path to the BED file')
 parser.add_argument('--keep-file', dest='keep_file', type=str, default=None,
                     help='A keep file for individuals used to compute the LD matrices')
+parser.add_argument('--min-mac', dest='min_mac', type=float, default=5,
+                    help='Minimum minor allele count')
+parser.add_argument('--min-maf', dest='min_maf', type=float, default=0.001,
+                    help='Minimum minor allele frequency')
 
 args = parser.parse_args()
 
@@ -29,8 +33,8 @@ if args.estimator == 'windowed':
                          ld_estimator="windowed",
                          window_unit="cM",
                          cm_window_cutoff=3.,
-                         min_mac=5,
-                         min_maf=0.01,
+                         min_mac=args.min_mac,
+                         min_maf=args.min_maf,
                          compute_ld=True,
                          output_dir=f"data/ld/{args.name}_windowed/",
                          temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
@@ -39,8 +43,8 @@ if args.estimator == 'block':
                          keep_individuals=args.keep_file,
                          ld_estimator="block",
                          ld_block_files='metadata/ldetect_blocks.txt',
-                         min_mac=5,
-                         min_maf=0.01,
+                         min_mac=args.min_mac,
+                         min_maf=args.min_maf,
                          compute_ld=True,
                          output_dir=f"data/ld/{args.name}_block/",
                          temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
@@ -51,8 +55,8 @@ elif args.estimator == 'shrinkage':
                          genmap_Ne=11400,
                          genmap_sample_size=183,
                          shrinkage_cutoff=1e-5,
-                         min_mac=5,
-                         min_maf=0.01,
+                         min_mac=args.min_mac,
+                         min_maf=args.min_maf,
                          compute_ld=True,
                          output_dir=f"data/ld/{args.name}_shrinkage/",
                          temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
@@ -60,8 +64,8 @@ elif args.estimator == 'sample':
     gdl = GWASDataLoader(args.bed_file,
                          keep_individuals=args.keep_file,
                          ld_estimator="sample",
-                         min_mac=5,
-                         min_maf=0.01,
+                         min_mac=args.min_mac,
+                         min_maf=args.min_maf,
                          compute_ld=True,
                          output_dir=f"data/ld/{args.name}_sample/",
                          temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))

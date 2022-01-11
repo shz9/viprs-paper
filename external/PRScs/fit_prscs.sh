@@ -15,7 +15,7 @@ echo "Dataset: $1"
 echo "Model: PRScs"
 
 source "$HOME/pyenv/bin/activate"
-prscs_bin="$HOME/projects/def-sgravel/bin/PRScs/PRScs.py"
+prscs_bin="external/PRScs/bin/PRScs/PRScs.py"
 
 export MKL_NUM_THREADS=8
 export NUMEXPR_NUM_THREADS=8
