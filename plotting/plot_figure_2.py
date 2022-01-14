@@ -48,5 +48,6 @@ plot_real_predictive_performance(bin_real_data,
                                  col_wrap=1,
                                  ax=ax2)
 
+makedir("plots/main_figures")
 plt.savefig("plots/main_figures/figure_2." + args.ext, bbox_inches='tight')
 plt.close()

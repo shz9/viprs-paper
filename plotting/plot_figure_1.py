@@ -42,5 +42,6 @@ plot_simulation_predictive_performance(bin_sim_data,
                                        model_order=sort_models(bin_sim_data['Model'].unique()),
                                        ax=ax2)
 
+makedir("plots/main_figures/")
 plt.savefig("plots/main_figures/figure_1." + args.ext, bbox_inches='tight')
 plt.close()

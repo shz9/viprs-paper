@@ -13,5 +13,6 @@ export R_LIBS="$LDPRED2_PATH/R_ldpred2_env"
 
 R -e 'install.packages("bigsnpr", repos="https://cloud.r-project.org/")'
 R -e 'install.packages("dplyr", repos="https://cloud.r-project.org/")'
+R -e 'install.packages("tidyr", repos="https://cloud.r-project.org/")'
 
 echo "Done!"

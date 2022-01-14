@@ -45,9 +45,9 @@ def extract_time_stats(phenotype_type=None,
 
     # Loop over the log files and extract the duration for each run
     # as well as associated info (e.g. configuration, model, LD panel, etc.):
-    for log_f in glob.glob(f"log/model_fit/*/*/{phenotype_type}/{configuration}/*.csv"):
+    for log_f in glob.glob(f"log/model_fit/*/*/{phenotype_type}/{configuration}/*.out"):
 
-        _, _, panel, model, config, trait = log_f.split('/')
+        _, _, panel, model, trait_type, config, trait = log_f.split('/')
 
         if keep_models is not None:
             if model not in keep_models:
@@ -81,6 +81,7 @@ def extract_time_stats(phenotype_type=None,
 
         time_stats.append({'LD Panel': panel,
                            'Configuration': config,
+                           'Class': ['Quantitative', 'Binary'][trait_type == 'binary'],
                            'Trait': trait,
                            'Model': model,
                            'Duration_minutes': duration})
