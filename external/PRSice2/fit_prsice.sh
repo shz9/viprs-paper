@@ -19,9 +19,9 @@ export NUMEXPR_NUM_THREADS=8
 export OMP_NUM_THREADS=8
 
 module load gcc/9.3.0 r/4.0.2
-export R_LIBS=$HOME/projects/def-sgravel/R_environments/R_4.0.2/prsice
+export R_LIBS="external/PRSice2/R_PRSice2_env"
 
-PRSiceHome=$HOME/projects/def-sgravel/bin/PRSice_v2.3.3
+PRSiceHome="external/PRSice2/PRSice_v2.3.5"
 
 # Inputs:
 ss_dir=$(readlink -e "$1")  # Summary statistics directory

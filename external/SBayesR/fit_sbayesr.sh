@@ -14,11 +14,14 @@ echo "Performing model fit..."
 echo "Dataset: $1"
 echo "Model: SBayesR"
 
-gctb_bin="$HOME/projects/def-sgravel/bin/gctb_v2.03/gctb"
+gctb_bin="external/SBayesR/gctb_v2.03/gctb"
 
 export MKL_NUM_THREADS=8
 export NUMEXPR_NUM_THREADS=8
 export OMP_NUM_THREADS=8
+
+# Read configs (e.g. LD matrix path):
+. external/SBayesR/config.sh
 
 # Inputs:
 ss_dir=$(readlink -e "$1") # Summary statistics directory
@@ -37,14 +40,14 @@ SECONDS=0
 for chrom in $(seq 1 22)
 do
   $gctb_bin --sbayes R \
-           --ldm "$HOME/projects/def-sgravel/data/ld/ukbEURu_hm3_shrunk_sparse/ukbEURu_hm3_chr${chrom}_v3_50k.ldm.sparse" \
+           --ldm "$LD_PANEL_PATH/ukbEURu_hm3_chr${chrom}_v3_50k.ldm.sparse" \
            --pi 0.95,0.02,0.02,0.01 \
            --gamma 0.0,0.01,0.1,1 \
            --gwas-summary "$ss_dir/chr_${chrom}.ma" \
            --unscale-genotype \
-           --chain-length 10000 \
-           --burn-in 2000 \
-           --out-freq 100 \
+           --chain-length "$CHAIN_LENGTH" \
+           --burn-in "$BURN_IN" \
+           --out-freq "$OUT_FREQ" \
            --out "$output_dir/chr_$chrom"
 done
 

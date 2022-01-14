@@ -4,6 +4,8 @@
 library(bigsnpr)
 library(dplyr)
 
+source("external/LDPred2/config.R")
+
 args <- commandArgs(trailingOnly=TRUE)
 ss_dir_path <- args[1]
 ss_type <- args[2]
@@ -102,7 +104,7 @@ if (trait_type == "binary"){
 # ----------------------------------------------------------
 # Step 3: Match the GWAS summary statistics and the LD reference panel
 
-map_ldref <- readRDS("~/projects/def-sgravel/data/ld/ukb_eur_ldpred2_ld/map.rds")
+map_ldref <- readRDS(file.path(ld_panel_path, "map.rds"))
 
 sumstats <- snp_match(sumstats, map_ldref, join_by_pos=F)
 (sumstats <- tidyr::drop_na(tibble::as_tibble(sumstats)))
@@ -121,7 +123,7 @@ for (chr in 1:22) {
   ## indices in 'corr'
   ind.chr3 <- match(ind.chr2, which(map_ldref$chr == chr))
 
-  corr0 <- readRDS(sprintf("~/projects/def-sgravel/data/ld/ukb_eur_ldpred2_ld/LD_chr%d.rds", chr))[ind.chr3, ind.chr3]
+  corr0 <- readRDS(file.path(ld_panel_path, sprintf("LD_chr%d.rds", chr)))[ind.chr3, ind.chr3]
 
   if (chr == 1) {
     df_beta <- sumstats[ind.chr, c("beta", "beta_se", "n_eff", "_NUM_ID_")]

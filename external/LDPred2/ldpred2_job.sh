@@ -2,7 +2,7 @@
 #SBATCH --account=def-sgravel
 #SBATCH --cpus-per-task=40
 #SBATCH --mem=0
-#SBATCH --time=4:00:00
+#SBATCH --time=20:00:00
 #SBATCH --output=./log/model_fit/%x.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL

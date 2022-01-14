@@ -64,10 +64,10 @@ for job in jobs:
         pass
 
     if args.model == 'inf':
-        cmd = ["sbatch", "-J", job['Name'], "--time 01:00:00", "external/LDPred2/ldpred2_job.sh",
+        cmd = ["sbatch", "-J", job['Name'], "--time 04:00:00", "external/LDPred2/ldpred2_job.sh",
                job['Trait'], args.model]
     elif args.model == 'auto':
-        cmd = ["sbatch", "-J", job['Name'], "--time 10:00:00", "external/LDPred2/ldpred2_job.sh",
+        cmd = ["sbatch", "-J", job['Name'], "--time 15:00:00", "external/LDPred2/ldpred2_job.sh",
                job['Trait'], args.model]
     else:
         cmd = ["sbatch", "-J", job['Name'], "external/LDPred2/ldpred2_job.sh",
