@@ -95,10 +95,16 @@ subset_map_ldref <- map_ldref[df_beta$`_NUM_ID_`,]
 # ----------------------------------------------------------
 # Step 3: Perform model fitting
 
+# Estimate the heritability using LDSC:
 (ldsc <- with(df_beta, snp_ldsc(ld, length(ld), chi2 = (beta / beta_se)^2,
                                 sample_size = n_eff, blocks = NULL,
                                 ncores = NCORES)))
 h2_est <- ldsc[["h2"]]
+
+# If the heritability estimate is negative, set it to a reasonable small value (e.g. 0.01)
+if (h2_est < 0.){
+  h2_est <- 0.01
+}
 
 print("Performing model fit...")
 beta_inf <- snp_ldpred2_inf(corr, df_beta, h2_est)

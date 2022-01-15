@@ -141,10 +141,16 @@ subset_map_ldref <- map_ldref[df_beta$`_NUM_ID_`,]
 # ----------------------------------------------------------
 # Step 4: Perform model fitting
 
+# Estimate heritability using LD score regression:
 (ldsc <- with(df_beta, snp_ldsc(ld, length(ld), chi2 = (beta / beta_se)^2,
                                 sample_size = n_eff, blocks = NULL,
                                 ncores = NCORES)))
 h2_est <- ldsc[["h2"]]
+
+# If the heritability estimate is negative, set it to a reasonable small value (e.g. 0.01)
+if (h2_est < 0.){
+  h2_est <- 0.01
+}
 
 (h2_seq <- round(h2_est * c(0.7, 1, 1.4), 4))
 (p_seq <- signif(seq_log(1e-5, 1, length.out = 21), 2))
@@ -161,6 +167,7 @@ pred_grid <- big_prodMat(G,
                          ind.col = which(obj.bigSNP$map$marker.ID %in% subset_map_ldref$rsid),
                          ncores = NCORES)
 
+print("Performing regression...")
 if (trait_type == "binary"){
   params$score <- big_univLogReg(as_FBM(pred_grid), y[ind.val2])$score
 } else {
