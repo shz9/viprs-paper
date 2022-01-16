@@ -158,6 +158,8 @@ if (h2_est < 0.){
 
 print("Performing model fit...")
 beta_grid <- snp_ldpred2_grid(corr, df_beta, params, ncores = NCORES)
+# Set NA to zero for now...
+beta_grid[is.na(beta_grid)] <- 0.
 params$sparsity <- colMeans(beta_grid == 0)
 
 print("Extracting best betas...")
