@@ -34,7 +34,7 @@ sns.set_context("paper")
 
 # Create plot:
 
-plt.figure(figsize=set_figure_size(width=.75*505.89))
+plt.figure(figsize=set_figure_size(width=.75*505.89, subplots=(3, 3)))
 
 plot_real_predictive_performance(quant_real_data,
                                  model_order=sort_models(quant_real_data['Model'].unique()),
@@ -45,7 +45,7 @@ plot_real_predictive_performance(quant_real_data,
 plt.savefig("plots/main_figures/figure_2/2_a." + args.ext, bbox_inches='tight')
 plt.close()
 
-plt.figure(figsize=set_figure_size(width=.25*505.89))
+plt.figure(figsize=set_figure_size(width=.25*505.89, subplots=(3, 1)))
 
 plot_real_predictive_performance(bin_real_data,
                                  metric='ROC-AUC',

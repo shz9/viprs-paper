@@ -35,7 +35,7 @@ makedir("plots/main_figures/figure_1/")
 # Create plot:
 
 # Plot panel (a) for the quantitative phenotypes:
-plt.figure(figsize=set_figure_size('paper'))
+plt.figure(figsize=set_figure_size('paper', subplots=(1, 3)))
 
 plot_simulation_predictive_performance(quant_sim_data,
                                        model_order=sort_models(quant_sim_data['Model'].unique()))
@@ -45,7 +45,7 @@ plt.close()
 
 # Plot panel (b) for the case/control phenotypes:
 
-plt.figure(figsize=set_figure_size('paper'))
+plt.figure(figsize=set_figure_size('paper', subplots=(1, 3)))
 
 plot_simulation_predictive_performance(bin_sim_data,
                                        metric='ROC-AUC',
