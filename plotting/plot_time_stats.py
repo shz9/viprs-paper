@@ -48,6 +48,7 @@ def extract_time_stats(phenotype_type=None,
     for log_f in glob.glob(f"log/model_fit/*/*/{phenotype_type}/{configuration}/*.out"):
 
         _, _, panel, model, trait_type, config, trait = log_f.split('/')
+        trait = trait.replace('.out', '')
 
         if keep_models is not None:
             if model not in keep_models:
@@ -61,7 +62,6 @@ def extract_time_stats(phenotype_type=None,
             if trait not in keep_traits:
                 continue
 
-        trait = trait.replace('.out', '')
         if 'real' in config:
             config = config.split('_')[0]
 

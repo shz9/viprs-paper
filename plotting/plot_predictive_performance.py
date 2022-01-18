@@ -40,8 +40,6 @@ def extract_predictive_evaluation_data(phenotype_type=None,
         configuration = '*'
     elif configuration == 'simulation':
         configuration = 'h2_*'
-    elif configuration == 'real':
-        configuration = 'real_fold_*'
 
     dfs = []
 
