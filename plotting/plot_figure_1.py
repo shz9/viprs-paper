@@ -30,18 +30,25 @@ quant_sim_data = update_model_names(quant_sim_data)
 sns.set_style("darkgrid")
 sns.set_context("paper")
 
+makedir("plots/main_figures/figure_1/")
+
 # Create plot:
 
-fig, (ax1, ax2) = plt.subplots(2, 1, figsize=set_figure_size('paper', subplots=(2, 1)))
+# Plot panel (a) for the quantitative phenotypes:
+plt.figure(figsize=set_figure_size('paper'))
 
 plot_simulation_predictive_performance(quant_sim_data,
-                                       model_order=sort_models(quant_sim_data['Model'].unique()),
-                                       ax=ax1)
+                                       model_order=sort_models(quant_sim_data['Model'].unique()))
+
+plt.savefig("plots/main_figures/figure_1/1_a." + args.ext, bbox_inches='tight')
+plt.close()
+
+# Plot panel (b) for the case/control phenotypes:
+
+plt.figure(figsize=set_figure_size('paper'))
+
 plot_simulation_predictive_performance(bin_sim_data,
                                        metric='ROC-AUC',
-                                       model_order=sort_models(bin_sim_data['Model'].unique()),
-                                       ax=ax2)
-
-makedir("plots/main_figures/")
-plt.savefig("plots/main_figures/figure_1." + args.ext, bbox_inches='tight')
+                                       model_order=sort_models(bin_sim_data['Model'].unique()))
+plt.savefig("plots/main_figures/figure_1/1_b." + args.ext, bbox_inches='tight')
 plt.close()

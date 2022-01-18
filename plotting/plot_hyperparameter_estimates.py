@@ -14,7 +14,7 @@ from utils import makedir
 import argparse
 import functools
 print = functools.partial(print, flush=True)
-from plot_utils import update_model_names, real_trait_order
+from plot_utils import *
 
 
 parser = argparse.ArgumentParser(description='Plot hyperparameter estimates')

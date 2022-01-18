@@ -6,7 +6,7 @@ and binary (case/control) phenotypes.
 
 from plot_predictive_performance import *
 
-parser = argparse.ArgumentParser(description='Generate Figure 1')
+parser = argparse.ArgumentParser(description='Generate Figure 2')
 parser.add_argument('--extension', dest='ext', type=str, default='eps')
 args = parser.parse_args()
 
@@ -28,26 +28,30 @@ quant_real_data = update_model_names(quant_real_data)
 
 
 # Set seaborn context:
+makedir("plots/main_figures/figure_2/")
 sns.set_style("darkgrid")
 sns.set_context("paper")
 
 # Create plot:
 
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=set_figure_size('paper', subplots=(1, 2)))
+plt.figure(figsize=set_figure_size(width=.75*505.89))
 
 plot_real_predictive_performance(quant_real_data,
                                  model_order=sort_models(quant_real_data['Model'].unique()),
                                  row_order=sort_traits('quantitative', quant_real_data['Trait'].unique()),
                                  col_order=sort_traits('quantitative', quant_real_data['Trait'].unique()),
-                                 col_wrap=3,
-                                 ax=ax1)
+                                 col_wrap=3)
+
+plt.savefig("plots/main_figures/figure_2/2_a." + args.ext, bbox_inches='tight')
+plt.close()
+
+plt.figure(figsize=set_figure_size(width=.25*505.89))
+
 plot_real_predictive_performance(bin_real_data,
                                  metric='ROC-AUC',
                                  row_order=sort_traits('binary', bin_real_data['Trait'].unique()),
                                  model_order=sort_models(bin_real_data['Model'].unique()),
-                                 col_wrap=1,
-                                 ax=ax2)
+                                 col_wrap=1)
 
-makedir("plots/main_figures")
-plt.savefig("plots/main_figures/figure_2." + args.ext, bbox_inches='tight')
+plt.savefig("plots/main_figures/figure_2/2_b." + args.ext, bbox_inches='tight')
 plt.close()
