@@ -50,7 +50,7 @@ def evaluate_binomial_predictive_performance(model_df):
 
 def process_trait(trait_f):
 
-    pheno_df = pd.read_csv(trait_f, names=['FID', 'IID', 'phenotype'], sep="\s+")
+    pheno_df = pd.read_csv(trait_f, names=['FID', 'IID', 'phenotype'], delim_whitespace=True)
     trait_type, config, trait = trait_f.split("/")[2:]
     print("> Type:", trait_type, " | Configuration:", config, " | Trait:", trait)
     trait = trait.replace(".txt", "")
@@ -71,7 +71,7 @@ def process_trait(trait_f):
         ld_panel, model, _, m_config = prs_file.split("/")[2:6]
         print(f"> Evaluating {model} ({ld_panel})")
 
-        prs_df = pd.read_csv(prs_file, sep="\s+")
+        prs_df = pd.read_csv(prs_file, delim_whitespace=True)
 
         prs_df = prs_df.reset_index()
 
@@ -178,7 +178,7 @@ if __name__ == '__main__':
     # Read the covariates file:
     covar_df = pd.read_csv("data/covariates/covar_file.txt",
                            names=['FID', 'IID'] + covariates,
-                           sep="\s+")
+                           delim_whitespace=True)
 
     pool = Pool(4)
     pool.map(process_trait, glob.glob(pheno_dir))
