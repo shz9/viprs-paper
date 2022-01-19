@@ -47,29 +47,52 @@ def set_figure_size(width, fraction=1, subplots=(1, 1)):
 def update_model_names(data_df):
 
     unique_models = data_df['Model'].unique()
-    update_dict = {}
 
+    def process_search_model_names(base_model, strategy):
+
+        model_name = f'{base_model}-{strategy}'
+
+        strategy_models = [m for m in unique_models if model_name in m]
+
+        if len(strategy_models) < 1:
+            return {}
+
+        # Check if some of the grids are localized while others are not:
+        l_in_model = ['l' in m.replace(model_name, '').split('_')[0] for m in strategy_models]
+
+        # Check if there are models with different grid metrics (validation vs. ELBO):
+        v_in_model = ['v' in m.replace(model_name, '').split('_')[0] for m in strategy_models]
+
+        # Check that the search was done over the same hyperparameters:
+        param_in_model = [m.split('_')[1] for m in strategy_models]
+
+        # If need be, replace the old model names:
+
+        new_model_names = [m.replace(model_name, '') for m in strategy_models]
+
+        # If all models include a localized grid, remove the `l` modifier:
+        if sum(l_in_model) == len(l_in_model):
+            new_model_names = [m.replace('l', '') for m in new_model_names]
+
+        # If all models evaluated performance with a validation set:
+        if sum(v_in_model) == len(v_in_model):
+            new_model_names = [m.replace('v', '') for m in new_model_names]
+
+        # If all models searched the same hyperparameters:
+        if len(set(param_in_model)) == 1:
+            new_model_names = [m.split('_')[0] for m in new_model_names]
+
+        new_model_names = [model_name + m for m in new_model_names]
+
+        return dict(zip(strategy_models, new_model_names))
+
+    update_dict = {}
     base_models = ['VIPRS', 'VIPRSMix', 'VIPRSAlpha', 'VIPRSSBayes', 'VIPRSSBayesAlpha']
+    base_strategies = ['GS', 'BO', 'BMA']
 
     for bm in base_models:
-
-        gs_models = [m for m in unique_models if f'{bm}-GS' in m]
-        bo_models = [m for m in unique_models if f'{bm}-BO' in m]
-
-        if len(gs_models) > 0:
-            if f'{bm}-GS' in gs_models:
-                update_dict.update({m: m for m in gs_models})
-            else:
-                u_gs_models = [bm + '-' + gsm.split('-')[-1].replace('l', '') for gsm in gs_models]
-                if len(u_gs_models) == 1:
-                    update_dict.update({gs_models[0]: u_gs_models[0].replace('v', '')})
-                else:
-                    update_dict.update(dict(zip(gs_models, u_gs_models)))
-
-        if len(bo_models) > 1:
-            update_dict.update({m: m for m in bo_models})
-        elif len(bo_models) == 1:
-            update_dict.update({bo_models[0]: bo_models[0].replace('v', '')})
+        for st in base_strategies:
+            update_dict.update(process_search_model_names(bm, st))
 
     for m in unique_models:
         if m not in update_dict:
@@ -138,21 +161,50 @@ def metric_name(metric):
 
     return pred_metrics[metric]
 
+
 def sort_models(models):
     """
-    Currently assumes that the models passed all exist in the `base_order` list below.
     :param models: A list of models to sort
     """
 
-    base_order = [
-        'VIPRS', 'VIPRSMix', 'VIPRSAlpha', 'VIPRSSBayes',
-        'VIPRS-GS', 'VIPRSMix-GS', 'VIPRSAlpha-GS', 'VIPRSSBayes-GS',
-        'VIPRS-GSv', 'VIPRSMix-GSv', 'VIPRSAlpha-GSv', 'VIPRSSBayes-GSv',
-        'VIPRS-GSl', 'VIPRSMix-GSl', 'VIPRSAlpha-GSl', 'VIPRSSBayes-GSl',
-        'VIPRS-GSvl', 'VIPRSMix-GSvl', 'VIPRSAlpha-GSvl', 'VIPRSSBayes-GSvl',
-        'VIPRS-BO',  'VIPRSMix-BO', 'VIPRSAlpha-BO', 'VIPRSSBayes-BO',
-        'VIPRS-BOv', 'VIPRSMix-BOv', 'VIPRSAlpha-BOv', 'VIPRSSBayes-BOv',
-        'VIPRS-BMA', 'VIPRSMix-BMA', 'VIPRSAlpha-BMA', 'VIPRSSBayes-BMA',
+    def viprs_model_sort(m):
+
+        num = 0
+
+        if 'VIPRSMix' in m:
+            num += 1
+        elif 'VIPRSAlpha' in m:
+            num += 2
+        elif 'VIPRSSBayes' in m:
+            num += 3
+        elif 'VIPRSSBayesAlpha' in m:
+            num += 4
+
+        if '-GS' in m:
+            num += 1000
+        elif '-BO' in m:
+            num += 2000
+        elif '-BMA' in m:
+            num += 3000
+
+        for strategy in ('-GS', '-BO', '-BMA'):
+            if strategy + 'vl' in m:
+                num += 300
+            elif strategy + 'l' in m:
+                num += 200
+            elif strategy + 'v' in m:
+                num += 100
+
+        if '_p' in m:
+            num += 10
+        elif '_e' in m:
+            num += 20
+        elif '_pe' in m:
+            num += 30
+
+        return num
+
+    external_model_order = [
         'SBayesR',
         'Lassosum',
         'LDPred2-inf', 'LDPred2-auto', 'LDPred2-grid',
@@ -160,4 +212,8 @@ def sort_models(models):
         'PRSice2',
     ]
 
-    return [m for m in base_order if m in models]
+    viprs_models = sorted([m for m in models if 'VIPRS' in m], key=viprs_model_sort)
+    external_models = sorted([m for m in models if m in external_model_order],
+                             key=lambda x: external_model_order.index(x))
+
+    return viprs_models + external_models

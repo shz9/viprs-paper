@@ -16,11 +16,13 @@ keep_traits = ['HEIGHT', 'HDL', 'BMI', 'FVC', 'FEV1', 'HC', 'WC', 'LDL', 'BW', '
 sim_time_stats = extract_time_stats(keep_models=keep_models,
                                     configuration='simulation',
                                     keep_panels=['ukbb_50k_windowed', 'external'])
+sim_time_stats = update_model_names(sim_time_stats)
 
 real_time_stats = extract_time_stats(keep_models=keep_models,
                                      configuration='real',
                                      keep_panels=['ukbb_50k_windowed', 'external'],
                                      keep_traits=keep_traits)
+real_time_stats = update_model_names(real_time_stats)
 
 # Set seaborn context:
 makedir("plots/main_figures/figure_3/")

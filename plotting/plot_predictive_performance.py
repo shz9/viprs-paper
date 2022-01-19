@@ -67,7 +67,7 @@ def extract_predictive_evaluation_data(phenotype_type=None,
 
 def plot_simulation_predictive_performance(s_df, metric='R2',
                                            showfliers=False, model_order=None,
-                                           palette='Set2', ax=None):
+                                           palette='Set2'):
 
     g = sns.catplot(x="Heritability",
                     y=metric,
@@ -77,8 +77,7 @@ def plot_simulation_predictive_performance(s_df, metric='R2',
                     kind="box",
                     showfliers=showfliers,
                     hue_order=model_order,
-                    palette=palette,
-                    ax=ax)
+                    palette=palette)
 
     if metric_name is not None:
         g.set_axis_labels("Model", metric_name(metric))
@@ -91,7 +90,7 @@ def plot_real_predictive_performance(r_df, metric='R2',
                                      x_label_rotation=90,
                                      hide_x_labels=False,
                                      model_order=None, row_order=None, col_order=None,
-                                     col_wrap=3, palette='Set2', ax=None):
+                                     col_wrap=3, palette='Set2'):
 
     g = sns.catplot(x="Model",
                     y=metric,
@@ -102,8 +101,7 @@ def plot_real_predictive_performance(r_df, metric='R2',
                     order=model_order,
                     row_order=row_order,
                     col_order=col_order,
-                    palette=palette,
-                    ax=ax)
+                    palette=palette)
 
     if add_bar_labels:
         add_labels_to_bars(g)
