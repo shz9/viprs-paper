@@ -80,7 +80,7 @@ def plot_simulation_predictive_performance(s_df, metric='R2',
                     palette=palette)
 
     if metric_name is not None:
-        g.set_axis_labels("Model", metric_name(metric))
+        g.set_axis_labels("Heritability", metric_name(metric))
 
     return g
 

@@ -30,7 +30,7 @@ quant_real_data = update_model_names(quant_real_data)
 # Set seaborn context:
 makedir("plots/main_figures/figure_2/")
 sns.set_style("darkgrid")
-sns.set_context("paper")
+sns.set_context("paper", font_scale=1.25)
 
 # Create plot:
 
