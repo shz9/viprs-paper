@@ -103,32 +103,29 @@ def update_model_names(data_df):
     return data_df
 
 
-def add_labels_to_bars(g, rotation=90):
+def add_labels_to_bars(g, rotation=90, fontsize='smaller'):
     """
     This function takes a barplot and adds labels above each bar with its value.
     """
 
-    max_height = 0.
-
-    for idx, ax in enumerate(g.axes.flatten()):
-        for p in ax.patches:
-            if p.get_height() > max_height:
-                max_height = p.get_height()
-
     for ax in g.axes.flatten():
+
+        y_min, y_max = ax.get_ylim()
+
         for p in ax.patches:
 
-            x_height = p.get_height()
+            x_height = p.get_height() - y_min
 
-            if x_height > .25*max_height and rotation == 90:
-                y = .5*p.get_height()
+            if x_height > .3*(y_max - y_min) and rotation == 90:
+                y = y_min + .5*x_height
             else:
-                y = p.get_height() + 0.02
+                y = y_min + x_height + 0.02
 
             ax.text(p.get_x() + .4,
                     y,
-                    f'{x_height:.3f}',
+                    f'{p.get_height():.3f}',
                     color='black',
+                    fontsize=fontsize,
                     rotation=rotation,
                     ha='center')
 

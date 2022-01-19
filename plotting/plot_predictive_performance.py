@@ -103,15 +103,19 @@ def plot_real_predictive_performance(r_df, metric='R2',
                     col_order=col_order,
                     palette=palette)
 
+    if metric == 'ROC-AUC':
+        for fig_ax in g.fig.axes:
+            fig_ax.set_ylim(.5, 1.)
+
     if add_bar_labels:
         add_labels_to_bars(g)
 
     if x_label_rotation != 0 or hide_x_labels:
-        for fix_ax in g.fig.axes:
+        for fig_ax in g.fig.axes:
             if hide_x_labels:
-                fix_ax.set_xticklabels([])
+                fig_ax.set_xticklabels([])
             else:
-                fix_ax.set_xticklabels(fix_ax.get_xticklabels(), rotation=x_label_rotation)
+                fig_ax.set_xticklabels(fig_ax.get_xticklabels(), rotation=x_label_rotation)
 
     if metric_name is not None:
         g.set_axis_labels("Model", metric_name(metric))
