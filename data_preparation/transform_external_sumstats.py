@@ -84,7 +84,7 @@ def transform_ldsc_sumstats(ldsc_file):
 
         # Correct allele frequency:
         a1_mismatch = (m_df['A1'] != m_df['ALT1'])
-        m_df['A1_FREQ'] = np.abs(a1_mismatch - m_df['ALT1_FREQS'])
+        m_df['A1_FREQ'] = np.abs(a1_mismatch - m_df['ALT1_FREQ'])
 
         # Estimate BETA:
         m_df['BETA'] = compute_beta(m_df)
@@ -101,29 +101,29 @@ def transform_ldsc_sumstats(ldsc_file):
 
         # Output the file in the format of PLINK:
 
-        chrom_name = osp.basename(freq_file).replace(".freq", "")
+        chrom_name = osp.basename(freq_file).replace(".afreq", "")
 
         for i in range(1, 6):
             output_f = osp.join(args.genotype_dir.split('/')[0], "gwas",
                                 trait_type, f"real_fold_{i}", trait_name, chrom_name + extension)
             makedir(osp.dirname(output_f))
-            m_df.to_csv(output_f, index=False)
+            m_df.to_csv(output_f, index=False, sep="\t")
 
 
 def separate_sumstats_by_chromosome(ss_df, trait_name, trait_type='quantitative'):
 
-    ss_df.drop_duplicates(subset='SNP', keep=False, inplace=True)
+    ss_df.drop_duplicates(subset='ID', keep=False, inplace=True)
 
     for freq_file in glob.glob(osp.join(args.genotype_dir, "*.afreq")):
         freq_df = pd.read_csv(freq_file, delim_whitespace=True)
 
-        m_df = freq_df.merge(ss_df, left_on='ID', right_on='SNP')
+        m_df = freq_df.merge(ss_df, on='ID', suffixes=('_f', ''))
 
         # Transform columns and column names:
-        m_df = m_df[['#CHROM', 'POS', 'ID', 'A2', 'A1', 'A1', 'A1_FREQ', 'OBS_CT', 'BETA', 'SE', 'Z', 'P']]
+        m_df = m_df[['#CHROM', 'POS', 'ID', 'A2', 'A1', 'A1', 'A1_FREQ', 'OBS_CT', 'BETA', 'SE', 'T_STAT', 'P']]
         m_df.columns = ['#CHROM', 'POS', 'ID', 'REF', 'ALT1', 'A1', 'A1_FREQ', 'OBS_CT', 'BETA', 'SE', 'T_STAT', 'P']
 
-        chrom_name = osp.basename(freq_file).replace(".freq", "")
+        chrom_name = osp.basename(freq_file).replace(".afreq", "")
 
         if trait_type == 'quantitative':
             extension = ".PHENO1.glm.linear"
@@ -134,7 +134,7 @@ def separate_sumstats_by_chromosome(ss_df, trait_name, trait_type='quantitative'
             output_f = osp.join(args.genotype_dir.split('/')[0], "gwas",
                                 trait_type, f"real_fold_{i}", trait_name, chrom_name + extension)
             makedir(osp.dirname(output_f))
-            m_df.to_csv(output_f, index=False)
+            m_df.to_csv(output_f, index=False, sep="\t")
 
 
 def replicate_cross_validation_files(gwas_f):
@@ -146,14 +146,15 @@ def replicate_cross_validation_files(gwas_f):
     :param gwas_f: The GWAS directory
     """
 
-    trait = osp.basename(osp.dirname(gwas_f))
+    trait = osp.basename(gwas_f).replace('.sumstats', '')
     ukb_trait = trait.split('_')[1]
     trait_type = gwas_f.split('/')[2]
 
     source = f"data/keep_files/ukbb_cv/{trait_type}/{ukb_trait}/"
     destination = f"data/keep_files/ukbb_cv/{trait_type}/{trait}/"
 
-    shutil.copytree(source, destination)
+    if not osp.isdir(destination):
+        shutil.copytree(source, destination)
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -161,10 +162,13 @@ def replicate_cross_validation_files(gwas_f):
 # Loop over the LDSC sumstats files and transform them:
 for f in (glob.glob("data/external_gwas/*/PASS_*.sumstats") +
           glob.glob("data/external_gwas/*/UKB_*.sumstats")):
+    print(f"> Transforming {f}")
     transform_ldsc_sumstats(f)
     replicate_cross_validation_files(f)
 
 # ----------------------------------------------------------------------------------------------------------------------
+
+print("> Transforming Wood_HEIGHT")
 
 # Transform the HEIGHT summary statistics data from Wood et al. (GIANT)
 # MarkerName	Allele1	Allele2	Freq.Allele1.HapMapCEU	b	SE	p	N
@@ -184,8 +188,12 @@ wood_height.rename(columns={
 wood_height['T_STAT'] = wood_height['BETA'] / wood_height['SE']
 
 separate_sumstats_by_chromosome(wood_height, trait_name="Wood_HEIGHT")
+replicate_cross_validation_files("data/external_gwas/quantitative/Wood_HEIGHT.sumstats")
 
 # -------------------------------------------------------------
+
+print("> Transforming Locke_BMI")
+
 # Transform the BMI summary statistics data from Locke et al. (GIANT)
 # to LDSC-style summary statistics:
 
@@ -204,8 +212,12 @@ locke_bmi.rename(columns={
 
 locke_bmi['T_STAT'] = locke_bmi['BETA'] / locke_bmi['SE']
 separate_sumstats_by_chromosome(locke_bmi, trait_name="Locke_BMI")
+replicate_cross_validation_files("data/external_gwas/quantitative/Locke_BMI.sumstats")
 
 # -------------------------------------------------------------
+
+print("> Transforming Yengo_BMI")
+
 # Transform the BMI meta-analyzed summary statistics data from Yengo et al.
 # to LDSC-style summary statistics:
 
@@ -224,8 +236,12 @@ yengo_bmi.rename(columns={
 yengo_bmi['T_STAT'] = yengo_bmi['BETA'] / yengo_bmi['SE']
 
 separate_sumstats_by_chromosome(yengo_bmi, trait_name="Yengo_BMI")
+replicate_cross_validation_files("data/external_gwas/quantitative/Yengo_BMI.sumstats")
 
 # -------------------------------------------------------------
+
+print("> Transforming Yengo_HEIGHT")
+
 # Transform the HEIGHT meta-analyzed summary statistics data from Yengo et al.
 # to LDSC-style summary statistics:
 
@@ -244,3 +260,4 @@ yengo_height.rename(columns={
 yengo_height['T_STAT'] = yengo_height['BETA'] / yengo_height['SE']
 
 separate_sumstats_by_chromosome(yengo_height, trait_name="Yengo_HEIGHT")
+replicate_cross_validation_files("data/external_gwas/quantitative/Yengo_HEIGHT.sumstats")

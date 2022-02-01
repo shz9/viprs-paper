@@ -66,12 +66,6 @@ wget https://storage.googleapis.com/broad-alkesgroup-public/LDSCORE/all_sumstats
     -O ./data/external_gwas/binary/UKB_T2D.sumstats
 
 # ----------------------------------
-# T1D
-
-wget https://storage.googleapis.com/broad-alkesgroup-public/LDSCORE/all_sumstats/PASS_Type_1_Diabetes.sumstats \
-    -O ./data/external_gwas/binary/PASS_T1D.sumstats
-
-# ----------------------------------
 # RA
 
 wget https://storage.googleapis.com/broad-alkesgroup-public/LDSCORE/all_sumstats/PASS_Rheumatoid_Arthritis.sumstats \
