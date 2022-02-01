@@ -65,23 +65,12 @@ def main():
     print("> Processing GWAS summary statistics in:", ss_dir)
     print("> Loading the LD data and associated summary statistics file...")
 
-    if config == 'independent':
-        # Fix this to work with combined sumstats files...
-        sumstats_format = 'LDSC'
-        if args.genomewide:
-            ss_files = osp.join(ss_dir, "combined.sumstats")
-        else:
-            ss_files = [osp.join(ss_dir, "combined.sumstats")]*22
-
-        ld_panel_files = [f"data/ld/{args.ld_panel}/ld/chr_{chrom}" for chrom in range(1, 23)]
-
-    else:
-        sumstats_format = 'plink'
-        ss_files = sorted(glob.glob(osp.join(ss_dir, "*.PHENO1.glm.*")),
-                          key=lambda x: int(osp.basename(x).split('.')[0].split('_')[1]))
-        if args.chrom is not None:
-            ss_files = [ssf for ssf in ss_files if f'chr_{args.chrom}.' in ssf]
-        ld_panel_files = [f"data/ld/{args.ld_panel}/ld/{osp.basename(ssf).split('.')[0]}" for ssf in ss_files]
+    sumstats_format = 'plink'
+    ss_files = sorted(glob.glob(osp.join(ss_dir, "*.PHENO1.glm.*")),
+                      key=lambda x: int(osp.basename(x).split('.')[0].split('_')[1]))
+    if args.chrom is not None:
+        ss_files = [ssf for ssf in ss_files if f'chr_{args.chrom}.' in ssf]
+    ld_panel_files = [f"data/ld/{args.ld_panel}/ld/{osp.basename(ssf).split('.')[0]}" for ssf in ss_files]
 
     file_sets = []
 
@@ -172,8 +161,6 @@ def main():
 
             if 'real' in config:
                 phenotype_file = f"data/phenotypes/{trait_type}/real/{trait}.txt"
-            elif config == 'independent':
-                phenotype_file = f"data/phenotypes/{trait_type}/real/{trait.split('_')[-1]}.txt"
             else:
                 phenotype_file = f"data/phenotypes/{trait_type}/{config}/{trait}.txt"
 

@@ -15,7 +15,7 @@ parser.add_argument('-p', '--phenotype', dest='pheno_name', type=str,
 parser.add_argument('-c', '--config', dest='config', type=str,
                     help='The simulation configuration on which to perform model fit')
 parser.add_argument('-a', '--application', dest='application', type=str,
-                    choices={'real', 'simulation', 'independent'},
+                    choices={'real', 'simulation'},
                     help='The category of phenotypes to consider')
 parser.add_argument('-t', '--type', dest='type', type=str, default='all',
                     choices={'quantitative', 'binary', 'all'},
@@ -55,8 +55,6 @@ elif args.config is not None:
 elif args.application is not None:
     if args.application == 'real':
         gwas_dir = osp.join(gwas_dir, "real_fold_*", "*")
-    elif args.application == 'independent':
-        gwas_dir = osp.join(gwas_dir, "independent", "*")
     else:
         gwas_dir = osp.join(gwas_dir, "h2_*", "*")
 else:
