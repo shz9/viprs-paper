@@ -22,7 +22,7 @@ if [ $snp_set == "hm3" ]; then
   output_dir="data/1000G_qc_genotypes"
 else
   snp_keep="data/keep_files/ukbb_qc_variants.keep"
-  output_dir="/scratch/szabad/data/1000G_qc_genotypes_all"
+  output_dir="data_all/1000G_qc_genotypes"
 fi
 
 mkdir -p "$output_dir"
@@ -40,6 +40,13 @@ plink2 --bfile "$TGP_GENOTYPE_DIR/1000G.EUR.QC.$CHR" \
       --snps-only \
       --max-alleles 2 \
       --out "$output_dir/chr_${CHR}"
+
+# Compute the allele frequency and store in the same directory
+# (May be useful in some downstream tasks)
+plink2 --bfile "$output_dir/chr_${CHR}" \
+       --freq cols=chrom,pos,ref,alt1,alt1freq,nobs \
+       --out "$output_dir/chr_${CHR}"
+
 
 module load nixpkgs/16.09
 module load plink/1.9b_4.1-x86_64

@@ -12,6 +12,8 @@
 # This is mainly to correct for the effect of filtering individuals
 # with excessive missingness rates.
 
+. global_config.sh
+
 module load plink
 
 echo "Creating a combined .mindrem.id file..."
@@ -26,9 +28,9 @@ do
   echo "------- Filtering individuals from chromosome $chr... -------"
   plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
          --make-bed \
-         --mac 5 \
-         --maf 0.0001 \
-         --max-maf 0.9999 \
+         --mac "$MIN_MAC" \
+         --maf "$MIN_MAF" \
+         --max-maf "$MAX_MAF" \
          --remove data/ukbb_qc_genotypes/combined.mindrem.id \
          --out "data/ukbb_qc_genotypes/chr_$chr"
 done

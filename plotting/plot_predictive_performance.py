@@ -117,6 +117,10 @@ def plot_real_predictive_performance(r_df, metric='R2',
             else:
                 fig_ax.set_xticklabels(fig_ax.get_xticklabels(), rotation=x_label_rotation)
 
+    # Update the subplot titles:
+    for fig_ax in g.fig.axes:
+        fig_ax.set_title(fig_ax.get_title().replace("Trait = ", ""))
+
     if metric_name is not None:
         g.set_axis_labels("Model", metric_name(metric))
 

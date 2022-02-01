@@ -52,7 +52,9 @@ if (trait_type == "binary"){
   n_eff <- neff_df[(neff_df$Trait == trait) &
                      (neff_df$Configuration == config) &
                       (neff_df$Class == trait_type), "N_eff"]
-  sumstats$n_eff <- n_eff
+  if (length(n_eff) > 0){
+    sumstats$n_eff <- n_eff
+  }
 }
 
 # ----------------------------------------------------------

@@ -9,7 +9,7 @@ import os.path as osp
 import glob
 import numpy as np
 import pandas as pd
-sys.path.append(osp.dirname(osp.dirname(__file__)))
+sys.path.append(osp.dirname(osp.dirname(osp.dirname(__file__))))
 sys.path.append("viprs/")
 from gwasimulator.GWASDataLoader import GWASDataLoader
 from viprs.prs.src.VIPRS import VIPRS
@@ -39,7 +39,7 @@ def main():
                                  'VIPRSSBayesAlpha', 'GibbsPRS', 'GibbsPRSSBayes'})
     parser.add_argument('-f', '--fitting-strategy', dest='fitting_strategy', type=str, default='EM',
                         help='The strategy for fitting the hyperparameters', choices={'EM', 'BO', 'GS', 'BMA'})
-    parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_50k_windowed',
+    parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_all_windowed',
                         help='The LD panel to use in model fit')
     parser.add_argument('-s', '--sumstats', dest='ss_dir', type=str, required=True,
                         help='The summary statistics directory')
@@ -73,7 +73,7 @@ def main():
         else:
             ss_files = [osp.join(ss_dir, "combined.sumstats")]*22
 
-        ld_panel_files = [f"data/ld/{args.ld_panel}/ld/chr_{chrom}" for chrom in range(1, 23)]
+        ld_panel_files = [f"data_all/ld/ld/chr_{chrom}" for chrom in range(1, 23)]
 
     else:
         sumstats_format = 'plink'
@@ -81,7 +81,8 @@ def main():
                           key=lambda x: int(osp.basename(x).split('.')[0].split('_')[1]))
         if args.chrom is not None:
             ss_files = [ssf for ssf in ss_files if f'chr_{args.chrom}.' in ssf]
-        ld_panel_files = [f"data/ld/{args.ld_panel}/ld/{osp.basename(ssf).split('.')[0]}" for ssf in ss_files]
+        ld_panel_files = [f"data_all/ld/ld/{osp.basename(ssf).split('.')[0]}" for ssf in ss_files]
+
 
     file_sets = []
 
@@ -98,9 +99,9 @@ def main():
             })
 
     if args.fitting_strategy == 'EM':
-        output_dir = f"data/model_fit/{args.ld_panel}/{args.model}"
+        output_dir = f"data_all/model_fit/{args.ld_panel}/{args.model}"
     else:
-        output_dir = f"data/model_fit/{args.ld_panel}/{args.model}-{args.fitting_strategy}"
+        output_dir = f"data_all/model_fit/{args.ld_panel}/{args.model}-{args.fitting_strategy}"
 
     if args.fitting_strategy in ('GS', 'BO') and args.grid_metric == 'validation':
         output_dir += "v"
@@ -132,8 +133,8 @@ def main():
     run_opts = {}
 
     if args.fitting_strategy in ('BMA', 'GS', 'BO'):
-        load_ld = True
-        max_iter = 100
+        load_ld = False
+        max_iter = 300
         if args.fitting_strategy in ('BMA', 'GS'):
             if len(opt_params) == 1:
                 for p in opt_params:
@@ -143,11 +144,11 @@ def main():
                     if p != 'alpha':
                         run_opts = {p + '_steps': 20}
     elif 'sample' in args.ld_panel:
-        load_ld = True
-        max_iter = 500
+        load_ld = False
+        max_iter = 300
     else:
-        load_ld = True
-        max_iter = 1000
+        load_ld = False
+        max_iter = 300
 
     h2g = []
     prop_causal = []
@@ -177,7 +178,7 @@ def main():
             else:
                 phenotype_file = f"data/phenotypes/{trait_type}/{config}/{trait}.txt"
 
-            validation_gdl = GWASDataLoader(bed_files=[f"data/ukbb_qc_genotypes/chr_{chrom}.bed"
+            validation_gdl = GWASDataLoader(bed_files=[f"data_all/ukbb_qc_genotypes/chr_{chrom}.bed"
                                                        for chrom in gdl.chromosomes],
                                             keep_individuals=validation_keep,
                                             phenotype_likelihood=['gaussian', 'binomial'][trait_type == 'binary'],
@@ -299,3 +300,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
