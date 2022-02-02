@@ -31,6 +31,8 @@ parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb
                              'ukbb_10k_sample', 'ukbb_10k_shrinkage', 'ukbb_10k_windowed', 'ukbb_10k_block',
                              'ukbb_50k_sample', 'ukbb_50k_shrinkage', 'ukbb_50k_windowed', 'ukbb_50k_block',
                              'ukbb_all_windowed'})
+parser.add_argument('--skip-completed', dest='skip_completed', action='store_true', default=False,
+                    help='Skip runs that have been completed before.')
 
 args = parser.parse_args()
 
@@ -71,7 +73,12 @@ for gd in glob.glob(gwas_dir):
     config = osp.basename(osp.dirname(gd))
     trait_type = osp.basename(osp.dirname(osp.dirname(gd)))
 
-    for chrom in range(1,23):
+    for chrom in range(1, 23):
+
+        if args.skip_completed:
+            if osp.isfile(f"data_all/model_fit/{args.ld_panel}/{model_name}/{trait_type}/{config}/{trait}/chr_{chrom}.fit"):
+                continue
+
         jobs.append({
             'Trait': gd,
             'Name': f"{args.ld_panel}/{model_name}/{trait_type}/{config}/{trait}/chr_{chrom}",

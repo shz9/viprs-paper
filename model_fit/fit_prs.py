@@ -121,7 +121,6 @@ def main():
     run_opts = {}
 
     if args.fitting_strategy in ('BMA', 'GS', 'BO'):
-        load_ld = True
         max_iter = 100
         if args.fitting_strategy in ('BMA', 'GS'):
             if len(opt_params) == 1:
@@ -132,10 +131,8 @@ def main():
                     if p != 'alpha':
                         run_opts = {p + '_steps': 20}
     elif 'sample' in args.ld_panel:
-        load_ld = True
         max_iter = 500
     else:
-        load_ld = True
         max_iter = 1000
 
     h2g = []
@@ -177,25 +174,22 @@ def main():
         else:
             validation_gdl = None
 
-        if load_ld:
-            gdl.load_ld()
-
         if args.model == 'VIPRS':
-            prs_m = VIPRS(gdl, load_ld=load_ld)
+            prs_m = VIPRS(gdl)
         elif args.model == 'VIPRSMix':
-            prs_m = VIPRSMix(gdl, K=3, prior_multipliers=[0.01, 0.1, 1.], load_ld=load_ld)
+            prs_m = VIPRSMix(gdl, K=3, prior_multipliers=[0.01, 0.1, 1.])
         elif args.model == 'VIPRSAlpha':
-            prs_m = VIPRSAlpha(gdl, load_ld=load_ld)
+            prs_m = VIPRSAlpha(gdl)
         elif args.model == 'VIPRSSBayes':
-            prs_m = VIPRSSBayes(gdl, load_ld=load_ld)
+            prs_m = VIPRSSBayes(gdl)
         elif args.model == 'VIPRSMixSBayes':
-            prs_m = VIPRSMixSBayes(gdl, K=3, prior_multipliers=[0.01, 0.1, 1.], load_ld=load_ld)
+            prs_m = VIPRSMixSBayes(gdl, K=3, prior_multipliers=[0.01, 0.1, 1.])
         elif args.model == 'VIPRSSBayesAlpha':
-            prs_m = VIPRSSBayesAlpha(gdl, load_ld=load_ld)
+            prs_m = VIPRSSBayesAlpha(gdl)
         elif args.model == 'GibbsPRS':
-            prs_m = GibbsPRS(gdl, load_ld=load_ld)
+            prs_m = GibbsPRS(gdl)
         elif args.model == 'GibbsPRSSBayes':
-            prs_m = GibbsPRSSBayes(gdl, load_ld=load_ld)
+            prs_m = GibbsPRSSBayes(gdl)
 
         # Fit the model to the data:
         if args.genomewide:
@@ -257,9 +251,6 @@ def main():
                 hs_m.write_validation_result(osp.join(output_dir, f'chr_{chrom}.validation'))
 
         # Cleanup:
-        if load_ld:
-            gdl.release_ld()
-
         gdl.cleanup()
         if validation_gdl is not None:
             validation_gdl.cleanup()

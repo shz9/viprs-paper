@@ -139,7 +139,7 @@ def separate_sumstats_by_chromosome(ss_df, trait_name, trait_type='quantitative'
 
 def replicate_cross_validation_files(gwas_f):
     """
-    Replicate the cross validation files for the external GWAS trait
+    Replicate the cross validation and phenotype files for the external GWAS trait
     from the corresponding internal GWAS traits.
     For example, if we have cross-validation files for height from
     the UKB, replicate those files for GWAS from an external cohort.
@@ -150,11 +150,20 @@ def replicate_cross_validation_files(gwas_f):
     ukb_trait = trait.split('_')[1]
     trait_type = gwas_f.split('/')[2]
 
+    # Copy the cross-validation files:
     source = f"data/keep_files/ukbb_cv/{trait_type}/{ukb_trait}/"
     destination = f"data/keep_files/ukbb_cv/{trait_type}/{trait}/"
 
     if not osp.isdir(destination):
         shutil.copytree(source, destination)
+
+    # Copy the phenotype files:
+    source = f"data/phenotypes/{trait_type}/real/{ukb_trait}.txt"
+    destination = f"data/phenotypes/{trait_type}/real/{trait}.txt"
+
+    if not osp.isfile(destination):
+        shutil.copy(source, destination)
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 
@@ -195,7 +204,7 @@ replicate_cross_validation_files("data/external_gwas/quantitative/Wood_HEIGHT.su
 print("> Transforming Locke_BMI")
 
 # Transform the BMI summary statistics data from Locke et al. (GIANT)
-# to LDSC-style summary statistics:
+# to PLINK2-style summary statistics:
 
 # SNP	A1	A2	Freq1.Hapmap	b	se	p	N
 locke_bmi = pd.read_csv("data/external_gwas/quantitative/Locke_BMI.sumstats",
@@ -219,7 +228,7 @@ replicate_cross_validation_files("data/external_gwas/quantitative/Locke_BMI.sums
 print("> Transforming Yengo_BMI")
 
 # Transform the BMI meta-analyzed summary statistics data from Yengo et al.
-# to LDSC-style summary statistics:
+# to PLINK2-style summary statistics:
 
 # CHR	POS	SNP	Tested_Allele	Other_Allele	Freq_Tested_Allele_in_HRS	BETA	SE	P	N
 yengo_bmi = pd.read_csv("data/external_gwas/quantitative/Yengo_BMI.sumstats",
@@ -243,7 +252,7 @@ replicate_cross_validation_files("data/external_gwas/quantitative/Yengo_BMI.sums
 print("> Transforming Yengo_HEIGHT")
 
 # Transform the HEIGHT meta-analyzed summary statistics data from Yengo et al.
-# to LDSC-style summary statistics:
+# to PLINK2-style summary statistics:
 
 # CHR	POS	SNP	Tested_Allele	Other_Allele	Freq_Tested_Allele_in_HRS	BETA	SE	P	N
 yengo_height = pd.read_csv("data/external_gwas/quantitative/Yengo_HEIGHT.sumstats",
