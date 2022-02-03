@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=16
 #SBATCH --mem-per-cpu=8GB
 #SBATCH --time=2:00:00
-#SBATCH --output=./log/data_preparation/ld_mat/%x/%j.out
+#SBATCH --output=./log/data_preparation/ld_mat/%x.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL
 
