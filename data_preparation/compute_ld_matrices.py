@@ -24,6 +24,8 @@ parser.add_argument('--min-mac', dest='min_mac', type=float, default=5,
                     help='Minimum minor allele count')
 parser.add_argument('--min-maf', dest='min_maf', type=float, default=0.001,
                     help='Minimum minor allele frequency')
+parser.add_argument('--use-plink', dest='use_plink', action='store_true', default=False,
+                    help='Use plink2 to compute the LD matrix.')
 
 args = parser.parse_args()
 
@@ -36,6 +38,7 @@ if args.estimator == 'windowed':
                          min_mac=args.min_mac,
                          min_maf=args.min_maf,
                          compute_ld=True,
+                         use_plink=args.use_plink,
                          output_dir=f"data/ld/{args.name}_windowed/",
                          temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 if args.estimator == 'block':
@@ -46,6 +49,7 @@ if args.estimator == 'block':
                          min_mac=args.min_mac,
                          min_maf=args.min_maf,
                          compute_ld=True,
+                         use_plink=args.use_plink,
                          output_dir=f"data/ld/{args.name}_block/",
                          temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 elif args.estimator == 'shrinkage':
@@ -58,6 +62,7 @@ elif args.estimator == 'shrinkage':
                          min_mac=args.min_mac,
                          min_maf=args.min_maf,
                          compute_ld=True,
+                         use_plink=args.use_plink,
                          output_dir=f"data/ld/{args.name}_shrinkage/",
                          temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 elif args.estimator == 'sample':
@@ -67,6 +72,7 @@ elif args.estimator == 'sample':
                          min_mac=args.min_mac,
                          min_maf=args.min_maf,
                          compute_ld=True,
+                         use_plink=args.use_plink,
                          output_dir=f"data/ld/{args.name}_sample/",
                          temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 else:

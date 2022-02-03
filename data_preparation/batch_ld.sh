@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ld_estimator=("windowed" "block" "shrinkage" "sample")
+ld_estimator=("windowed" "block" "shrinkage")
 
 for ld in "${ld_estimator[@]}"
 do
@@ -17,7 +17,7 @@ do
     for c in $(seq 1 22)
     do
       if [ $sample_size == "50k" ]; then
-        sbatch -J "ukbb_$sample_size/$ld_estimator" --mem-per-cpu "14GB" --time "01:30:00" \
+        sbatch -J "ukbb_$sample_size/$ld_estimator" --mem-per-cpu "8GB" --time "02:30:00" \
                 data_preparation/ld_compute_job.sh "$ld" "data/ukbb_qc_genotypes/chr_$c" "ukbb_$sample_size" "$kf"
       else
         sbatch -J "ukbb_$sample_size/$ld_estimator" \
@@ -26,14 +26,14 @@ do
     done
   done
 
-  echo "Submitting jobs for computing LD matrices from 1000G with the $ld estimator..."
+  #echo "Submitting jobs for computing LD matrices from 1000G with the $ld estimator..."
 
-  rm -rf ./log/data_preparation/ld_mat/1000G/"$ld_estimator" || true
-  mkdir -p ./log/data_preparation/ld_mat/1000G/"$ld_estimator"
+  #rm -rf ./log/data_preparation/ld_mat/1000G/"$ld_estimator" || true
+  #mkdir -p ./log/data_preparation/ld_mat/1000G/"$ld_estimator"
 
-  for c in $(seq 1 22)
-  do
-    sbatch -J "1000G/$ld_estimator" data_preparation/ld_compute_job.sh "$ld" "data/1000G_qc_genotypes/chr_$c" "1000G"
-  done
+  #for c in $(seq 1 22)
+  #do
+  #  sbatch -J "1000G/$ld_estimator" data_preparation/ld_compute_job.sh "$ld" "data/1000G_qc_genotypes/chr_$c" "1000G"
+  #done
 
 done

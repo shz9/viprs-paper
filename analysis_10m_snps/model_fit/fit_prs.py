@@ -146,6 +146,8 @@ def main():
         gdl = GWASDataLoader(ld_store_files=fs['LD'],
                              sumstats_files=fs['SS'],
                              sumstats_format=sumstats_format,
+                             min_mac=None,
+                             min_maf=None,
                              temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 
         if args.fitting_strategy in ('GS', 'BO') and args.grid_metric == 'validation':

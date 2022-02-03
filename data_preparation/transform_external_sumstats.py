@@ -225,6 +225,7 @@ replicate_cross_validation_files("data/external_gwas/quantitative/Locke_BMI.sums
 
 # -------------------------------------------------------------
 
+"""
 print("> Transforming Yengo_BMI")
 
 # Transform the BMI meta-analyzed summary statistics data from Yengo et al.
@@ -270,3 +271,4 @@ yengo_height['T_STAT'] = yengo_height['BETA'] / yengo_height['SE']
 
 separate_sumstats_by_chromosome(yengo_height, trait_name="Yengo_HEIGHT")
 replicate_cross_validation_files("data/external_gwas/quantitative/Yengo_HEIGHT.sumstats")
+"""
