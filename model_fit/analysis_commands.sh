@@ -16,3 +16,21 @@ python model_fit/batch_model_fit.py -m VIPRS -l ukbb_50k_windowed
 python model_fit/batch_model_fit.py -m VIPRS -l ukbb_1k_block
 python model_fit/batch_model_fit.py -m VIPRS -l ukbb_10k_block
 python model_fit/batch_model_fit.py -m VIPRS -l ukbb_50k_block
+
+python model_fit/batch_model_fit.py -m VIPRS -l ukbb_1k_shrinkage
+python model_fit/batch_model_fit.py -m VIPRS -l ukbb_10k_shrinkage
+python model_fit/batch_model_fit.py -m VIPRS -l ukbb_50k_shrinkage
+
+python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_1k_windowed
+python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_10k_windowed
+python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_50k_windowed
+
+python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_1k_block
+python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_10k_block
+python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_50k_block
+
+python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_1k_shrinkage
+python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_10k_shrinkage
+python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_50k_shrinkage
+
+

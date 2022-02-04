@@ -145,8 +145,6 @@ def main():
         gdl = GWASDataLoader(ld_store_files=fs['LD'],
                              sumstats_files=fs['SS'],
                              sumstats_format=sumstats_format,
-                             min_mac=None,
-                             min_maf=None,
                              temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 
         if args.fitting_strategy in ('GS', 'BO') and args.grid_metric == 'validation':
@@ -167,8 +165,6 @@ def main():
                                                        for chrom in gdl.chromosomes],
                                             keep_individuals=validation_keep,
                                             phenotype_likelihood=['gaussian', 'binomial'][trait_type == 'binary'],
-                                            min_maf=None,
-                                            min_mac=None,
                                             phenotype_file=phenotype_file,
                                             compute_ld=False,
                                             use_plink=True,

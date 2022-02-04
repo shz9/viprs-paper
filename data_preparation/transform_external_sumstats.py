@@ -118,6 +118,8 @@ def separate_sumstats_by_chromosome(ss_df, trait_name, trait_type='quantitative'
         freq_df = pd.read_csv(freq_file, delim_whitespace=True)
 
         m_df = freq_df.merge(ss_df, on='ID', suffixes=('_f', ''))
+        a1_mismatch = (m_df['A1'] != m_df['ALT1'])
+        m_df['A1_FREQ'] = np.abs(a1_mismatch - m_df['ALT1_FREQ'])
 
         # Transform columns and column names:
         m_df = m_df[['#CHROM', 'POS', 'ID', 'A2', 'A1', 'A1', 'A1_FREQ', 'OBS_CT', 'BETA', 'SE', 'T_STAT', 'P']]
@@ -188,7 +190,6 @@ wood_height.rename(columns={
     'MarkerName': 'ID',
     'Allele1': 'A1',
     'Allele2': 'A2',
-    'Freq.Allele1.HapMapCEU': 'A1_FREQ',
     'N': 'OBS_CT',
     'b': 'BETA',
     'p': 'P'
@@ -212,7 +213,6 @@ locke_bmi = pd.read_csv("data/external_gwas/quantitative/Locke_BMI.sumstats",
 
 locke_bmi.rename(columns={
     'SNP': 'ID',
-    'Freq1.Hapmap': 'A1_FREQ',
     'N': 'OBS_CT',
     'b': 'BETA',
     'se': 'SE',
@@ -239,7 +239,6 @@ yengo_bmi.rename(columns={
     'SNP': 'ID',
     'Tested_Allele': 'A1',
     'Other_Allele': 'A2',
-    'Freq_Tested_Allele_in_HRS': 'A1_FREQ',
     'N': 'OBS_CT'
 }, inplace=True)
 
@@ -263,7 +262,6 @@ yengo_height.rename(columns={
     'SNP': 'ID',
     'Tested_Allele': 'A1',
     'Other_Allele': 'A2',
-    'Freq_Tested_Allele_in_HRS': 'A1_FREQ',
     'N': 'OBS_CT'
 }, inplace=True)
 
