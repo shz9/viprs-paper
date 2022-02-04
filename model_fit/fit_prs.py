@@ -226,8 +226,7 @@ def main():
             final_m = hs_m.fit(max_iter=max_iter, **run_opts)
         except Exception as e:
             print(e)
-            if e.__class__.__name__ != 'OptimizationDivergence':
-                raise e
+            raise e
 
         print("> Writing out the inference results...")
 
