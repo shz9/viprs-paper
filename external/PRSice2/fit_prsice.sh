@@ -83,6 +83,7 @@ echo "Transforming output..."
 
 source "$HOME/pyenv/bin/activate"
 python external/PRSice2/transform_output.py -o "$output_dir" -s "$ss_dir"
+python model_fit/combine_fit_files.py -d "data/model_fit/$SLURM_JOB_NAME"
 
 echo "Job finished with exit code $? at: `date`"
 echo "Duration (minutes): $MINUTES"

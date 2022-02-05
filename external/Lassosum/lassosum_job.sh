@@ -29,5 +29,8 @@ Rscript external/Lassosum/fit_lassosum.R "$1" "plink"
 
 MINUTES=$(echo "scale=2; $SECONDS/60" | bc)
 
+source "$HOME/pyenv/bin/activate"
+python model_fit/combine_fit_files.py -d "data/model_fit/$SLURM_JOB_NAME"
+
 echo "Job finished with exit code $? at: `date`"
 echo "Duration (minutes): $MINUTES"

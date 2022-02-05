@@ -19,19 +19,32 @@ python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRS -t quantitative -
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRS -t quantitative -p HDL
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRS -t quantitative -p LDL
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRS -t quantitative -p Locke_BMI
+python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRS -t quantitative -p Wood_HEIGHT
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRS -t quantitative -p WC
-
 
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSMix -t binary
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSMix -t quantitative -p HEIGHT
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSMix -t quantitative -p BMI
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSMix -t quantitative -p BW
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSMix -t quantitative -p FEV1
-
-
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSMix -t quantitative -p FVC
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSMix -t quantitative -p HC
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSMix -t quantitative -p HDL
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSMix -t quantitative -p LDL
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSMix -t quantitative -p Locke_BMI
+python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSMix -t quantitative -p Wood_HEIGHT
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSMix -t quantitative -p WC
+
+python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSAlpha -t binary
+python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSAlpha -t quantitative -p HEIGHT
+python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSAlpha -t quantitative -p BMI
+python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSAlpha -t quantitative -p BW
+python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSAlpha -t quantitative -p FEV1
+python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSAlpha -t quantitative -p FVC
+python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSAlpha -t quantitative -p HC
+python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSAlpha -t quantitative -p HDL
+python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSAlpha -t quantitative -p LDL
+python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSAlpha -t quantitative -p Locke_BMI
+python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSAlpha -t quantitative -p Wood_HEIGHT
+python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRSAlpha -t quantitative -p WC
+

@@ -264,13 +264,6 @@ def main():
                   "This is indicative of poor model fit or the algorithm diverging. "
                   "You may need to re-run this model with a different LD panel.")
 
-        hyp_df = pd.DataFrame.from_dict({
-            'Heritability': np.sum(h2g),
-            'Prop. Causal': np.mean(prop_causal)
-        }, orient='index')
-
-        hyp_df.to_csv(osp.join(output_dir, 'combined.hyp'))
-
 
 if __name__ == '__main__':
     main()

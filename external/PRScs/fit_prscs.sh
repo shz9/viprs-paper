@@ -57,6 +57,7 @@ MINUTES=$(echo "scale=2; $SECONDS/60" | bc)
 echo "Transforming output of PRScs..."
 
 python external/PRScs/transform_output.py -o "$output_dir"
+python model_fit/combine_fit_files.py -d "data/model_fit/$SLURM_JOB_NAME"
 
 echo "Job finished with exit code $? at: `date`"
 echo "Duration (minutes): $MINUTES"

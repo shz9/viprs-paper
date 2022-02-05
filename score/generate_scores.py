@@ -42,7 +42,7 @@ test_data = GWASDataLoader([f"data/ukbb_qc_genotypes/chr_{chrom}.bed" for chrom 
                            compute_ld=False,
                            temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 prs_m = PRSModel(test_data)
-prs_m.read_inferred_params(glob.glob(osp.join(fit_dir, "*.fit")))
+prs_m.read_inferred_params(glob.glob(osp.join(fit_dir, "*.fit*")))
 
 # Predict on the test set:
 print("> Generating polygenic scores...")
@@ -58,6 +58,6 @@ ind_table['PRS'] = prs
 test_data.cleanup()
 
 # Output the scores:
-output_f = fit_dir.replace("model_fit", "test_scores") + '.prs'
+output_f = fit_dir.replace("model_fit", "test_scores") + '.prs.gz'
 makedir(osp.dirname(output_f))
 ind_table.to_csv(output_f, index=False, sep="\t")
