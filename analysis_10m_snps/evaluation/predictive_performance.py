@@ -66,7 +66,7 @@ def process_trait(trait_f):
     pheno_res = []
 
     for prs_file in glob.glob(f"data_all/test_scores/{search_panel}/{search_model}"
-                              f"/{trait_type}/{search_config}/{trait}.prs"):
+                              f"/{trait_type}/{search_config}/{trait}.prs*"):
 
         ld_panel, model, _, m_config = prs_file.split("/")[2:6]
         print(f"> Evaluating {model} ({ld_panel})")

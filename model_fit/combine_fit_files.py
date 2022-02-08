@@ -7,12 +7,12 @@ import glob
 
 def combine_fit_files(fit_dir, delete_original=True):
 
-    chr_files = list(glob.glob(osp.join(fit_dir, "chr_*.fit")))
+    fit_files = list(glob.glob(osp.join(fit_dir, "chr_*.fit")))
 
-    if len(chr_files) == 22:
+    if len(fit_files) == 22:
 
         dfs = []
-        for f in chr_files:
+        for f in fit_files:
             dfs.append(pd.read_csv(f, sep="\t"))
 
         # Concatenate the tables:
@@ -21,23 +21,28 @@ def combine_fit_files(fit_dir, delete_original=True):
         dfs.to_csv(osp.join(fit_dir, "combined.fit.gz"), sep="\t", index=False)
 
         if delete_original:
-            for f in chr_files:
+            for f in fit_files:
                 try:
                     os.remove(f)
                 except OSError as e:
                     raise e
+    elif osp.isfile(osp.join(fit_dir, "combined.fit.gz")):
+        return
+    elif len(fit_files) == 0:
+        print("Error: There are no fit files in this directory!")
     else:
         print(f"Error: Directory {fit_dir} is incomplete!")
 
 
 def combine_hyp_files(fit_dir, delete_original=True):
 
-    chr_files = list(glob.glob(osp.join(fit_dir, "chr_*.hyp")))
+    hyp_files = list(glob.glob(osp.join(fit_dir, "chr_*.hyp")))
+    fit_files = list(glob.glob(osp.join(fit_dir, "chr_*.fit")))
 
-    if len(chr_files) == 22:
+    if len(hyp_files) == 22:
 
         dfs = []
-        for f in chr_files:
+        for f in hyp_files:
             dfs.append(pd.read_csv(f, sep="\t"))
             dfs[-1]['CHR'] = osp.basename(f).replace(".hyp", "")
 
@@ -47,11 +52,17 @@ def combine_hyp_files(fit_dir, delete_original=True):
         dfs.to_csv(osp.join(fit_dir, "combined.hyp.gz"), sep="\t", index=False)
 
         if delete_original:
-            for f in chr_files:
+            for f in hyp_files:
                 try:
                     os.remove(f)
                 except OSError as e:
                     raise e
+    elif osp.isfile(osp.join(fit_dir, "combined.hyp.gz")):
+        return
+    elif len(hyp_files) == 0 and len(fit_files) == 22:
+        print("Warning: This model does not output hyperparameter files!")
+    elif len(hyp_files) == 0:
+        print("Error: There are no hyperparameter files in this directory!")
     else:
         print(f"Error: Directory {fit_dir} is incomplete!")
 

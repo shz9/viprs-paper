@@ -1,4 +1,5 @@
-import os, errno
+import os
+import errno
 
 
 def makedir(directory):
