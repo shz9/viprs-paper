@@ -59,7 +59,7 @@ def combine_hyp_files(fit_dir, delete_original=True):
                     raise e
     elif osp.isfile(osp.join(fit_dir, "combined.hyp.gz")):
         return
-    elif len(hyp_files) == 0 and len(fit_files) == 22:
+    elif len(hyp_files) == 0 and ((len(fit_files) == 22) or osp.isfile(osp.join(fit_dir, "combined.fit.gz"))):
         print("Warning: This model does not output hyperparameter files!")
     elif len(hyp_files) == 0:
         print("Error: There are no hyperparameter files in this directory!")
