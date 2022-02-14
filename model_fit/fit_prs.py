@@ -156,7 +156,7 @@ def main():
             n_filt_snps = mis_mask.sum()
             if n_filt_snps > 0:
                 filtered_snps += n_filt_snps
-                gdl.filter_snps(gdl.snps[c][mis_mask], chrom=c)
+                gdl.filter_snps(gdl.snps[c][~mis_mask], chrom=c)
 
         if filtered_snps > 0:
             print(f"Filtered {filtered_snps} SNPs due to mismatch between summary statistics and LD reference panel.")
