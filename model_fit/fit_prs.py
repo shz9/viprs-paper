@@ -219,7 +219,7 @@ def main():
             else:
                 hs_m = prs_m
 
-            final_m = hs_m.fit(max_iter=max_iter, **run_opts)
+            final_m = hs_m.fit(max_iter=max_iter, f_abs_tol=1e-2, **run_opts)
         except Exception as e:
             print(e)
             raise e

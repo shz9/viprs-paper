@@ -14,6 +14,9 @@ python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRS -t quantitative -
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRS -t quantitative -p BMI
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRS -t quantitative -p BW
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRS -t quantitative -p FEV1
+
+
+
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRS -t quantitative -p FVC
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRS -t quantitative -p HC
 python analysis_10m_snps/model_fit/batch_model_fit.py -m VIPRS -t quantitative -p HDL

@@ -29,9 +29,9 @@ def combine_fit_files(fit_dir, delete_original=True):
     elif osp.isfile(osp.join(fit_dir, "combined.fit.gz")):
         return
     elif len(fit_files) == 0:
-        print("Error: There are no fit files in this directory!")
+        raise FileNotFoundError("There are no fit files in this directory!")
     else:
-        print(f"Error: Directory {fit_dir} is incomplete!")
+        raise Exception(f"Error: Directory {fit_dir} is incomplete!")
 
 
 def combine_hyp_files(fit_dir, delete_original=True):
@@ -62,9 +62,9 @@ def combine_hyp_files(fit_dir, delete_original=True):
     elif len(hyp_files) == 0 and ((len(fit_files) == 22) or osp.isfile(osp.join(fit_dir, "combined.fit.gz"))):
         print("Warning: This model does not output hyperparameter files!")
     elif len(hyp_files) == 0:
-        print("Error: There are no hyperparameter files in this directory!")
+        raise FileNotFoundError("There are no hyperparameter files in this directory!")
     else:
-        print(f"Error: Directory {fit_dir} is incomplete!")
+        raise Exception(f"Error: Directory {fit_dir} is incomplete!")
 
 
 if __name__ == '__main__':
