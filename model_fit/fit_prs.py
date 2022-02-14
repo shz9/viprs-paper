@@ -12,6 +12,7 @@ import pandas as pd
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 sys.path.append("viprs/")
 from gwasimulator.GWASDataLoader import GWASDataLoader
+from gwasimulator.model_utils import identify_mismatched_snps
 from viprs.prs.src.VIPRS import VIPRS
 from viprs.prs.src.VIPRSMix import VIPRSMix
 from viprs.prs.src.VIPRSAlpha import VIPRSAlpha
@@ -146,6 +147,21 @@ def main():
                              sumstats_files=fs['SS'],
                              sumstats_format=sumstats_format,
                              temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
+
+        # -----------------------------------------------------------
+        # Identify mismatched SNPs and remove them from analysis:
+        mismatched_snps = identify_mismatched_snps(gdl)
+        filtered_snps = 0
+        for c, mis_mask in mismatched_snps.items():
+            n_filt_snps = mis_mask.sum()
+            if n_filt_snps > 0:
+                filtered_snps += n_filt_snps
+                gdl.filter_snps(gdl.snps[c][mis_mask], chrom=c)
+
+        if filtered_snps > 0:
+            print(f"Filtered {filtered_snps} SNPs due to mismatch between summary statistics and LD reference panel.")
+            gdl.harmonize_data()
+        # -----------------------------------------------------------
 
         if args.fitting_strategy in ('GS', 'BO') and args.grid_metric == 'validation':
 
