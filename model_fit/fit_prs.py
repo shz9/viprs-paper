@@ -54,7 +54,7 @@ def main():
     parser.add_argument('--opt-params', dest='opt_params', type=str,
                         default='sigma_epsilon,pi',
                         help='The hyperparameters to optimize using GridSearch/BMA/Bayesian optimization')
-    parser.add_argument('--max-attempts', dest='max_attempts', type=int, default=3,
+    parser.add_argument('--max-attempts', dest='max_attempts', type=int, default=5,
                         help='The maximum number of model restarts (in case of optimization divergence issues).')
 
     args = parser.parse_args()
@@ -249,7 +249,7 @@ def main():
                 converged = True
             except Exception as e:
                 print(e)
-                if e.__class__.__name__ == 'OptimizationDivergence':
+                if e.__class__.__name__ == 'OptimizationDivergence' and n_attempts + 1 < args.max_attempts:
                     n_attempts += 1
                 else:
                     raise e
