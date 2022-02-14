@@ -54,6 +54,8 @@ def main():
     parser.add_argument('--opt-params', dest='opt_params', type=str,
                         default='sigma_epsilon,pi',
                         help='The hyperparameters to optimize using GridSearch/BMA/Bayesian optimization')
+    parser.add_argument('--max-attempts', dest='max_attempts', type=int, default=3,
+                        help='The maximum number of model restarts (in case of optimization divergence issues).')
 
     args = parser.parse_args()
 
@@ -148,21 +150,6 @@ def main():
                              sumstats_format=sumstats_format,
                              temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 
-        # -----------------------------------------------------------
-        # Identify mismatched SNPs and remove them from analysis:
-        mismatched_snps = identify_mismatched_snps(gdl)
-        filtered_snps = 0
-        for c, mis_mask in mismatched_snps.items():
-            n_filt_snps = mis_mask.sum()
-            if n_filt_snps > 0:
-                filtered_snps += n_filt_snps
-                gdl.filter_snps(gdl.snps[c][~mis_mask], chrom=c)
-
-        if filtered_snps > 0:
-            print(f"Filtered {filtered_snps} SNPs due to mismatch between summary statistics and LD reference panel.")
-            gdl.harmonize_data()
-        # -----------------------------------------------------------
-
         if args.fitting_strategy in ('GS', 'BO') and args.grid_metric == 'validation':
 
             print("> Reading validation dataset...")
@@ -188,57 +175,84 @@ def main():
         else:
             validation_gdl = None
 
-        if args.model == 'VIPRS':
-            prs_m = VIPRS(gdl)
-        elif args.model == 'VIPRSMix':
-            prs_m = VIPRSMix(gdl, K=3, prior_multipliers=[0.01, 0.1, 1.])
-        elif args.model == 'VIPRSAlpha':
-            prs_m = VIPRSAlpha(gdl)
-        elif args.model == 'VIPRSSBayes':
-            prs_m = VIPRSSBayes(gdl)
-        elif args.model == 'VIPRSMixSBayes':
-            prs_m = VIPRSMixSBayes(gdl, K=3, prior_multipliers=[0.01, 0.1, 1.])
-        elif args.model == 'VIPRSSBayesAlpha':
-            prs_m = VIPRSSBayesAlpha(gdl)
-        elif args.model == 'GibbsPRS':
-            prs_m = GibbsPRS(gdl)
-        elif args.model == 'GibbsPRSSBayes':
-            prs_m = GibbsPRSSBayes(gdl)
+        converged = False
+        n_attempts = 0
 
-        # Fit the model to the data:
-        if args.genomewide:
-            print("> Performing model fit on all chromosomes jointly...")
-        else:
-            print("> Performing model fit on chromosome:", gdl.chromosomes)
+        while n_attempts < args.max_attempts and not converged:
 
-        try:
-            if args.fitting_strategy == 'BO':
-                hs_m = BayesOpt(gdl,
-                                prs_m,
-                                opt_params=opt_params,
-                                validation_gdl=validation_gdl,
-                                objective=args.grid_metric)
-            elif args.fitting_strategy == 'GS':
-                hs_m = GridSearch(gdl,
-                                  prs_m,
-                                  opt_params=opt_params,
-                                  validation_gdl=validation_gdl,
-                                  objective=args.grid_metric,
-                                  localized_grid=args.localgrid,
-                                  n_jobs=7)
-            elif args.fitting_strategy == 'BMA':
-                hs_m = BMA(gdl,
-                           prs_m,
-                           opt_params=opt_params,
-                           localized_grid=args.localgrid,
-                           n_jobs=7)
+            # -----------------------------------------------------------
+            # Identify mismatched SNPs and remove them from analysis:
+            mismatched_snps = identify_mismatched_snps(gdl)
+            filtered_snps = 0
+            for c, mis_mask in mismatched_snps.items():
+                n_filt_snps = mis_mask.sum()
+                if n_filt_snps > 0:
+                    filtered_snps += n_filt_snps
+                    gdl.filter_snps(gdl.snps[c][~mis_mask], chrom=c)
+
+            if filtered_snps > 0:
+                print(
+                    f"Filtered {filtered_snps} SNPs due to mismatch between summary statistics and LD reference panel.")
+                gdl.harmonize_data()
+            elif n_attempts > 0:
+                raise Exception("Re-attempting model fit without filtering any new variants. Exiting...")
+            # -----------------------------------------------------------
+
+            if args.model == 'VIPRS':
+                prs_m = VIPRS(gdl)
+            elif args.model == 'VIPRSMix':
+                prs_m = VIPRSMix(gdl, K=3, prior_multipliers=[0.01, 0.1, 1.])
+            elif args.model == 'VIPRSAlpha':
+                prs_m = VIPRSAlpha(gdl)
+            elif args.model == 'VIPRSSBayes':
+                prs_m = VIPRSSBayes(gdl)
+            elif args.model == 'VIPRSMixSBayes':
+                prs_m = VIPRSMixSBayes(gdl, K=3, prior_multipliers=[0.01, 0.1, 1.])
+            elif args.model == 'VIPRSSBayesAlpha':
+                prs_m = VIPRSSBayesAlpha(gdl)
+            elif args.model == 'GibbsPRS':
+                prs_m = GibbsPRS(gdl)
+            elif args.model == 'GibbsPRSSBayes':
+                prs_m = GibbsPRSSBayes(gdl)
+
+            # Fit the model to the data:
+            if args.genomewide:
+                print("> Performing model fit on all chromosomes jointly...")
             else:
-                hs_m = prs_m
+                print("> Performing model fit on chromosome:", gdl.chromosomes)
 
-            final_m = hs_m.fit(max_iter=max_iter, f_abs_tol=1e-2, **run_opts)
-        except Exception as e:
-            print(e)
-            raise e
+            try:
+                if args.fitting_strategy == 'BO':
+                    hs_m = BayesOpt(gdl,
+                                    prs_m,
+                                    opt_params=opt_params,
+                                    validation_gdl=validation_gdl,
+                                    objective=args.grid_metric)
+                elif args.fitting_strategy == 'GS':
+                    hs_m = GridSearch(gdl,
+                                      prs_m,
+                                      opt_params=opt_params,
+                                      validation_gdl=validation_gdl,
+                                      objective=args.grid_metric,
+                                      localized_grid=args.localgrid,
+                                      n_jobs=7)
+                elif args.fitting_strategy == 'BMA':
+                    hs_m = BMA(gdl,
+                               prs_m,
+                               opt_params=opt_params,
+                               localized_grid=args.localgrid,
+                               n_jobs=7)
+                else:
+                    hs_m = prs_m
+
+                final_m = hs_m.fit(max_iter=max_iter, f_abs_tol=5e-3, **run_opts)
+                converged = True
+            except Exception as e:
+                print(e)
+                if e.__class__.__name__ == 'OptimizationDivergence':
+                    n_attempts += 1
+                else:
+                    raise e
 
         print("> Writing out the inference results...")
 
