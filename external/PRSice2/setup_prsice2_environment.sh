@@ -6,7 +6,7 @@
 wget https://github.com/choishingwan/PRSice/releases/download/2.3.5/PRSice_linux.zip -P external/PRSice2/ || exit
 
 # Unzip the software:
-unzip external/PRSice2/PRSice_linux.zip -d external/PRSice2/
+unzip external/PRSice2/PRSice_linux.zip -d external/PRSice2/PRSice_linux
 mv external/PRSice2/PRSice_linux external/PRSice2/PRSice_v2.3.5
 rm external/PRSice2/PRSice_linux.zip
 

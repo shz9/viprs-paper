@@ -40,7 +40,8 @@ test_data = GWASDataLoader([f"data_all/ukbb_qc_genotypes/chr_{chrom}.bed" for ch
                            min_maf=None,
                            use_plink=True,
                            compute_ld=False,
-                           temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
+                           temp_dir=os.getenv('SLURM_TMPDIR', 'temp'),
+                           n_threads=10)
 prs_m = PRSModel(test_data)
 prs_m.read_inferred_params(glob.glob(osp.join(fit_dir, "*.fit*")))
 

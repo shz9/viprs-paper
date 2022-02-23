@@ -169,9 +169,12 @@ def main():
                                             keep_individuals=validation_keep,
                                             phenotype_likelihood=['gaussian', 'binomial'][trait_type == 'binary'],
                                             phenotype_file=phenotype_file,
+                                            min_maf=None,
+                                            min_mac=None,
                                             compute_ld=False,
                                             use_plink=True,
-                                            temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
+                                            temp_dir=os.getenv('SLURM_TMPDIR', 'temp'),
+                                            n_threads=7)
         else:
             validation_gdl = None
 
@@ -245,7 +248,7 @@ def main():
                 else:
                     hs_m = prs_m
 
-                final_m = hs_m.fit(max_iter=max_iter, f_abs_tol=5e-3, **run_opts)
+                final_m = hs_m.fit(max_iter=max_iter, f_abs_tol=1e-2, **run_opts)
                 converged = True
             except Exception as e:
                 print(e)

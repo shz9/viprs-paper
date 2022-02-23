@@ -6,16 +6,13 @@
 #
 # !!! IMPORTANT NOTE !!!
 # It is not recommended to run this script all at once, as it will launch thousands of jobs
-# to the cluster, potentially hitting the limits of the scheduler. It is better to run the commands
+# to the cluster, potentially hitting the limits of the scheduler. We recommend running the commands
 # one at a time.
 
+# (1) Analysis to understand impact of LD matrix properties:
 python model_fit/batch_model_fit.py -m VIPRS -l ukbb_1k_windowed
 python model_fit/batch_model_fit.py -m VIPRS -l ukbb_10k_windowed
 python model_fit/batch_model_fit.py -m VIPRS -l ukbb_50k_windowed
-
-
-
-
 
 python model_fit/batch_model_fit.py -m VIPRS -l ukbb_1k_block
 python model_fit/batch_model_fit.py -m VIPRS -l ukbb_10k_block
@@ -25,33 +22,26 @@ python model_fit/batch_model_fit.py -m VIPRS -l ukbb_1k_shrinkage
 python model_fit/batch_model_fit.py -m VIPRS -l ukbb_10k_shrinkage
 python model_fit/batch_model_fit.py -m VIPRS -l ukbb_50k_shrinkage
 
-python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_1k_windowed
-python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_10k_windowed
+# (2) Analysis to understand the impact of priors
+
 python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_50k_windowed
-
-python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_1k_block
-python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_10k_block
-python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_50k_block
-
-python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_1k_shrinkage
-python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_10k_shrinkage
-python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_50k_shrinkage
-
-python model_fit/batch_model_fit.py -m VIPRSMix -l ukbb_1k_windowed
-python model_fit/batch_model_fit.py -m VIPRSMix -l ukbb_10k_windowed
 python model_fit/batch_model_fit.py -m VIPRSMix -l ukbb_50k_windowed
 
-python model_fit/batch_model_fit.py -m VIPRSMix -l ukbb_1k_block
-python model_fit/batch_model_fit.py -m VIPRSMix -l ukbb_10k_block
+# (3) Analysis to understand impact of hyperparameter optimization technique + priors:
 
+# Grid search with performance on held-out validation set as criterion:
+python model_fit/batch_model_fit.py -m VIPRS -l ukbb_50k_windowed --strategy GS --opt-params pi --grid-metric validation (running)
+python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_50k_windowed --strategy GS --opt-params pi --grid-metric validation (running)
+python model_fit/batch_model_fit.py -m VIPRSMix -l ukbb_50k_windowed --strategy GS --opt-params pi --grid-metric validation (running)
 
+# Grid search with ELBO as criterion:
+python model_fit/batch_model_fit.py -m VIPRS -l ukbb_50k_windowed --strategy GS --opt-params pi --grid-metric ELBO (running narval)
+python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_50k_windowed --strategy GS --opt-params pi --grid-metric ELBO (running narval)
+python model_fit/batch_model_fit.py -m VIPRSMix -l ukbb_50k_windowed --strategy GS --opt-params pi --grid-metric ELBO (running narval)
 
-python model_fit/batch_model_fit.py -m VIPRSMix -l ukbb_50k_block
+# Bayesian Optimization:
+python model_fit/batch_model_fit.py -m VIPRS -l ukbb_50k_windowed --strategy BO --opt-params pi --grid-metric ELBO (running)
+python model_fit/batch_model_fit.py -m VIPRS -l ukbb_50k_windowed --strategy BO --opt-params pi --grid-metric validation (running)
 
-python model_fit/batch_model_fit.py -m VIPRSMix -l ukbb_1k_shrinkage
-python model_fit/batch_model_fit.py -m VIPRSMix -l ukbb_10k_shrinkage
-python model_fit/batch_model_fit.py -m VIPRSMix -l ukbb_50k_shrinkage
-
-
-
-
+# Bayesian model averaging:
+python model_fit/batch_model_fit.py -m VIPRS -l ukbb_50k_windowed --strategy BMA --opt-params pi (running narval)

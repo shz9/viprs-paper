@@ -4,7 +4,7 @@
 
 # LD Panel path
 # Downloaded from: https://zenodo.org/record/3350914
-LD_PANEL_PATH="$HOME/projects/def-sgravel/data/ld/ukbEURu_hm3_shrunk_sparse"
+LD_PANEL_PATH="$HOME/projects/ctb-sgravel/data/ld/ukbEURu_hm3_shrunk_sparse"
 
 # MCMC settings:
 CHAIN_LENGTH=10000

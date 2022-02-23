@@ -45,7 +45,7 @@ for gd in glob.glob(gwas_dir):
 
     jobs.append({
         'Trait': gd,
-        'Name': f"external/Lassosum/{args.type}{config}/{trait}"
+        'Name': f"external/Lassosum/{args.type}/{config}/{trait}"
     })
 
 if len(jobs) > 500:

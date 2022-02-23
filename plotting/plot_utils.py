@@ -145,9 +145,9 @@ def sort_traits(trait_type, traits):
 def metric_name(metric):
 
     pred_metrics = {
-        'ROC-AUC': 'ROC-AUC',
+        'ROC-AUC': 'AUROC',
         'Average Precision': 'Average Precision',
-        'PR-AUC': 'PR-AUC',
+        'PR-AUC': 'AUPRC',
         'R2': 'Prediction $R^2$',
         'Alt R2': 'Prediction $R^2$',
         'Full R2': 'Prediction $R^2$',
