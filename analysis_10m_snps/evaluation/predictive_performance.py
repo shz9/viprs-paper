@@ -66,7 +66,7 @@ def process_trait(trait_f):
     pheno_res = []
 
     for prs_file in glob.glob(f"data_all/test_scores/{search_panel}/{search_model}"
-                              f"/{trait_type}/{search_config}/{trait}.prs*"):
+                              f"/{trait_type}/{search_config}/{trait}.prs.gz"):
 
         ld_panel, model, _, m_config = prs_file.split("/")[2:6]
         print(f"> Evaluating {model} ({ld_panel})")
@@ -171,6 +171,7 @@ if __name__ == '__main__':
         pheno_dir = osp.join(pheno_dir, "*", "*.txt")
 
     print("> Evaluating predictive performance of PRS methods...")
+    print(pheno_dir)
 
     # Covariates:
     covariates = ['Sex'] + ['PC' + str(i + 1) for i in range(10)] + ['Age']

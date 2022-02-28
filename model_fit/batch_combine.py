@@ -1,5 +1,5 @@
 import argparse
-from combine_fit_files import combine_fit_files, combine_hyp_files
+from combine_fit_files import combine_fit_files, combine_hyp_files, combine_validation_files
 from multiprocessing import Pool
 import glob
 
@@ -13,6 +13,11 @@ def combine(d):
 
     try:
         combine_hyp_files(d)
+    except Exception as e:
+        print(e)
+
+    try:
+        combine_validation_files(d)
     except Exception as e:
         print(e)
 

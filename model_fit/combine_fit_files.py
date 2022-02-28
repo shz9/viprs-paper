@@ -67,6 +67,39 @@ def combine_hyp_files(fit_dir, delete_original=True):
         raise Exception(f"Error: Directory {fit_dir} is incomplete!")
 
 
+def combine_validation_files(fit_dir, delete_original=True):
+
+    valid_files = list(glob.glob(osp.join(fit_dir, "chr_*.validation")))
+    fit_files = list(glob.glob(osp.join(fit_dir, "chr_*.fit")))
+
+    if len(valid_files) == 22:
+
+        dfs = []
+        for f in valid_files:
+            dfs.append(pd.read_csv(f, sep="\t"))
+            dfs[-1]['CHR'] = osp.basename(f).replace(".validation", "")
+
+        # Concatenate the tables:
+        dfs = pd.concat(dfs)
+        # Output a single, compressed table:
+        dfs.to_csv(osp.join(fit_dir, "combined.validation.gz"), sep="\t", index=False)
+
+        if delete_original:
+            for f in valid_files:
+                try:
+                    os.remove(f)
+                except OSError as e:
+                    raise e
+    elif osp.isfile(osp.join(fit_dir, "combined.validation.gz")):
+        return
+    elif len(valid_files) == 0 and ((len(fit_files) == 22) or osp.isfile(osp.join(fit_dir, "combined.fit.gz"))):
+        print("Warning: This model does not output validation files!")
+    elif len(valid_files) == 0:
+        raise FileNotFoundError("There are no validation files in this directory!")
+    else:
+        raise Exception(f"Error: Directory {fit_dir} is incomplete!")
+
+
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Combine model fit results into a single file.')
@@ -81,5 +114,10 @@ if __name__ == '__main__':
 
     try:
         combine_hyp_files(args.fit_dir)
+    except Exception as e:
+        print(e)
+
+    try:
+        combine_validation_files(args.fit_dir)
     except Exception as e:
         print(e)

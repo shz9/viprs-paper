@@ -66,7 +66,7 @@ def process_trait(trait_f):
     pheno_res = []
 
     for prs_file in glob.glob(f"data/test_scores/{search_panel}/{search_model}"
-                              f"/{trait_type}/{search_config}/{trait}.prs"):
+                              f"/{trait_type}/{search_config}/{trait}.prs.gz"):
 
         ld_panel, model, _, m_config = prs_file.split("/")[2:6]
         print(f"> Evaluating {model} ({ld_panel})")
@@ -145,7 +145,7 @@ if __name__ == '__main__':
                         choices={'quantitative', 'binary', 'all'},
                         help='The type of phenotype to consider')
     parser.add_argument('-m', '--model', dest='model', type=str, default='all')
-    parser.add_argument('-l', '--panel', dest='panel', type=str, default='ukbb_50k_windowed',
+    parser.add_argument('-l', '--panel', dest='panel', type=str, default='all',
                         choices={'external', '1000G_sample', '1000G_shrinkage', '1000G_windowed', '1000G_block',
                                  'ukbb_1k_sample', 'ukbb_1k_shrinkage', 'ukbb_1k_windowed', 'ukbb_1k_block',
                                  'ukbb_10k_sample', 'ukbb_10k_shrinkage', 'ukbb_10k_windowed', 'ukbb_10k_block',
@@ -171,6 +171,7 @@ if __name__ == '__main__':
         pheno_dir = osp.join(pheno_dir, "*", "*.txt")
 
     print("> Evaluating predictive performance of PRS methods...")
+    print(pheno_dir)
 
     # Covariates:
     covariates = ['Sex'] + ['PC' + str(i + 1) for i in range(10)] + ['Age']
