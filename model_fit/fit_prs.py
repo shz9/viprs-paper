@@ -236,15 +236,21 @@ def main():
                 print(e)
                 if e.__class__.__name__ == 'OptimizationDivergence' and n_attempts + 1 < args.max_attempts:
 
-                    # -----------------------------------------------------------
-                    # Identify mismatched SNPs and remove them from analysis:
-                    mismatched_snps = identify_mismatched_snps(gdl)
+                    current_p_val_cutoff = 5e-8
                     filtered_snps = 0
-                    for c, mis_mask in mismatched_snps.items():
-                        n_filt_snps = mis_mask.sum()
-                        if n_filt_snps > 0:
-                            filtered_snps += n_filt_snps
-                            gdl.filter_snps(gdl.snps[c][~mis_mask], chrom=c)
+
+                    while filtered_snps < 1 and current_p_val_cutoff < .05:
+                        # -----------------------------------------------------------
+                        # Identify mismatched SNPs and remove them from analysis:
+                        mismatched_snps = identify_mismatched_snps(gdl, p_dentist_threshold=current_p_val_cutoff)
+                        for c, mis_mask in mismatched_snps.items():
+                            n_filt_snps = mis_mask.sum()
+                            if n_filt_snps > 0:
+                                filtered_snps += n_filt_snps
+                                gdl.filter_snps(gdl.snps[c][~mis_mask], chrom=c)
+
+                        if filtered_snps < 1:
+                            current_p_val_cutoff *= 10.
 
                     if filtered_snps > 0:
                         print(f"> Filtered {filtered_snps} SNPs due to mismatch between "
