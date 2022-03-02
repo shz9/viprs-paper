@@ -41,7 +41,7 @@ if args.estimator == 'windowed':
                          use_plink=args.use_plink,
                          output_dir=f"data/ld/{args.name}_windowed/",
                          temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
-if args.estimator == 'block':
+elif args.estimator == 'block':
     gdl = GWASDataLoader(args.bed_file,
                          keep_individuals=args.keep_file,
                          ld_estimator="block",
@@ -76,7 +76,7 @@ elif args.estimator == 'sample':
                          output_dir=f"data/ld/{args.name}_sample/",
                          temp_dir=os.getenv('SLURM_TMPDIR', 'temp'))
 else:
-    raise Exception(f"LD estimator {args.estimator} not implemented!")
+    raise KeyError(f"LD estimator {args.estimator} not implemented!")
 
 # Clean up all intermediate files and directories:
 gdl.cleanup()

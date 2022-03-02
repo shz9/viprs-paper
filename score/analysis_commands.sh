@@ -44,4 +44,4 @@ python score/batch_score.py -m VIPRS-BO_p -l ukbb_50k_windowed
 python score/batch_score.py -m VIPRS-BOv_p -l ukbb_50k_windowed
 
 # Bayesian model averaging:
-python model_fit/batch_model_fit.py -m VIPRS-BMA_p -l ukbb_50k_windowed
+python score/batch_score.py -m VIPRS-BMA_p -l ukbb_50k_windowed

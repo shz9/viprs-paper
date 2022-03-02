@@ -48,7 +48,7 @@ plt.close()
 plt.figure(figsize=set_figure_size(width=.25*505.89, subplots=(3, 1)))
 
 plot_real_predictive_performance(bin_real_data,
-                                 metric='ROC-AUC',
+                                 metric='PR-AUC',
                                  row_order=sort_traits('binary', bin_real_data['Trait'].unique()),
                                  model_order=sort_models(bin_real_data['Model'].unique()),
                                  col_wrap=1)

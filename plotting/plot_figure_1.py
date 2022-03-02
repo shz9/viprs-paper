@@ -48,7 +48,7 @@ plt.close()
 plt.figure(figsize=set_figure_size('paper', subplots=(1, 3)))
 
 plot_simulation_predictive_performance(bin_sim_data,
-                                       metric='ROC-AUC',
+                                       metric='PR-AUC',
                                        model_order=sort_models(bin_sim_data['Model'].unique()))
 plt.savefig("plots/main_figures/figure_1/1_b." + args.ext, bbox_inches='tight')
 plt.close()
