@@ -261,6 +261,9 @@ def main():
                     # -----------------------------------------------------------
 
                     n_attempts += 1
+                elif n_attempts + 1 == args.max_attempts:
+                    raise Exception("Error: Reached the maximum number of attempts "
+                                    "for fitting the model without convergence!")
                 else:
                     raise e
 
