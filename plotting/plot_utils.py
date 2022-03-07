@@ -136,10 +136,12 @@ def sort_traits(trait_type, traits):
         return [t for t in [
             'HEIGHT', 'HDL', 'BMI',
             'FVC', 'FEV1', 'HC',
-            'WC', 'LDL', 'BW'
+            'WC', 'LDL', 'BW',
+            'PASS_HEIGHT', 'PASS_HDL',
+            'PASS_BMI', 'PASS_LDL'
         ] if t in traits]
     else:
-        return [t for t in ['ASTHMA', 'T2D', 'T1D', 'RA'] if t in traits]
+        return [t for t in ['ASTHMA', 'T2D', 'T1D', 'RA', 'PASS_T2D', 'PASS_RA'] if t in traits]
 
 
 def metric_name(metric):

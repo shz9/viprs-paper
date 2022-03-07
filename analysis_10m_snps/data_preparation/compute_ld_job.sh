@@ -2,7 +2,7 @@
 #SBATCH --account=ctb-sgravel
 #SBATCH --cpus-per-task=16
 #SBATCH --mem=64GB
-#SBATCH --time=40:00:00
+#SBATCH --time=60:00:00
 #SBATCH --output=./log_all/data_preparation/ld/%x.out
 #SBATCH --mail-user=shadi.zabad@mail.mcgill.ca
 #SBATCH --mail-type=FAIL

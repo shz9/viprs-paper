@@ -36,8 +36,6 @@ python model_fit/batch_model_fit.py -m VIPRSMix -l ukbb_50k_windowed --strategy 
 
 # Grid search with ELBO as criterion:
 python model_fit/batch_model_fit.py -m VIPRS -l ukbb_50k_windowed --strategy GS --opt-params pi --grid-metric ELBO
-python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_50k_windowed --strategy GS --opt-params pi --grid-metric ELBO
-python model_fit/batch_model_fit.py -m VIPRSMix -l ukbb_50k_windowed --strategy GS --opt-params pi --grid-metric ELBO
 
 # Bayesian Optimization:
 python model_fit/batch_model_fit.py -m VIPRS -l ukbb_50k_windowed --strategy BO --opt-params pi --grid-metric ELBO

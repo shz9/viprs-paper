@@ -19,9 +19,7 @@ gdl = GWASDataLoader(f"data_all/ukbb_qc_genotypes/chr_{args.chrom}",
                      use_plink=True,
                      compute_ld=True,
                      output_dir=f"data_all/ld/ukbb_all_windowed/",
-                     temp_dir="/home/szabad/projects/ctb-sgravel/szabad/temp/")
+                     temp_dir="/home/szabad/projects/ctb-sgravel/szabad/temp/",
+                     n_threads=15)
 
 gdl.cleanup()
-
-
-

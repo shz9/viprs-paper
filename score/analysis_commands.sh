@@ -36,8 +36,6 @@ python score/batch_score.py -m VIPRSMix-GSv_p -l ukbb_50k_windowed
 
 # Grid search with ELBO as criterion:
 python score/batch_score.py -m VIPRS-GS_p -l ukbb_50k_windowed
-python score/batch_score.py -m VIPRSAlpha-GS_p -l ukbb_50k_windowed
-python score/batch_score.py -m VIPRSMix-GS_p -l ukbb_50k_windowed
 
 # Bayesian Optimization:
 python score/batch_score.py -m VIPRS-BO_p -l ukbb_50k_windowed
