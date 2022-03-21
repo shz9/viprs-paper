@@ -116,7 +116,7 @@ def add_labels_to_bars(g, rotation=90, fontsize='smaller'):
 
             x_height = p.get_height() - y_min
 
-            if x_height > .3*(y_max - y_min) and rotation == 90:
+            if round(x_height, 3) > .3*(y_max - y_min) and rotation == 90:
                 y = y_min + .5*x_height
             else:
                 y = y_min + x_height + 0.02

@@ -36,18 +36,20 @@ sns.set_context("paper", font_scale=1.8)
 
 # Create plot:
 
-plt.figure(figsize=set_figure_size(subplots=(1, 4)))
+plt.figure(figsize=set_figure_size('paper', subplots=(1, 4)))
 
 plot_real_predictive_performance(quant_real_data,
+                                 col_wrap=2,
                                  model_order=sort_models(quant_real_data['Model'].unique()))
 
 plt.savefig("plots/main_figures/figure_5/5_a." + args.ext, bbox_inches='tight')
 plt.close()
 
-plt.figure(figsize=set_figure_size(subplots=(1, 2)))
+plt.figure(figsize=set_figure_size('paper', subplots=(1, 2)))
 
 plot_real_predictive_performance(bin_real_data,
                                  metric='PR-AUC',
+                                 col_wrap=1,
                                  model_order=sort_models(bin_real_data['Model'].unique()))
 
 plt.savefig("plots/main_figures/figure_5/5_b." + args.ext, bbox_inches='tight')

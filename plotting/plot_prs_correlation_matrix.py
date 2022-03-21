@@ -49,7 +49,7 @@ def compute_trait_prs_corr(trait_f, configuration, keep_models=None, keep_ld_pan
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='Generate Figure 1')
+    parser = argparse.ArgumentParser(description='Generate PRS Correlation Figure')
     parser.add_argument('--extension', dest='ext', type=str, default='eps')
     args = parser.parse_args()
 

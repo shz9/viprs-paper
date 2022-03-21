@@ -4,6 +4,7 @@ Date: May 2021
 """
 
 import pandas as pd
+import numpy as np
 import glob
 import os.path as osp
 import sys
@@ -17,124 +18,218 @@ print = functools.partial(print, flush=True)
 from plot_utils import *
 
 
-parser = argparse.ArgumentParser(description='Plot hyperparameter estimates')
-parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_50k_windowed')
-parser.add_argument('--extension', dest='ext', type=str, default='eps')
-parser.add_argument('-t', '--type', dest='type', type=str, default='quantitative',
-                    choices={'quantitative', 'binary'},
-                    help='The type of phenotype to consider')
-args = parser.parse_args()
+def extract_hyperparameter_estimates_data(phenotype_type=None,
+                                          configuration=None,
+                                          keep_models=None,
+                                          keep_panels=None,
+                                          keep_traits=None):
+    """
+    Extract hyperparameter estimates from files and combine them for plotting
+    :param phenotype_type: Can be `quantitative`, `binary`, or None (both)
+    :param configuration: Can be `real`, `simulation`, or None (both)
+    :param keep_models: Only keep a subset of the models
+    :param keep_panels: The LD reference panel to use
+    :param keep_traits: Extract data for only a subset of traits.
+    """
 
-order = [
-    'VIPRS', 'VIPRSSBayes',
-    'VIPRS-GS', 'VIPRS-GSv', 'VIPRS-GSl', 'VIPRS-GSvl',
-    'VIPRS-BO', 'VIPRS-BOv',
-    'SBayesR']
-trait_order = real_trait_order(args.type)
+    if phenotype_type is None:
+        phenotype_type = '*'
 
-print(f"> Plotting hyperparameter estimates for {args.type} traits...")
-
-simulation_dfs = []
-real_dfs = []
-
-for f in glob.glob(f"data/model_fit/{args.ld_panel}/*/{args.type}/*/*/combined.hyp") + \
-         glob.glob(f"data/model_fit/external/*/{args.type}/*/*/combined.hyp"):
-
-    _, _, _, model, trait_type, config, trait, _ = f.split("/")
-
-    df = pd.read_csv(f, index_col=0).T
-    df.columns = ['Estimated ' + c for c in df.columns]
-
-    df['Model'] = model
-    df['Trait'] = trait
-
-    if 'real' in config:
-        real_dfs.append(df)
+    if configuration is None:
+        configuration = '*'
+    elif configuration == 'simulation':
+        configuration = 'h2_*'
     else:
+        configuration = 'real_fold_*'
 
-        _, h2, _, p = config.split("_")
-        df['Heritability'] = float(h2)
-        df['Prop. Causal'] = float(p)
+    dfs = []
 
-        simulation_dfs.append(df)
+    for f in glob.glob(f"data/model_fit/*/*/{phenotype_type}/{configuration}/*/combined.hyp"):
 
-sns.set_style("darkgrid")
-sns.set_context("paper")
+        _, _, ld_panel, model, trait_type, config, trait, _ = f.split("/")
 
-if len(simulation_dfs) > 0:
-    print("> Plotting hyperparameter estimates on simulated data...")
+        if keep_models is not None:
+            if model not in keep_models:
+                continue
 
-    final_simulation_df = pd.concat(simulation_dfs)
+        if keep_panels is not None:
+            if ld_panel not in keep_panels:
+                continue
 
-    # Update model names:
-    final_simulation_df = update_model_names(final_simulation_df)
+        if keep_traits is not None:
+            if trait not in keep_traits:
+                continue
 
-    final_simulation_df = final_simulation_df.groupby(['Heritability', 'Prop. Causal', 'Trait', 'Model']).agg(
-        {'Estimated Heritability': 'sum', 'Estimated Prop. Causal': 'mean'}
-    ).reset_index()
+        df = pd.read_csv(f, index_col=0).T
+        df.columns = ['Estimated ' + c for c in df.columns]
 
-    model_order = [m for m in order if m in final_simulation_df['Model'].unique()]
+        df['Model'] = model
+        df['Trait'] = trait
 
-    plt.figure(figsize=(9, 6))
+        if 'real' in config:
+            df['Heritability'] = np.nan
+            df['Prop. Causal'] = np.nan
+        else:
+            _, h2, _, p = config.split("_")
+            df['Heritability'] = float(h2)
+            df['Prop. Causal'] = float(p)
+
+        dfs.append(df)
+
+    if len(dfs) >= 1:
+        return pd.concat(dfs)
+
+
+def plot_simulation_hyperparameter_estimates(s_df, metric,
+                                             showfliers=False,
+                                             model_order=None,
+                                             palette='Set2',
+                                             log_scale=False):
+
+    assert metric in ('Estimated Heritability', 'Estimated Prop. Causal')
+
     g = sns.catplot(x="Heritability",
-                    y="Estimated Heritability",
-                    hue="Model", col="Prop. Causal",
-                    data=final_simulation_df, kind="box", showfliers=False,
+                    y=metric,
+                    hue="Model",
+                    col="Prop. Causal",
+                    data=s_df,
+                    kind="box",
+                    showfliers=showfliers,
                     hue_order=model_order,
-                    palette='Set2')
+                    palette=palette)
 
-    makedir(f"plots/hyperparameters/{args.type}/simulation/h2g/")
-    plt.savefig(f"plots/hyperparameters/{args.type}/simulation/h2g/{args.ld_panel}_estimates." + args.ext,
-                bbox_inches='tight')
-    plt.close()
+    if metric_name is not None:
+        g.set_axis_labels("Heritability", metric_name(metric))
 
-    plt.figure(figsize=(9, 6))
-    g = sns.catplot(x="Prop. Causal", y="Estimated Prop. Causal",
-                    hue="Model", col="Heritability",
-                    data=final_simulation_df, kind="box", showfliers=False,
-                    hue_order=model_order,
-                    palette='Set2')
-    for i, ax in enumerate(g.fig.axes):
-        ax.set_yscale('log')
-    makedir(f"plots/hyperparameters/{args.type}/simulation/pi/")
-    plt.savefig(f"plots/hyperparameters/{args.type}/simulation/pi/{args.ld_panel}_estimates." + args.ext,
-                bbox_inches='tight')
-    plt.close()
+    if log_scale:
+        for i, ax in enumerate(g.fig.axes):
+            ax.set_yscale('log')
 
-if len(real_dfs) > 0:
-    print("> Plotting hyperparameter estimates on real data...")
+    return g
 
-    final_real_df = pd.concat(real_dfs)
 
-    # Update model names:
-    final_real_df = update_model_names(final_real_df)
+def plot_real_hyperparameter_estimates(r_df, metric,
+                                       add_bar_labels=True,
+                                       x_label_rotation=90,
+                                       hide_x_labels=False,
+                                       model_order=None, row_order=None, col_order=None,
+                                       col_wrap=3, palette='Set2',
+                                       log_scale=False):
 
-    model_order = [m for m in order if m in final_real_df['Model'].unique()]
+    assert metric in ('Estimated Heritability', 'Estimated Prop. Causal')
 
-    plt.figure(figsize=(9, 6))
-    g = sns.catplot(x="Model", y="Estimated Heritability", col="Trait", col_wrap=[3, 4][args.type == 'binary'],
-                    data=final_real_df, kind="box", showfliers=False,
-                    order=model_order, row_order=trait_order,
-                    palette='Set2')
-    for i, ax in enumerate(g.fig.axes):
-        ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
-
-    makedir(f"plots/hyperparameters/{args.type}/real/h2g/")
-    plt.savefig(f"plots/hyperparameters/{args.type}/real/h2g/{args.ld_panel}_estimates." + args.ext,
-                bbox_inches='tight')
-    plt.close()
-
-    plt.figure(figsize=(9, 6))
-    g = sns.catplot(x="Model", y="Estimated Prop. Causal", col="Trait", col_wrap=[3, 4][args.type == 'binary'],
-                    data=final_real_df, kind="box", showfliers=False,
+    g = sns.catplot(x="Model",
+                    y=metric,
+                    col="Trait",
+                    data=r_df,
+                    kind="bar",
+                    col_wrap=col_wrap,
                     order=model_order,
-                    row_order=trait_order,
-                    palette='Set2')
-    for i, ax in enumerate(g.fig.axes):
-        ax.set_xticklabels(ax.get_xticklabels(), rotation=90)
-        ax.set_yscale('log')
-    makedir(f"plots/hyperparameters/{args.type}/real/pi/")
-    plt.savefig(f"plots/hyperparameters/{args.type}/real/pi/{args.ld_panel}_estimates." + args.ext,
-                bbox_inches='tight')
-    plt.close()
+                    row_order=row_order,
+                    col_order=col_order,
+                    palette=palette)
 
+    if add_bar_labels:
+        add_labels_to_bars(g)
+
+    if x_label_rotation != 0 or hide_x_labels:
+        for fig_ax in g.fig.axes:
+            if hide_x_labels:
+                fig_ax.set_xticklabels([])
+            else:
+                fig_ax.set_xticklabels(fig_ax.get_xticklabels(), rotation=x_label_rotation)
+
+    # Update the subplot titles:
+    for fig_ax in g.fig.axes:
+        fig_ax.set_title(fig_ax.get_title().replace("Trait = ", ""))
+
+    if metric_name is not None:
+        g.set_axis_labels("Model", metric_name(metric))
+
+    if log_scale:
+        for i, ax in enumerate(g.fig.axes):
+            ax.set_yscale('log')
+
+    return g
+
+# ---------------------------------------------------------------
+
+
+def main():
+
+    parser = argparse.ArgumentParser(description='Plot hyperparameter estimates')
+    parser.add_argument('-l', '--ld-panel', dest='ld_panel', type=str, default='ukbb_50k_windowed')
+    parser.add_argument('--extension', dest='ext', type=str, default='eps')
+    parser.add_argument('-t', '--type', dest='type', type=str, default='quantitative',
+                        choices={'quantitative', 'binary'},
+                        help='The type of phenotype to consider')
+    args = parser.parse_args()
+
+    print(f"> Plotting hyperparameter estimates for {args.type} traits...")
+
+    simulation_data = extract_hyperparameter_estimates_data(phenotype_type=args.type,
+                                                            keep_models=['VIPRS', 'SBayesR'],
+                                                            configuration='simulation',
+                                                            keep_panels=['external', args.ld_panel])
+    real_data = extract_hyperparameter_estimates_data(phenotype_type=args.type,
+                                                      configuration='real',
+                                                      keep_models=['VIPRS', 'SBayesR'],
+                                                      keep_traits=['HEIGHT', 'HDL', 'BMI',
+                                                                   'FVC', 'FEV1', 'HC',
+                                                                   'WC', 'LDL', 'BW'],
+                                                      keep_panels=['external', args.ld_panel])
+
+    sns.set_style("darkgrid")
+    sns.set_context("paper")
+
+    if len(simulation_data) > 0:
+        print("> Plotting hyperparameter estimates on simulated data...")
+
+        plt.figure(figsize=(9, 6))
+        plot_simulation_hyperparameter_estimates(simulation_data, metric='Estimated Heritability',
+                                                 model_order=sort_models(simulation_data['Model'].unique()))
+
+        makedir(f"plots/hyperparameters/{args.type}/simulation/h2g/")
+        plt.savefig(f"plots/hyperparameters/{args.type}/simulation/h2g/{args.ld_panel}_estimates." + args.ext,
+                    bbox_inches='tight')
+        plt.close()
+
+        plt.figure(figsize=(9, 6))
+        plot_simulation_hyperparameter_estimates(simulation_data, metric='Estimated Prop. Causal',
+                                                 model_order=sort_models(simulation_data['Model'].unique()),
+                                                 log_scale=True)
+        makedir(f"plots/hyperparameters/{args.type}/simulation/pi/")
+        plt.savefig(f"plots/hyperparameters/{args.type}/simulation/pi/{args.ld_panel}_estimates." + args.ext,
+                    bbox_inches='tight')
+        plt.close()
+
+    if len(real_data) > 0:
+        print("> Plotting hyperparameter estimates on real data...")
+
+        plt.figure(figsize=(9, 6))
+        trait_order = sort_traits(args.type, real_data['Trait'].unique())
+
+        plot_real_hyperparameter_estimates(real_data, "Estimated Heritability",
+                                           col_wrap=[3, 1][args.type == 'binary'],
+                                           model_order=sort_models(simulation_data['Model'].unique()),
+                                           row_order=trait_order, col_order=trait_order)
+
+        makedir(f"plots/hyperparameters/{args.type}/real/h2g/")
+        plt.savefig(f"plots/hyperparameters/{args.type}/real/h2g/{args.ld_panel}_estimates." + args.ext,
+                    bbox_inches='tight')
+        plt.close()
+
+        plt.figure(figsize=(9, 6))
+        plot_real_hyperparameter_estimates(real_data, "Estimated Prop. Causal",
+                                           col_wrap=[3, 1][args.type == 'binary'],
+                                           model_order=sort_models(simulation_data['Model'].unique()),
+                                           row_order=trait_order, col_order=trait_order,
+                                           log_scale=True)
+        makedir(f"plots/hyperparameters/{args.type}/real/pi/")
+        plt.savefig(f"plots/hyperparameters/{args.type}/real/pi/{args.ld_panel}_estimates." + args.ext,
+                    bbox_inches='tight')
+        plt.close()
+
+
+if __name__ == '__main__':
+    main()
