@@ -146,7 +146,7 @@ def sort_traits(trait_type, traits):
 
 def metric_name(metric):
 
-    pred_metrics = {
+    metrics = {
         'ROC-AUC': 'AUROC',
         'Average Precision': 'Average Precision',
         'PR-AUC': 'AUPRC',
@@ -155,10 +155,12 @@ def metric_name(metric):
         'Full R2': 'Prediction $R^2$',
         'Naive R2': 'Prediction $R^2$',
         'Pearson Correlation': 'Correlation',
-        'Partial Correlation': 'Partial Correlation'
+        'Partial Correlation': 'Partial Correlation',
+        'Estimated Heritability': 'Estimated Heritability',
+        'Estimated Prop. Causal': 'Estimated Prop. Causal'
     }
 
-    return pred_metrics[metric]
+    return metrics[metric]
 
 
 def sort_models(models):
