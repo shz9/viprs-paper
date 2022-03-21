@@ -68,7 +68,9 @@ sns.set_context("paper", font_scale=1.9)
 plt.figure(figsize=set_figure_size(width=.75*505.89, subplots=(3, 3)))
 
 plot_real_predictive_performance(quant_real_data,
-                                 model_order=sort_models(quant_real_data['Model'].unique()),
+                                 model_order=['VIPRS', 'VIPRSMix', 'VIPRSAlpha',
+                                              'VIPRS-10m', 'VIPRSMix-10m', 'VIPRSAlpha-10m',
+                                              'VIPRS-GSv_p', 'VIPRSMix-GSv_p', 'VIPRSAlpha-GSv_p'],
                                  row_order=sort_traits('quantitative', quant_real_data['Trait'].unique()),
                                  col_order=sort_traits('quantitative', quant_real_data['Trait'].unique()),
                                  col_wrap=3)
@@ -81,7 +83,9 @@ plt.figure(figsize=set_figure_size(width=.25*505.89, subplots=(3, 1)))
 
 plot_real_predictive_performance(bin_real_data,
                                  metric='PR-AUC',
-                                 model_order=sort_models(bin_real_data['Model'].unique()),
+                                 model_order=['VIPRS', 'VIPRSMix', 'VIPRSAlpha',
+                                              'VIPRS-10m', 'VIPRSMix-10m', 'VIPRSAlpha-10m',
+                                              'VIPRS-GSv_p', 'VIPRSMix-GSv_p', 'VIPRSAlpha-GSv_p'],
                                  row_order=sort_traits('binary', bin_real_data['Trait'].unique()),
                                  col_wrap=1)
 

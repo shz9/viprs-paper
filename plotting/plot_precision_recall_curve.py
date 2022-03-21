@@ -2,9 +2,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import glob
 import argparse
-import seaborn as sns
+import os.path as osp
+import sys
 from plot_utils import *
 from sklearn.metrics import precision_recall_curve
+sys.path.append(osp.dirname(osp.dirname(__file__)))
+from utils import makedir
 
 
 def plot_precision_recall_curve(pr_df, trait_name):
@@ -66,6 +69,8 @@ def main():
 
     keep_models = ['VIPRS', 'VIPRS-GSv_p', 'SBayesR', 'Lassosum', 'LDPred2-grid', 'PRScs', 'PRSice2']
     keep_panels = ['external', 'ukbb_50k_windowed']
+
+    makedir("plots/supplementary/prc_curves/")
 
     for trait_file in glob.glob("data/phenotypes/binary/real/*.txt"):
         config, trait = trait_file.split("/")[3:]

@@ -57,5 +57,5 @@ plot_real_predictive_performance(bin_real_data,
                                  row_order=sort_traits('binary', bin_real_data['Trait'].unique()),
                                  col_wrap=1)
 
-plt.savefig("plots/supplementary_figures/6_b." + args.ext, bbox_inches='tight')
+plt.savefig("plots/supplementary_figures/figure_6/6_b." + args.ext, bbox_inches='tight')
 plt.close()

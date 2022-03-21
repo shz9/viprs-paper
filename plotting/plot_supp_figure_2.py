@@ -13,7 +13,7 @@ args = parser.parse_args()
 # Extract data:
 keep_models = ['VIPRS']
 keep_panels = ['ukbb_1k_windowed', 'ukbb_1k_shrinkage', 'ukbb_1k_block',
-               'ukbb_10_windowed', 'ukbb_10_shrinkage', 'ukbb_10_block',
+               'ukbb_10k_windowed', 'ukbb_10k_shrinkage', 'ukbb_10k_block',
                'ukbb_50k_windowed', 'ukbb_50k_shrinkage', 'ukbb_50k_block']
 
 bin_real_data = extract_predictive_evaluation_data(phenotype_type='binary',
@@ -21,7 +21,7 @@ bin_real_data = extract_predictive_evaluation_data(phenotype_type='binary',
                                                    keep_models=keep_models,
                                                    keep_panels=keep_panels,
                                                    keep_traits=['ASTHMA', 'T2D', 'RA'])
-bin_real_data['Model'] = bin_real_data['Model'] + ' (' + bin_real_data['LD Panel'] + ')'
+bin_real_data['Model'] = bin_real_data['Model'] + ' (' + bin_real_data['LD Panel'].str.replace('ukbb_', '') + ')'
 
 quant_real_data = extract_predictive_evaluation_data(phenotype_type='quantitative',
                                                      configuration='real',
@@ -30,7 +30,7 @@ quant_real_data = extract_predictive_evaluation_data(phenotype_type='quantitativ
                                                      keep_traits=['HEIGHT', 'HDL', 'BMI',
                                                                   'FVC', 'FEV1', 'HC',
                                                                   'WC', 'LDL', 'BW'])
-quant_real_data['Model'] = quant_real_data['Model'] + ' (' + quant_real_data['LD Panel'] + ')'
+quant_real_data['Model'] = quant_real_data['Model'] + ' (' + quant_real_data['LD Panel'].str.replace('ukbb_', '') + ')'
 
 
 # Set seaborn context:
@@ -43,7 +43,7 @@ sns.set_context("paper", font_scale=1.8)
 plt.figure(figsize=set_figure_size(width=.75*505.89, subplots=(3, 3)))
 
 plot_real_predictive_performance(quant_real_data,
-                                 model_order=['VIPRS (' + ldp + ')' for ldp in keep_panels],
+                                 model_order=['VIPRS (' + ldp.replace('ukbb_', '') + ')' for ldp in keep_panels],
                                  row_order=sort_traits('quantitative', quant_real_data['Trait'].unique()),
                                  col_order=sort_traits('quantitative', quant_real_data['Trait'].unique()),
                                  col_wrap=3)
@@ -55,7 +55,7 @@ plt.figure(figsize=set_figure_size(width=.25*505.89, subplots=(3, 1)))
 
 plot_real_predictive_performance(bin_real_data,
                                  metric='PR-AUC',
-                                 model_order=['VIPRS (' + ldp + ')' for ldp in keep_panels],
+                                 model_order=['VIPRS (' + ldp.replace('ukbb_', '') + ')' for ldp in keep_panels],
                                  row_order=sort_traits('binary', bin_real_data['Trait'].unique()),
                                  col_wrap=1)
 
