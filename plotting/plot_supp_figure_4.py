@@ -70,7 +70,7 @@ plt.figure(figsize=set_figure_size(width=.75*505.89, subplots=(3, 3)))
 plot_real_predictive_performance(quant_real_data,
                                  model_order=['VIPRS', 'VIPRSMix', 'VIPRSAlpha',
                                               'VIPRS-10m', 'VIPRSMix-10m', 'VIPRSAlpha-10m',
-                                              'VIPRS-GSv_p', 'VIPRSMix-GSv_p', 'VIPRSAlpha-GSv_p'],
+                                              'VIPRS-GS', 'VIPRSMix-GS', 'VIPRSAlpha-GS'],
                                  row_order=sort_traits('quantitative', quant_real_data['Trait'].unique()),
                                  col_order=sort_traits('quantitative', quant_real_data['Trait'].unique()),
                                  col_wrap=3)
@@ -85,7 +85,7 @@ plot_real_predictive_performance(bin_real_data,
                                  metric='PR-AUC',
                                  model_order=['VIPRS', 'VIPRSMix', 'VIPRSAlpha',
                                               'VIPRS-10m', 'VIPRSMix-10m', 'VIPRSAlpha-10m',
-                                              'VIPRS-GSv_p', 'VIPRSMix-GSv_p', 'VIPRSAlpha-GSv_p'],
+                                              'VIPRS-GS', 'VIPRSMix-GS', 'VIPRSAlpha-GS'],
                                  row_order=sort_traits('binary', bin_real_data['Trait'].unique()),
                                  col_wrap=1)
 

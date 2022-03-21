@@ -44,7 +44,7 @@ def extract_hyperparameter_estimates_data(phenotype_type=None,
 
     dfs = []
 
-    for f in glob.glob(f"data/model_fit/*/*/{phenotype_type}/{configuration}/*/combined.hyp"):
+    for f in glob.glob(f"data/model_fit/*/*/{phenotype_type}/{configuration}/*/combined.hyp.gz"):
 
         _, _, ld_panel, model, trait_type, config, trait, _ = f.split("/")
 
