@@ -60,14 +60,22 @@ def extract_hyperparameter_estimates_data(phenotype_type=None,
             if trait not in keep_traits:
                 continue
 
-        df = pd.read_csv(f)
+        if model == 'SBayesR':
+            df = pd.read_csv(f, header=0, names=['Parameter', 'data'])
+            df['Value'] = df.data.str.split("\t").str[0].astype(float)
+        else:
+            df = pd.read_csv(f, sep="\t")
 
         est_h2g = df.loc[df.Parameter == 'Heritability', 'Value'].sum()
-        est_p = df.loc[df.Parameter == 'Proportion_causal', 'Value'].mean()
 
-        est_df = pd.DataFrame({'Model': model, 'Trait': trait,
-                               'Estimated Heritability': est_h2g,
-                               'Estimated Prop. Causal': est_p})
+        if model == 'SBayesR':
+            est_p = df.loc[df.Parameter == 'Prop. Causal', 'Value'].mean()
+        else:
+            est_p = df.loc[df.Parameter == 'Proportion_causal', 'Value'].mean()
+
+        est_df = pd.DataFrame({'Model': [model], 'Trait': [trait],
+                               'Estimated Heritability': [est_h2g],
+                               'Estimated Prop. Causal': [est_p]})
 
         if 'real' in config:
             est_df['Heritability'] = np.nan
