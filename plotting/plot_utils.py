@@ -1,6 +1,6 @@
 
 
-def set_figure_size(width, fraction=1, subplots=(1, 1)):
+def set_figure_size(width, fraction=1, subplots=(1, 1), height_extra_pct=0., width_extra_pct=0.):
     """Set figure dimensions to avoid scaling in LaTeX.
 
     Modified from https://jwalton.info/Embed-Publication-Matplotlib-Latex/
@@ -13,6 +13,10 @@ def set_figure_size(width, fraction=1, subplots=(1, 1)):
             Fraction of the width which you wish the figure to occupy
     subplots: array-like, optional
             The number of rows and columns of subplots.
+    height_extra_pct: float
+            Stretch the final height by percentage
+    width_extra_pct: float
+            Stretch the final width by percentage
     Returns
     -------
     fig_dim: tuple
@@ -41,7 +45,7 @@ def set_figure_size(width, fraction=1, subplots=(1, 1)):
     # Figure height in inches
     fig_height_in = fig_width_in * golden_ratio * (subplots[0] / subplots[1])
 
-    return fig_width_in, fig_height_in
+    return fig_width_in + fig_width_in*width_extra_pct, fig_height_in + fig_height_in*height_extra_pct
 
 
 def update_model_names(data_df):

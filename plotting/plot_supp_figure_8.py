@@ -15,21 +15,49 @@ keep_models = ['VIPRS', 'VIPRS-GSv_p', 'VIPRS-GS_p', 'VIPRS-BO_p', 'VIPRS_BOv_p'
 keep_panels = ['ukbb_50k_windowed', 'external']
 
 bin_real_data = extract_hyperparameter_estimates_data(phenotype_type='binary',
-                                                     configuration='real',
-                                                     keep_models=keep_models,
-                                                     keep_panels=keep_panels,
-                                                     keep_traits=['ASTHMA', 'T2D', 'RA'])
+                                                      configuration='real',
+                                                      keep_models=keep_models,
+                                                      keep_panels=keep_panels,
+                                                      keep_traits=['ASTHMA', 'T2D', 'RA'])
 bin_real_data = update_model_names(bin_real_data)
 
 quant_real_data = extract_hyperparameter_estimates_data(phenotype_type='quantitative',
-                                                       configuration='real',
-                                                       keep_models=keep_models,
-                                                       keep_panels=keep_panels,
-                                                       keep_traits=['HEIGHT', 'HDL', 'BMI',
-                                                                    'FVC', 'FEV1', 'HC',
-                                                                    'WC', 'LDL', 'BW']
-                                                       )
+                                                        configuration='real',
+                                                        keep_models=keep_models,
+                                                        keep_panels=keep_panels,
+                                                        keep_traits=['HEIGHT', 'HDL', 'BMI',
+                                                                     'FVC', 'FEV1', 'HC',
+                                                                     'WC', 'LDL', 'BW']
+                                                        )
 quant_real_data = update_model_names(quant_real_data)
+
+# --------------------------------------------------------
+# Add LDSC heritability estimates from the Heritability Browser (Ben Neale's lab):
+# https://nealelab.github.io/UKBB_ldsc/h2_browser.html
+
+ldsc_bin_data = pd.DataFrame({
+    'Trait': ['ASTHMA', 'T2D', 'RA'],
+    'Model': ['S-LDSC', 'S-LDSC', 'S-LDSC'],
+    'Estimated Heritability': [0.170, 0.14, 0.07],
+    'Estimated Prop. Causal': [np.nan, np.nan, np.nan],
+    'Heritability': [np.nan, np.nan, np.nan],
+    'Prop. Causal': [np.nan, np.nan, np.nan]
+})
+
+bin_real_data = pd.concat([bin_real_data, ldsc_bin_data])
+
+ldsc_quant_data = pd.DataFrame({
+    'Trait': ['HEIGHT', 'HDL', 'BMI', 'FVC', 'FEV1', 'HC', 'WC', 'LDL', 'BW'],
+    'Model': ['S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC'],
+    'Estimated Heritability': [0.485, 0.33, 0.248, 0.21, 0.192, 0.223, 0.206, 0.0825, 0.122],
+    'Estimated Prop. Causal': [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
+    'Heritability': [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
+    'Prop. Causal': [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]
+})
+
+quant_real_data = pd.concat([quant_real_data, ldsc_quant_data])
+
+# --------------------------------------------------------
 
 # Set seaborn context:
 makedir("plots/supplementary_figures/figure_8/")

@@ -40,7 +40,7 @@ sns.set_context("paper", font_scale=1.8)
 
 # Create plot:
 
-plt.figure(figsize=set_figure_size(width=.75*505.89, subplots=(3, 3)))
+plt.figure(figsize=set_figure_size(width=.75*505.89, subplots=(3, 3), height_extra_pct=.1))
 
 plot_real_predictive_performance(quant_real_data,
                                  model_order=['VIPRS (' + ldp.replace('ukbb_', '') + ')' for ldp in keep_panels],
@@ -51,7 +51,7 @@ plot_real_predictive_performance(quant_real_data,
 plt.savefig("plots/supplementary_figures/figure_2/2_a." + args.ext, bbox_inches='tight')
 plt.close()
 
-plt.figure(figsize=set_figure_size(width=.25*505.89, subplots=(3, 1)))
+plt.figure(figsize=set_figure_size(width=.25*505.89, subplots=(3, 1), height_extra_pct=.1))
 
 plot_real_predictive_performance(bin_real_data,
                                  metric='PR-AUC',
