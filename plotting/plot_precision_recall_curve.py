@@ -10,13 +10,15 @@ sys.path.append(osp.dirname(osp.dirname(__file__)))
 from utils import makedir
 
 
-def plot_precision_recall_curve(pr_df, trait_name):
+def plot_precision_recall_curve(pr_df, trait_name, precision_max=1., recall_max=1.):
 
     for m in sort_models(pr_df['Model'].unique()):
         sub_df = pr_df.loc[pr_df['Model'] == m, ]
         precision, recall, _ = precision_recall_curve(sub_df['phenotype'], sub_df['PRS'])
         plt.plot(recall, precision, label=m)
 
+    plt.xlim(0., recall_max)
+    plt.ylim(0., precision_max)
     plt.title(trait_name)
     plt.xlabel("Recall")
     plt.ylabel("Precision")
@@ -65,6 +67,8 @@ def main():
 
     parser = argparse.ArgumentParser(description='Generate Precision-Recall Curve Figures')
     parser.add_argument('--extension', dest='ext', type=str, default='eps')
+    parser.add_argument('--max-precision', dest='max_precision', type=float, default=1.)
+    parser.add_argument('--max-recall', dest='max_recall', type=float, default=1.)
     args = parser.parse_args()
 
     keep_models = ['VIPRS', 'VIPRS-GSv_p', 'SBayesR', 'Lassosum', 'LDPred2-grid', 'PRScs', 'PRSice2']
@@ -80,7 +84,9 @@ def main():
         trait_data = update_model_names(trait_data)
 
         plt.figure(figsize=set_figure_size('paper'))
-        plot_precision_recall_curve(trait_data, trait_name)
+        plot_precision_recall_curve(trait_data, trait_name,
+                                    precision_max=args.max_precision,
+                                    recall_max=args.max_recall)
         plt.savefig(f"plots/supplementary/prc_curves/{trait_name}." + args.ext, bbox_inches='tight')
         plt.close()
 
