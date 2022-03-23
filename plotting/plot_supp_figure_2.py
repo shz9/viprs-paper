@@ -14,7 +14,7 @@ args = parser.parse_args()
 keep_models = ['VIPRS']
 keep_panels = ['ukbb_1k_shrinkage', 'ukbb_10k_shrinkage', 'ukbb_50k_shrinkage',
                'ukbb_1k_block', 'ukbb_10k_block', 'ukbb_50k_block',
-               'ukbb_1k_windowed', 'ukbb_10k_windowed', 'ukbb_50k_windowed',]
+               'ukbb_1k_windowed', 'ukbb_10k_windowed', 'ukbb_50k_windowed']
 
 bin_real_data = extract_predictive_evaluation_data(phenotype_type='binary',
                                                    configuration='real',

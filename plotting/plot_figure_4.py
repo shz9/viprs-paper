@@ -72,7 +72,7 @@ plot_real_predictive_performance(quant_real_data,
                                  row_order=sort_traits('quantitative', quant_real_data['Trait'].unique()),
                                  col_order=sort_traits('quantitative', quant_real_data['Trait'].unique()),
                                  col_wrap=3,
-                                 palette=['#b2df8a', '#33a02c', '#a6cee3', '#1f78b4', '#fc8d62', '#8da0cb'])
+                                 palette=['#b2df8a', '#33a02c', '#a6cee3', '#1f78b4', '#fc8d62', '#cab2d6'])
 
 plt.savefig("plots/main_figures/figure_4/4_a." + args.ext, bbox_inches='tight')
 plt.close()
@@ -87,7 +87,7 @@ plot_real_predictive_performance(bin_real_data,
                                               'VIPRS-GS', 'SBayesR'],
                                  row_order=sort_traits('binary', bin_real_data['Trait'].unique()),
                                  col_wrap=1,
-                                 palette=['#b2df8a', '#33a02c', '#a6cee3', '#1f78b4', '#fc8d62', '#8da0cb'])
+                                 palette=['#b2df8a', '#33a02c', '#a6cee3', '#1f78b4', '#fc8d62', '#cab2d6'])
 
 plt.savefig("plots/main_figures/figure_4/4_b." + args.ext, bbox_inches='tight')
 plt.close()

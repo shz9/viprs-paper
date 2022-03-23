@@ -48,7 +48,7 @@ plt.figure(figsize=set_figure_size(width='paper'))
 plot_time_stats(sim_time_stats, units='hours',
                 model_order=sort_models(sim_time_stats['Model'].unique()))
 
-plt.savefig("plots/main_figures/figure_3/3_a." + args.ext, bbox_inches='tight')
+plt.savefig("plots/main_figures/figure_3/3_sim." + args.ext, bbox_inches='tight')
 plt.close()
 
 plt.figure(figsize=set_figure_size(width='paper'))
@@ -56,5 +56,5 @@ plt.figure(figsize=set_figure_size(width='paper'))
 plot_time_stats(real_time_stats, units='hours',
                 model_order=sort_models(real_time_stats['Model'].unique()))
 
-plt.savefig("plots/main_figures/figure_3/3_b." + args.ext, bbox_inches='tight')
+plt.savefig("plots/main_figures/figure_3/3_real." + args.ext, bbox_inches='tight')
 plt.close()
