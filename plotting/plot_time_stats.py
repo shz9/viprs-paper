@@ -93,6 +93,8 @@ def extract_time_stats(phenotype_type=None,
 def plot_time_stats(time_stats_df,
                     units='hours',
                     x_label_rotation=90,
+                    showfliers=False,
+                    showmeans=True,
                     model_order=None,
                     palette='Set2',
                     ax=None):
@@ -104,11 +106,15 @@ def plot_time_stats(time_stats_df,
     elif units == 'log_minutes':
         time_stats_df['Duration_log_minutes'] = np.log(time_stats_df['Duration_minutes'])
 
-    g = sns.violinplot(x="Model", y="Duration_" + units,
-                       data=time_stats_df,
-                       palette=palette,
-                       order=model_order,
-                       ax=ax)
+    g = sns.boxplot(x="Model", y="Duration_" + units,
+                    data=time_stats_df,
+                    showfliers=showfliers,
+                    palette=palette,
+                    order=model_order,
+                    ax=ax,
+                    showmeans=showmeans,
+                    meanprops={"markerfacecolor": "white", "markeredgecolor": "black"}
+                    )
 
     if x_label_rotation != 0:
         g.set_xticklabels(g.get_xticklabels(), rotation=x_label_rotation)
