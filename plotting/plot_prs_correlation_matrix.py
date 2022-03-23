@@ -23,7 +23,7 @@ def compute_trait_prs_corr(trait_f, configuration, keep_models=None, keep_ld_pan
 
     merged_df = pheno_df
 
-    for prs_file in glob.glob(f"data/test_scores/*/*/{trait_type}/{configuration}/{trait}.prs"):
+    for prs_file in glob.glob(f"data/test_scores/*/*/{trait_type}/{configuration}/{trait}.prs.gz"):
 
         ld_panel, model, _, m_config = prs_file.split("/")[2:6]
 

@@ -23,9 +23,9 @@ bin_sim_data = update_model_names(bin_sim_data)
 
 # For binary phenotypes, you may convert the heritability estimates to the liability scale:
 # Equation is taken from https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3059431/
-# prevalence = .15
-# mult_factor = prevalence*(1. - prevalence) / (norm.pdf(norm.ppf(prevalence))**2)
-# bin_sim_data['Estimated Heritability'] *= mult_factor
+prevalence = .15
+mult_factor = prevalence*(1. - prevalence) / (norm.pdf(norm.ppf(prevalence))**2)
+bin_sim_data['Estimated Heritability'] *= mult_factor
 
 quant_sim_data = extract_hyperparameter_estimates_data(phenotype_type='quantitative',
                                                        configuration='simulation',

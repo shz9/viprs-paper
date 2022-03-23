@@ -114,7 +114,7 @@ def plot_simulation_hyperparameter_estimates(s_df, metric,
 
     if log_scale:
         for i, ax in enumerate(g.fig.axes):
-            ax.set_yscale('log')
+            ax.set_yscale('log', base=10)
 
     return g
 
@@ -140,6 +140,11 @@ def plot_real_hyperparameter_estimates(r_df, metric,
                     col_order=col_order,
                     palette=palette)
 
+    if log_scale:
+        for i, ax in enumerate(g.fig.axes):
+            ax.set_ylim(y_min=r_df[metric].min())
+            ax.set_yscale('log', base=10)
+
     if add_bar_labels:
         add_labels_to_bars(g)
 
@@ -156,10 +161,6 @@ def plot_real_hyperparameter_estimates(r_df, metric,
 
     if metric_name is not None:
         g.set_axis_labels("Model", metric_name(metric))
-
-    if log_scale:
-        for i, ax in enumerate(g.fig.axes):
-            ax.set_yscale('log')
 
     return g
 

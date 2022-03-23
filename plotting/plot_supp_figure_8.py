@@ -4,6 +4,7 @@ where we show hyperparameter estimates for quantitative
 and binary (case/control) phenotypes.
 """
 
+from scipy.stats import norm
 from plot_hyperparameter_estimates import *
 
 parser = argparse.ArgumentParser(description='Generate Supplementary Figure 8')
@@ -20,6 +21,17 @@ bin_real_data = extract_hyperparameter_estimates_data(phenotype_type='binary',
                                                       keep_panels=keep_panels,
                                                       keep_traits=['ASTHMA', 'T2D', 'PASS_T2D', 'RA', 'PASS_RA'])
 bin_real_data = update_model_names(bin_real_data)
+
+population_prevalence = {'ASTHMA': .08, 'T2D': .063, 'PASS_T2D': .063, 'RA': .01, 'PASS_RA': .01}
+sample_prevalence = {'ASTHMA': 0.127, 'T2D': 0.0228, 'PASS_T2D': 0.2325, 'RA': 0.0169, 'PASS_RA': 0.288}
+bin_real_data['Pop_Prevalence'] = bin_real_data['Trait'].map(population_prevalence)
+bin_real_data['Sample_Prevalence'] = bin_real_data['Trait'].map(sample_prevalence)
+
+mult_factor_1 = bin_real_data['Pop_Prevalence']*(1. - bin_real_data['Pop_Prevalence']) / (bin_real_data['Sample_Prevalence']*(1. - bin_real_data['Sample_Prevalence']))
+mult_factor_2 = bin_real_data['Pop_Prevalence']*(1. - bin_real_data['Pop_Prevalence']) / (norm.pdf(norm.ppf(bin_real_data['Pop_Prevalence']))**2)
+
+bin_real_data['Estimated Heritability'] *= mult_factor_1*mult_factor_2
+
 
 quant_real_data = extract_hyperparameter_estimates_data(phenotype_type='quantitative',
                                                         configuration='real',
@@ -38,28 +50,23 @@ quant_real_data = update_model_names(quant_real_data)
 # https://nealelab.github.io/UKBB_ldsc/h2_browser.html
 
 ldsc_bin_data = pd.DataFrame({
-    'Trait': ['ASTHMA', 'T2D', 'PASS_T2D', 'RA', 'PASS_RA'],
-    'Model': ['S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC'],
-    'Estimated Heritability': [0.170, 0.14, 0.14, 0.07, 0.07],
-    'Estimated Prop. Causal': [np.nan, np.nan, np.nan, np.nan, np.nan],
-    'Heritability': [np.nan, np.nan, np.nan, np.nan, np.nan],
-    'Prop. Causal': [np.nan, np.nan, np.nan, np.nan, np.nan]
+    'Trait': ['ASTHMA', 'T2D', 'RA'],
+    'Model': ['S-LDSC', 'S-LDSC', 'S-LDSC'],
+    'Estimated Heritability': [0.170, 0.14, 0.07],
+    'Estimated Prop. Causal': [np.nan, np.nan, np.nan],
+    'Heritability': [np.nan, np.nan, np.nan],
+    'Prop. Causal': [np.nan, np.nan, np.nan]
 })
 
 bin_real_data = pd.concat([bin_real_data, ldsc_bin_data])
 
 ldsc_quant_data = pd.DataFrame({
-    'Trait': ['HEIGHT', 'PASS_HEIGHT', 'HDL', 'PASS_HDL', 'BMI', 'PASS_BMI', 'FVC',
-              'FEV1', 'HC', 'WC', 'LDL', 'PASS_LDL', 'BW'],
-    'Model': ['S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC',
-              'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC'],
-    'Estimated Heritability': [0.485, 0.485, 0.33, 0.33, 0.248, 0.248, 0.21, 0.192, 0.223, 0.206, 0.0825, 0.0825, 0.122],
-    'Estimated Prop. Causal': [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan,
-                               np.nan, np.nan, np.nan, np.nan],
-    'Heritability': [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan,
-                     np.nan, np.nan, np.nan, np.nan],
-    'Prop. Causal': [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan,
-                     np.nan, np.nan, np.nan, np.nan]
+    'Trait': ['HEIGHT', 'HDL', 'BMI', 'FVC', 'FEV1', 'HC', 'WC', 'LDL', 'BW'],
+    'Model': ['S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC'],
+    'Estimated Heritability': [0.485, 0.33, 0.248, 0.21, 0.192, 0.223, 0.206, 0.0825, 0.122],
+    'Estimated Prop. Causal': [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
+    'Heritability': [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
+    'Prop. Causal': [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]
 })
 
 quant_real_data = pd.concat([quant_real_data, ldsc_quant_data])

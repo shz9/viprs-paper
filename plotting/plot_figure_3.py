@@ -27,7 +27,7 @@ real_time_stats = update_model_names(real_time_stats)
 # Set seaborn context:
 makedir("plots/main_figures/figure_3/")
 sns.set_style("darkgrid")
-sns.set_context("paper")
+sns.set_context("paper", font_scale=1.5)
 
 
 # Generate a combined figure:

@@ -1,3 +1,4 @@
+import numpy as np
 
 
 def set_figure_size(width, fraction=1, subplots=(1, 1), height_extra_pct=0., width_extra_pct=0.):
@@ -115,15 +116,27 @@ def add_labels_to_bars(g, rotation=90, fontsize='smaller'):
     for ax in g.axes.flatten():
 
         y_min, y_max = ax.get_ylim()
+        scale = ax.get_yaxis().get_scale()
 
-        for p in ax.patches:
+        for p, l in zip(ax.patches, ax.lines):
 
-            x_height = p.get_height() - y_min
+            if scale == 'linear':
 
-            if round(x_height, 3) > .5*(y_max - y_min) and rotation == 90:
-                y = y_min + .5*x_height
+                x_height = [l.get_ydata()[1], p.get_height()][np.isnan(l.get_ydata()[1])] - y_min
+
+                if round(x_height, 3) > .5 * (y_max - y_min) and rotation == 90:
+                    y = y_min + .5 * x_height
+                else:
+                    y = y_min + x_height * 1.05 + 0.05 * (y_max - y_min)
             else:
-                y = y_min + x_height + 0.02
+
+                x_height = l.get_ydata()[1]
+
+                if np.log10(x_height) - np.log10(y_min) > .5 * (np.log10(y_max) - np.log10(y_min)) and rotation == 90:
+                    y = 10 ** (.5 * (np.log10(x_height) - np.log10(y_min)) + np.log10(y_min))
+                else:
+                    y = 10 ** (np.log10(y_min) + (np.log10(x_height) - np.log10(y_min)) * 1.05 + .05 * (
+                                np.log10(y_max) - np.log10(y_min)))
 
             ax.text(p.get_x() + .4,
                     y,
