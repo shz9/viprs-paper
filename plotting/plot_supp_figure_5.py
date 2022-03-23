@@ -29,7 +29,7 @@ quant_sim_data = update_model_names(quant_sim_data)
 
 # Set seaborn context:
 sns.set_style("darkgrid")
-sns.set_context("paper", font_scale=1.5)
+sns.set_context("paper", font_scale=1.8)
 
 makedir("plots/supplementary_figures/figure_5/")
 

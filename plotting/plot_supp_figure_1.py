@@ -31,7 +31,7 @@ quant_sim_data['Model'] = quant_sim_data['Model'] + ' (' + quant_sim_data['LD Pa
 
 # Set seaborn context:
 sns.set_style("darkgrid")
-sns.set_context("paper", font_scale=1.5)
+sns.set_context("paper", font_scale=1.8)
 
 makedir("plots/supplementary_figures/figure_1/")
 

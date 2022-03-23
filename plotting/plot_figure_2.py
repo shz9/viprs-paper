@@ -34,7 +34,7 @@ quant_real_data = update_model_names(quant_real_data)
 # Set seaborn context:
 makedir("plots/main_figures/figure_2/")
 sns.set_style("darkgrid")
-sns.set_context("paper", font_scale=1.8)
+sns.set_context("paper", font_scale=2.3)
 
 # Create plot:
 
@@ -45,7 +45,7 @@ plot_real_predictive_performance(quant_real_data,
                                  row_order=sort_traits('quantitative', quant_real_data['Trait'].unique()),
                                  col_order=sort_traits('quantitative', quant_real_data['Trait'].unique()),
                                  col_wrap=3)
-
+plt.subplots_adjust(wspace=.1)
 plt.savefig("plots/main_figures/figure_2/2_a." + args.ext, bbox_inches='tight')
 plt.close()
 
@@ -56,6 +56,6 @@ plot_real_predictive_performance(bin_real_data,
                                  model_order=sort_models(bin_real_data['Model'].unique()),
                                  row_order=sort_traits('binary', bin_real_data['Trait'].unique()),
                                  col_wrap=1)
-
+plt.subplots_adjust(wspace=.1)
 plt.savefig("plots/main_figures/figure_2/2_b." + args.ext, bbox_inches='tight')
 plt.close()
