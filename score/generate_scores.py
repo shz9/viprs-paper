@@ -21,6 +21,13 @@ parser = argparse.ArgumentParser(description='Generate Polygenic Scores')
 
 parser.add_argument('-f', '--fit-dir', dest='fit_dir', type=str, required=True,
                     help='The directory with the outputted parameter fits')
+parser.add_argument('--bed-dir', dest='bed_dir', type=str,
+                    default='data/ukbb_qc_genotypes',
+                    help='The directory with the bed files that need to be scored are located')
+parser.add_argument('--keep-file', dest='keep_file', type=str,
+                    help='A file with a list of individuals to score')
+parser.add_argument('--prefix', dest='prefix', type=str,
+                    help='A prefix to prepend to the output directory')
 args = parser.parse_args()
 
 fit_dir = osp.normpath(args.fit_dir)
@@ -29,12 +36,14 @@ config_dir = osp.dirname(fit_dir)
 config = osp.basename(config_dir)
 trait_type = osp.basename(osp.dirname(config_dir))
 
-if 'real' in config:
+if args.keep_file is not None:
+    keep_file = args.keep_file
+elif 'real' in config:
     keep_file = f"data/keep_files/ukbb_cv/{trait_type}/{trait}/{config.replace('real_', '')}/test.keep"
 else:
     keep_file = "data/keep_files/ukbb_test_subset.keep"
 
-test_data = GWASDataLoader([f"data/ukbb_qc_genotypes/chr_{chrom}.bed" for chrom in range(1, 23)],
+test_data = GWASDataLoader([osp.join(args.bed_dir, f"chr_{chrom}.bed") for chrom in range(1, 23)],
                            keep_individuals=keep_file,
                            min_mac=None,
                            min_maf=None,
@@ -59,6 +68,10 @@ ind_table['PRS'] = prs
 test_data.cleanup()
 
 # Output the scores:
-output_f = fit_dir.replace("model_fit", "test_scores") + '.prs.gz'
+if args.prefix is None:
+    output_f = fit_dir.replace("model_fit", "test_scores") + '.prs.gz'
+else:
+    output_f = fit_dir.replace("model_fit", args.prefix + "_test_scores") + '.prs.gz'
+
 makedir(osp.dirname(output_f))
 ind_table.to_csv(output_f, index=False, sep="\t")
