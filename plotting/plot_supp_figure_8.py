@@ -39,7 +39,7 @@ quant_real_data = update_model_names(quant_real_data)
 
 ldsc_bin_data = pd.DataFrame({
     'Trait': ['ASTHMA', 'T2D', 'PASS_T2D', 'RA', 'PASS_RA'],
-    'Model': ['S-LDSC', 'S-LDSC', 'S-LDSC'],
+    'Model': ['S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC'],
     'Estimated Heritability': [0.170, 0.14, 0.14, 0.07, 0.07],
     'Estimated Prop. Causal': [np.nan, np.nan, np.nan, np.nan, np.nan],
     'Heritability': [np.nan, np.nan, np.nan, np.nan, np.nan],
@@ -49,8 +49,10 @@ ldsc_bin_data = pd.DataFrame({
 bin_real_data = pd.concat([bin_real_data, ldsc_bin_data])
 
 ldsc_quant_data = pd.DataFrame({
-    'Trait': ['HEIGHT', 'PASS_HEIGHT', 'HDL', 'PASS_HDL', 'BMI', 'PASS_BMI', 'FVC', 'FEV1', 'HC', 'WC', 'LDL', 'PASS_LDL', 'BW'],
-    'Model': ['S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC'],
+    'Trait': ['HEIGHT', 'PASS_HEIGHT', 'HDL', 'PASS_HDL', 'BMI', 'PASS_BMI', 'FVC',
+              'FEV1', 'HC', 'WC', 'LDL', 'PASS_LDL', 'BW'],
+    'Model': ['S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC',
+              'S-LDSC', 'S-LDSC', 'S-LDSC', 'S-LDSC'],
     'Estimated Heritability': [0.485, 0.485, 0.33, 0.33, 0.248, 0.248, 0.21, 0.192, 0.223, 0.206, 0.0825, 0.0825, 0.122],
     'Estimated Prop. Causal': [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan,
                                np.nan, np.nan, np.nan, np.nan],

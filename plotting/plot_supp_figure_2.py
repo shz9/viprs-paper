@@ -58,7 +58,7 @@ plt.figure(figsize=set_figure_size(width='paper', subplots=(1, 5)))
 plot_real_predictive_performance(bin_real_data,
                                  metric='PR-AUC',
                                  model_order=['VIPRS (' + ldp.replace('ukbb_', '') + ')' for ldp in keep_panels],
-                                 col_order=sort_traits('quantitative', bin_real_data['Trait'].unique()),
+                                 row_order=sort_traits('quantitative', bin_real_data['Trait'].unique()),
                                  col_wrap=5)
 plt.subplots_adjust(wspace=.1)
 plt.savefig("plots/supplementary_figures/figure_2/2_b." + args.ext, bbox_inches='tight')
