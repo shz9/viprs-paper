@@ -27,6 +27,7 @@ quant_real_data = extract_predictive_evaluation_data(phenotype_type='quantitativ
                                                                   'PASS_BMI', 'PASS_LDL'],
                                                      keep_panels=['ukbb_50k_windowed', 'external'])
 quant_real_data = update_model_names(quant_real_data)
+quant_real_data['Model'] = quant_real_data['Model'].map({'SBayesR': 'SBayesR (*)'}).fillna(quant_real_data['Model'])
 
 
 # Set seaborn context:
@@ -40,7 +41,8 @@ plt.figure(figsize=set_figure_size('paper', subplots=(1, 4)))
 
 plot_real_predictive_performance(quant_real_data,
                                  col_wrap=2,
-                                 model_order=sort_models(quant_real_data['Model'].unique()))
+                                 model_order=['VIPRS', 'VIPRS-GS', 'SBayesR (*)',
+                                              'Lassosum', 'LDPred2-grid', 'PRScs', 'PRSice2'])
 
 plt.savefig("plots/main_figures/figure_5/5_a." + args.ext, bbox_inches='tight')
 plt.close()

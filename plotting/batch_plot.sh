@@ -20,3 +20,8 @@ python plotting/plot_supp_figure_7.py --extension "$extension"
 python plotting/plot_supp_figure_8.py --extension "$extension"
 python plotting/plot_supp_figure_9.py --extension "$extension"
 python plotting/plot_supp_figure_10.py --extension "$extension"
+
+# Other supplementary figures:
+python plotting/plot_prs_correlation_matrix.py --extension "$extension"
+
+python plotting/plot_prs_validation_metrics.py --chromosome "chr_2" --extension "$extension"

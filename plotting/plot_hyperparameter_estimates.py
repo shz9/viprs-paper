@@ -142,7 +142,7 @@ def plot_real_hyperparameter_estimates(r_df, metric,
 
     if log_scale:
         for i, ax in enumerate(g.fig.axes):
-            ax.set_ylim(y_min=r_df[metric].min())
+            ax.set_ylim(ymin=r_df[metric].min())
             ax.set_yscale('log', base=10)
 
     if add_bar_labels:
