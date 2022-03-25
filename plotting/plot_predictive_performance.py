@@ -167,10 +167,59 @@ def plot_real_predictive_performance(r_df, metric='R2',
     for fig_ax in g.fig.axes:
         fig_ax.set_title(fig_ax.get_title().replace("Trait = ", ""))
 
-    if metric_name is not None:
-        g.set_axis_labels("Model", metric_name(metric))
+    g.set_axis_labels("Model", metric_name(metric))
 
     return g
+
+
+def plot_real_predictive_performance_with_lines(r_df,
+                                                lines,
+                                                metric='R2',
+                                                model_order=None,
+                                                trait_order=None,
+                                                palette='Set2'):
+
+    unique_traits = trait_order or r_df['Trait'].unique()
+
+    ax = sns.barplot(x=metric,
+                     y="Trait",
+                     hue="Model",
+                     data=r_df,
+                     hue_order=model_order,
+                     order=unique_traits,
+                     palette=palette)
+
+    for l in lines:
+        add_lines_to_bars(ax, [l['values'][t] for t in unique_traits], color=l['color'], label=l['label'])
+
+    ax.set(xlabel=metric_name(metric), ylabel='Trait')
+    plt.legend()
+
+    return ax
+
+
+def plot_real_predictive_performance_relative_improvement(r_df,
+                                                          metric='R2',
+                                                          reference_model='VIPRS',
+                                                          model_order=None,
+                                                          trait_order=None,
+                                                          palette='Set2'):
+    unique_traits = trait_order or r_df['Trait'].unique()
+
+    plt_r_df = r_df.loc[r_df.Model != reference_model, ]
+    ref_r_df = r_df.loc[r_df.Model == reference_model, ]
+    final_df = plt_r_df.merge(ref_r_df, on=['Trait', 'Fold'])
+
+    final_df[metric] = 100.*(final_df[metric + '_x'] - final_df[metric + '_y']) / final_df[metric + '_y']
+    final_df['Model'] = final_df['Model_x']
+
+    ax = sns.barplot(x=metric, y="Trait", hue="Model",
+                     data=final_df, hue_order=model_order,
+                     order=unique_traits, palette=palette)
+
+    ax.set(xlabel="% Improvement in " + metric_name(metric) + f"(Relative to {reference_model})", ylabel='Trait')
+
+    return ax
 
 
 # ---------------------------------------------------------------

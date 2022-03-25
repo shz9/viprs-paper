@@ -108,6 +108,40 @@ def update_model_names(data_df):
     return data_df
 
 
+def add_lines_to_bars(ax, values, orientation='vertical', color='r', label=None):
+    """
+    Add vertical or horizontal lines to barplots
+    :param ax: The axis on which to draw the lines
+    :param values: The place where to add the line
+    :param orientation: Orientation (vertical or horizontal)
+    :param color: Color of the line
+    """
+
+    n_models = len(ax.patches) // len(values)
+
+    if orientation == 'vertical':
+        sorted_patches = sorted(ax.patches, key=lambda x: x.get_y())
+    else:
+        sorted_patches = sorted(ax.patches, key=lambda x: x.get_x())
+
+    for i, p in enumerate(sorted_patches):
+
+        if i > 0:
+            label = None
+
+        if i % n_models != 0 or i == len(ax.patches) - 1:
+            continue
+
+        if orientation == 'vertical':
+            ax.vlines(ymin=p.get_y(), ymax=sorted_patches[i + n_models - 1].get_y() + p.get_height(),
+                      x=values[i // n_models], colors=color, label=label)
+        else:
+            ax.hlines(xmin=p.get_x(), xmax=sorted_patches[i + n_models - 1].get_x() + p.get_width(),
+                      y=values[i // n_models], colors=color, label=label)
+
+    return ax
+
+
 def add_labels_to_bars(g, rotation=90, fontsize='smaller'):
     """
     This function takes a barplot and adds labels above each bar with its value.

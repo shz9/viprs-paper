@@ -145,7 +145,7 @@ def main():
                                     col_wrap=5,
                                     row_order=sort_traits(args.type, real_validation_data['Trait'].unique()),
                                     col_order=sort_traits(args.type, real_validation_data['Trait'].unique()))
-    plt.subplots_adjust(wspace=.1)
+    plt.subplots_adjust(wspace=.25)
     makedir(f"plots/supplementary/validation_vs_elbo/{args.type}/")
     plt.savefig(f"plots/supplementary/validation_vs_elbo/{args.type}/{args.chromosome}." + args.ext,
                 bbox_inches='tight')
