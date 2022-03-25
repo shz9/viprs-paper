@@ -19,7 +19,7 @@ def extract_lines(data_df, metric='R2',
 
     # Extract data for the reference model:
     values = data_df.loc[data_df.Model == reference_model].groupby('Trait')[metric].mean().to_dict()
-    lines.append({'values': values, 'color': reference_color, 'label': reference_model})
+    lines.append({'values': values, 'color': reference_color, 'label': reference_model + ' (HapMap3)'})
 
     # Extract data for the best model:
     if add_best_model:
