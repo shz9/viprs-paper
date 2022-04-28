@@ -83,7 +83,7 @@ def update_model_names(data_df):
         if sum(v_in_model) == len(v_in_model):
             new_model_names = [m.replace('v', '') for m in new_model_names]
         else:
-            new_model_names = [m.replace('v', '') + ['-ELBO', '']['v' in m] for m in new_model_names]
+            new_model_names = [['-ELBO', '']['v' in m] + m.replace('v', '') for m in new_model_names]
 
         # If all models searched the same hyperparameters:
         if len(set(param_in_model)) == 1:
@@ -200,6 +200,7 @@ def add_labels_to_bars_horizontal(ax, fontsize='smaller'):
         ax.text(x, y,
                 f'{value:.3f}',
                 ha="left",
+                va="bottom",
                 color='black',
                 fontsize=fontsize)
 

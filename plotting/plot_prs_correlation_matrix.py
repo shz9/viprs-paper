@@ -42,7 +42,7 @@ def compute_trait_prs_corr(trait_f, configuration, keep_models=None, keep_ld_pan
 
     merged_df.drop(columns=['FID', 'IID'], inplace=True)
     merged_df = (merged_df - merged_df.mean()) / merged_df.std()
-    merged_df['Avg(VIPRS-GS,SBayesR)'] = merged_df[[c for c in combined_models]].mean(axis=1)
+    merged_df['Mean(VIPRSGS,SBayesR)'] = merged_df[[c for c in combined_models]].mean(axis=1)
 
     return merged_df.corr()
 
@@ -77,8 +77,8 @@ if __name__ == "__main__":
                                                          keep_models=keep_models, keep_ld_panels=keep_panels)
 
         trait_corr_mat /= len(real_folds)
-        trait_corr_mat.columns = update_model_names(pd.DataFrame({'Model': trait_corr_mat.columns}))
-        trait_corr_mat.index = update_model_names(pd.DataFrame({'Model': trait_corr_mat.index}))
+        trait_corr_mat.columns = update_model_names(pd.DataFrame({'Model': trait_corr_mat.columns}))['Model'].values
+        trait_corr_mat.index = update_model_names(pd.DataFrame({'Model': trait_corr_mat.index}))['Model'].values
 
         # Plot the correlation matrix:
         f, ax = plt.subplots(figsize=set_figure_size('paper'))

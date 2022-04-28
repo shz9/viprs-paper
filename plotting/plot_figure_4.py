@@ -83,7 +83,7 @@ quant_real_data = pd.concat([quant_real_data, quant_real_10m])
 # Set seaborn context:
 makedir("plots/main_figures/figure_4/")
 sns.set_style("darkgrid")
-sns.set_context("paper", font_scale=1.5)
+sns.set_context("paper", font_scale=1.2)
 
 # Create plot:
 
