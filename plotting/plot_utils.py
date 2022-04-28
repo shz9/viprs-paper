@@ -82,7 +82,7 @@ def update_model_names(data_df):
         # If all models evaluated performance with a validation set:
         if sum(v_in_model) == len(v_in_model):
             new_model_names = [m.replace('v', '') for m in new_model_names]
-        else:
+        elif model_name != 'VIPRS-BMA':
             new_model_names = [['-ELBO', '']['v' in m] + m.replace('v', '') for m in new_model_names]
 
         # If all models searched the same hyperparameters:
