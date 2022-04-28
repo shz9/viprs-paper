@@ -82,6 +82,8 @@ def update_model_names(data_df):
         # If all models evaluated performance with a validation set:
         if sum(v_in_model) == len(v_in_model):
             new_model_names = [m.replace('v', '') for m in new_model_names]
+        else:
+            new_model_names = [m.replace('v', '') + ['-ELBO', '']['v' in m] for m in new_model_names]
 
         # If all models searched the same hyperparameters:
         if len(set(param_in_model)) == 1:
@@ -179,6 +181,27 @@ def add_labels_to_bars(g, rotation=90, fontsize='smaller'):
                     fontsize=fontsize,
                     rotation=rotation,
                     ha='center')
+
+
+def add_labels_to_bars_horizontal(ax, fontsize='smaller'):
+    x_min, x_max = ax.get_xlim()
+
+    for p in ax.patches:
+
+        x_height = p.get_width()
+
+        if round(x_height, 3) > .45 * (x_max - x_min):
+            x = x_min + .5 * x_height
+        else:
+            x = x_min + x_height * 1.05 + 0.05 * (x_max - x_min)
+
+        y = p.get_y() + p.get_height()
+        value = p.get_width()
+        ax.text(x, y,
+                f'{value:.3f}',
+                ha="left",
+                color='black',
+                fontsize=fontsize)
 
 
 def sort_traits(trait_type, traits):

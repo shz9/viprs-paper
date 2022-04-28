@@ -175,6 +175,7 @@ def plot_real_predictive_performance(r_df, metric='R2',
 def plot_real_predictive_performance_with_lines(r_df,
                                                 lines,
                                                 metric='R2',
+                                                add_labels=True,
                                                 model_order=None,
                                                 trait_order=None,
                                                 palette='Set2'):
@@ -188,6 +189,9 @@ def plot_real_predictive_performance_with_lines(r_df,
                      hue_order=model_order,
                      order=unique_traits,
                      palette=palette)
+
+    if add_labels:
+        add_labels_to_bars_horizontal(ax)
 
     for l in lines:
         add_lines_to_bars(ax, [l['values'][t] for t in unique_traits], color=l['color'], label=l['label'])

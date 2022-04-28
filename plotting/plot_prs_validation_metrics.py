@@ -113,6 +113,8 @@ def plot_validation_vs_elbo_scatter(data_df,
         for fig_ax in g.fig.axes:
             fig_ax.set_title(fig_ax.get_title().replace("Trait = ", ""))
 
+    g.set_axis_labels("ELBO", "Validation $R^2$")
+
     return g
 
 
