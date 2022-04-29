@@ -11,7 +11,7 @@ parser.add_argument('--extension', dest='ext', type=str, default='eps')
 args = parser.parse_args()
 
 # Extract data:
-keep_models = ['VIPRS', 'VIPRS-GSv_p', 'VIPRS-GS_p', 'VIPRS-BO_p', 'VIPRS_BOv_p', 'SBayesR']
+keep_models = ['VIPRS', 'VIPRS-GSv_p', 'VIPRS-GS_p', 'VIPRS-BO_p', 'VIPRS-BOv_p', 'SBayesR']
 keep_panels = ['ukbb_50k_windowed', 'external']
 
 bin_sim_data = extract_hyperparameter_estimates_data(phenotype_type='binary',
