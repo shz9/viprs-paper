@@ -58,22 +58,23 @@ quant_real_data = extract_predictive_evaluation_data(phenotype_type='quantitativ
 quant_real_data = update_model_names(quant_real_data)
 
 
-bin_real_10m = extract_predictive_evaluation_data_all(phenotype_type='binary',
-                                                      configuration='real',
-                                                      keep_models=['VIPRS', 'VIPRSMix'],
-                                                      keep_traits=['ASTHMA', 'T2D', 'RA'])
+bin_real_10m = extract_predictive_evaluation_data(phenotype_type='binary',
+                                                  configuration='real',
+                                                  keep_models=['VIPRS', 'VIPRSMix'],
+                                                  keep_traits=['ASTHMA', 'T2D', 'RA'],
+                                                  eval_dir="data_all/evaluation")
 bin_real_10m['Model'] = bin_real_10m['Model'].map({'VIPRS': 'VIPRS-10m',
                                                    'VIPRSMix': 'VIPRSMix-10m'})
 
 bin_real_data = pd.concat([bin_real_data, bin_real_10m])
 
-quant_real_10m = extract_predictive_evaluation_data_all(phenotype_type='quantitative',
-                                                        keep_models=['VIPRS', 'VIPRSMix'],
-                                                        configuration='real',
-                                                        keep_traits=['HEIGHT', 'HDL', 'BMI',
-                                                                     'FVC', 'FEV1', 'HC',
-                                                                     'WC', 'LDL', 'BW']
-                                                        )
+quant_real_10m = extract_predictive_evaluation_data(phenotype_type='quantitative',
+                                                    keep_models=['VIPRS', 'VIPRSMix'],
+                                                    configuration='real',
+                                                    keep_traits=['HEIGHT', 'HDL', 'BMI',
+                                                                 'FVC', 'FEV1', 'HC',
+                                                                 'WC', 'LDL', 'BW'],
+                                                    eval_dir="data_all/evaluation")
 
 quant_real_10m['Model'] = quant_real_10m['Model'].map({'VIPRS': 'VIPRS-10m',
                                                        'VIPRSMix': 'VIPRSMix-10m'})

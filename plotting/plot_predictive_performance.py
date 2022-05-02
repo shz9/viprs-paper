@@ -23,7 +23,8 @@ def extract_predictive_evaluation_data(phenotype_type=None,
                                        configuration=None,
                                        keep_models=None,
                                        keep_panels=None,
-                                       keep_traits=None):
+                                       keep_traits=None,
+                                       eval_dir="data/evaluation"):
     """
     Extract evaluation metrics from files and combine them for plotting
     :param phenotype_type: Can be `quantitative`, `binary`, or None (both)
@@ -43,53 +44,7 @@ def extract_predictive_evaluation_data(phenotype_type=None,
 
     dfs = []
 
-    for f in glob.glob(f"data/evaluation/{phenotype_type}/{configuration}/*.csv"):
-
-        df = pd.read_csv(f)
-
-        if keep_models is not None:
-            df = df.loc[df['Model'].isin(keep_models), ]
-
-        if keep_panels is not None:
-            df = df.loc[df['LD Panel'].isin(keep_panels), ]
-
-        dfs.append(df)
-
-    if len(dfs) > 0:
-
-        combined_df = pd.concat(dfs)
-
-        if keep_traits is not None:
-            combined_df = combined_df.loc[combined_df['Trait'].isin(keep_traits), ]
-
-        return combined_df
-
-
-def extract_predictive_evaluation_data_all(phenotype_type=None,
-                                           configuration=None,
-                                           keep_models=None,
-                                           keep_panels=None,
-                                           keep_traits=None):
-    """
-    Extract evaluation metrics from files and combine them for plotting
-    :param phenotype_type: Can be `quantitative`, `binary`, or None (both)
-    :param configuration: Can be `real`, `simulation`, or None (both)
-    :param keep_models: Only keep a subset of the models
-    :param keep_panels: The LD reference panel to use
-    :param keep_traits: Extract data for only a subset of traits.
-    """
-
-    if phenotype_type is None:
-        phenotype_type = '*'
-
-    if configuration is None:
-        configuration = '*'
-    elif configuration == 'simulation':
-        configuration = 'h2_*'
-
-    dfs = []
-
-    for f in glob.glob(f"data_all/evaluation/{phenotype_type}/{configuration}/*.csv"):
+    for f in glob.glob(f"{eval_dir}/{phenotype_type}/{configuration}/*.csv"):
 
         df = pd.read_csv(f)
 
