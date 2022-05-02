@@ -62,7 +62,7 @@ bin_real_data_mp = extract_predictive_evaluation_data(phenotype_type='binary',
 bin_real_data_mp = update_model_names(bin_real_data_mp)
 
 bin_real_data_combined = bin_real_data_mp.merge(bin_real_data_wb, on=['Trait', 'LD Panel', 'Model', 'Class', 'Fold'])
-bin_real_data_combined['AUPRC'] = bin_real_data_combined['AUPRC_x'] / bin_real_data_combined['AUPRC_y']
+bin_real_data_combined['PR-AUC'] = bin_real_data_combined['PR-AUC_x'] / bin_real_data_combined['PR-AUC_y']
 
 quant_real_data_mp = extract_predictive_evaluation_data(phenotype_type='quantitative',
                                                         configuration='real',
@@ -89,12 +89,16 @@ sns.set_context("paper", font_scale=1.2)
 
 plt.figure(figsize=set_figure_size(width='paper'))
 plot_relative_predictive_performance(quant_real_data_combined, metric='R2',
+                                     model_order=['VIPRS', 'VIPRS-GS', 'SBayesR',
+                                                  'Lassosum', 'LDPred2-grid', 'PRScs', 'PRSice2'],
                                      ancestry_order=['Italy', 'India', 'China', 'Nigeria'])
 plt.savefig("plots/supplementary_figures/figure_13/13_a." + args.ext, bbox_inches='tight')
 plt.close()
 
 plt.figure(figsize=set_figure_size(width='paper'))
-plot_relative_predictive_performance(bin_real_data_combined, metric='AUPRC',
+plot_relative_predictive_performance(bin_real_data_combined, metric='PR-AUC',
+                                     model_order=['VIPRS', 'VIPRS-GS', 'SBayesR',
+                                                  'Lassosum', 'LDPred2-grid', 'PRScs', 'PRSice2'],
                                      ancestry_order=['Italy', 'India', 'China', 'Nigeria'])
 plt.savefig("plots/supplementary_figures/figure_13/13_b." + args.ext, bbox_inches='tight')
 plt.close()
