@@ -18,10 +18,11 @@ cd "$VIPRS_PATH" || exit
 
 CHR=${1:-22}  # Chromosome number (default 22)
 snp_set=${2:-"hm3"} # The SNP set to use
+ind_keep_file=${3-"data/keep_files/ukbb_qc_individuals.keep"}
+output_dir=${4-"data/ukbb_qc_genotypes"}
 
 if [ $snp_set == "hm3" ]; then
   snp_keep="data/keep_files/ukbb_qc_variants_hm3.keep"
-  output_dir="data/ukbb_qc_genotypes"
 else
   snp_keep="data/keep_files/ukbb_qc_variants.keep"
   output_dir="data_all/ukbb_qc_genotypes"
@@ -33,7 +34,7 @@ plink2 --bgen "$UKBB_GENOTYPE_DIR/ukb_imp_chr${CHR}_v3.bgen" ref-first \
       --sample "$UKBB_GENOTYPE_DIR/ukb6728_imp_chr${CHR}_v3_s487395.sample" \
       --make-bed \
       --allow-no-sex \
-      --keep data/keep_files/ukbb_qc_individuals.keep \
+      --keep "$ind_keep_file" \
       --extract "$snp_keep" \
       --hwe "$HWE_CUTOFF" \
       --mind "$MIND" \

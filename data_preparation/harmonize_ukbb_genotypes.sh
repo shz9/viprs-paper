@@ -14,27 +14,29 @@
 
 . global_config.sh
 
+input_dir=${1:-"data/ukbb_qc_genotypes"}  # Chromosome number (default 22)
+
 module load plink
 
 echo "Creating a combined .mindrem.id file..."
 # Combine the IDs of filtered individuals from all chromosomes:
-rm -rf data/ukbb_qc_genotypes/combined.mindrem.id || true
-awk '(NR == 1) || (FNR > 1)' data/ukbb_qc_genotypes/*.mindrem.id > data/ukbb_qc_genotypes/combined.mindrem.id
+rm -rf "$input_dir/combined.mindrem.id" || true
+awk '(NR == 1) || (FNR > 1)' "$input_dir"/*.mindrem.id > "$input_dir/combined.mindrem.id"
 
 echo "Filtering individuals with excessive missingness from all chromosomes..."
 
 for chr in $(seq 1 22)
 do
   echo "------- Filtering individuals from chromosome $chr... -------"
-  plink2 --bfile "data/ukbb_qc_genotypes/chr_$chr" \
+  plink2 --bfile "$input_dir/chr_$chr" \
          --make-bed \
          --mac "$MIN_MAC" \
          --maf "$MIN_MAF" \
          --max-maf "$MAX_MAF" \
-         --remove data/ukbb_qc_genotypes/combined.mindrem.id \
-         --out "data/ukbb_qc_genotypes/chr_$chr"
+         --remove "$input_dir/combined.mindrem.id" \
+         --out "$input_dir/chr_$chr"
 done
 
-rm -r data/ukbb_qc_genotypes/*~ || true
+rm -r "$input_dir"/*~ || true
 
 echo "Job finished with exit code $? at: `date`"
