@@ -13,12 +13,10 @@ https://github.com/privefl/paper-ldpred2/blob/master/code/prepare-phenotypes.R
 
 import pandas as pd
 import numpy as np
-import statsmodels.api as sm
-from scipy.stats import rankdata, norm, zscore
 import os.path as osp
 import sys
 import itertools
-sys.path.append(osp.dirname(osp.dirname(__file__)))
+sys.path.append(osp.dirname(osp.dirname(osp.dirname(__file__))))
 from utils import makedir
 
 input_dir = "/lustre03/project/6004777/projects/uk_biobank/raw/"
