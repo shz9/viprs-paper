@@ -3,7 +3,7 @@ source "$HOME/pyenv/bin/activate"
 
 extension=${1:-"eps"}
 
-rm -rf plotting/*
+rm -rf plots/*
 
 python plotting/plot_figure_1.py --extension "$extension"
 python plotting/plot_figure_2.py --extension "$extension"
