@@ -3,7 +3,7 @@ import os
 import os.path as osp
 sys.path.append(osp.dirname(osp.dirname(osp.dirname(__file__))))
 import argparse
-from gwasimulator.GWASDataLoader import GWASDataLoader
+from magenpy.GWASDataLoader import GWASDataLoader
 
 parser = argparse.ArgumentParser(description='Computing LD matrices')
 parser.add_argument('-c', '--chromosome', dest='chrom', type=str, required=True)

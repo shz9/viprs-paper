@@ -9,7 +9,7 @@ import os.path as osp
 import glob
 sys.path.append(osp.dirname(osp.dirname(osp.dirname(__file__))))
 sys.path.append("viprs/")
-from gwasimulator.GWASDataLoader import GWASDataLoader
+from magenpy.GWASDataLoader import GWASDataLoader
 from viprs.prs.src.PRSModel import PRSModel
 from utils import makedir
 import argparse

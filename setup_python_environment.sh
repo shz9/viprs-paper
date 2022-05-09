@@ -7,6 +7,6 @@ virtualenv --no-download $SLURM_TMPDIR/env
 source $SLURM_TMPDIR/env/bin/activate
 pip install --no-index --upgrade pip
 
-pip install --no-index -r gwasimulator/requirements.txt
+pip install --no-index -r magenpy/requirements.txt
 pip install --no-index -r viprs/requirements.txt
 

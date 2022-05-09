@@ -7,7 +7,7 @@ import sys
 import os
 import os.path as osp
 sys.path.append(osp.dirname(osp.dirname(__file__)))
-from gwasimulator.GWASSimulator import GWASSimulator
+from magenpy.GWASSimulator import GWASSimulator
 from utils import makedir
 import argparse
 import functools

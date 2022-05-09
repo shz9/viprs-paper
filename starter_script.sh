@@ -17,25 +17,25 @@ pip install --upgrade pip
 
 # Install requirements for viprs-paper:
 pip install -r requirements.txt
-# Install requirements for gwasimulator:
-pip install -r gwasimulator/requirements.txt
-# Install optional requirements for gwasimulator:
-pip install -r gwasimulator/optional-requirements.txt
+# Install requirements for magenpy:
+pip install -r magenpy/requirements.txt
+# Install optional requirements for magenpy:
+pip install -r magenpy/optional-requirements.txt
 # Install requirements for viprs:
 pip install -r viprs/requirements.txt
 # Install optional requirements for viprs:
 pip install -r viprs/optional-requirements.txt
 
-# Compile the Cython code for gwasimulator:
-cd gwasimulator || exit
+# Compile the Cython code for magenpy:
+cd magenpy || exit
 python setup.py
 
 # Compile the Cython code for viprs:
 cd ../viprs || exit
 python setup.py
 
-# Compile the Cython code for gwasimulator (within viprs):
-cd prs/gwasimulator || exit
+# Compile the Cython code for magenpy (within viprs):
+cd prs/magenpy || exit
 python setup.py
 
 cd "$VIPRS_PATH" || exit

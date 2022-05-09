@@ -7,7 +7,7 @@ import pandas as pd
 import re
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 sys.path.append("viprs/")
-from gwasimulator.GWASDataLoader import GWASDataLoader
+from magenpy.GWASDataLoader import GWASDataLoader
 from viprs.prs.src.VIPRS import VIPRS
 from viprs.prs.src.VIPRSAlpha import VIPRSAlpha
 from viprs.prs.src.VIPRSSBayes import VIPRSSBayes

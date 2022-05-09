@@ -11,8 +11,8 @@ import numpy as np
 import pandas as pd
 sys.path.append(osp.dirname(osp.dirname(__file__)))
 sys.path.append("viprs/")
-from gwasimulator.GWASDataLoader import GWASDataLoader
-from gwasimulator.model_utils import identify_mismatched_snps
+from magenpy.GWASDataLoader import GWASDataLoader
+from magenpy.model_utils import identify_mismatched_snps
 from viprs.prs.src.VIPRS import VIPRS
 from viprs.prs.src.VIPRSMix import VIPRSMix
 from viprs.prs.src.VIPRSAlpha import VIPRSAlpha

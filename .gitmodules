@@ -1,6 +1,6 @@
-[submodule "gwasimulator"]
-	path = gwasimulator
-	url = https://github.com/shz9/gwasimulator.git
+[submodule "magenpy"]
+	path = magenpy
+	url = https://github.com/shz9/magenpy.git
 [submodule "viprs"]
 	path = viprs
 	url = https://github.com/shz9/viprs.git
