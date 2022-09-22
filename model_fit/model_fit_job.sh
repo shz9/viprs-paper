@@ -36,21 +36,26 @@ echo "Model: $model"
 echo "LD Panel: $ld_panel"
 echo "Fitting strategy: $fitting_method"
 
-SECONDS=0
+# Parse optional parameters:
+extra_params=()
 
 if [ "$genomewide" = true ]; then
-  if [ "$local_grid" = true ]; then
-    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric" --local-grid --genomewide --opt-params "$opt_params"
-  else
-    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric" --genomewide --opt-params "$opt_params"
-  fi
-else
-  if [ "$local_grid" = true ]; then
-    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric" --local-grid --opt-params "$opt_params"
-  else
-    python model_fit/fit_prs.py -s "$1" -m "$model" -l "$ld_panel" -f "$fitting_method" --grid-metric "$grid_metric" --opt-params "$opt_params"
-  fi
+  extra_params+=(--genomewide)
 fi
+
+if [ "$local_grid" = true ]; then
+  extra_params+=(--local-grid)
+fi
+
+SECONDS=0
+
+python model_fit/fit_prs.py -s "$1" \
+                          -m "$model" \
+                          -l "$ld_panel" \
+                          -f "$fitting_method" \
+                          --grid-metric "$grid_metric" \
+                          --opt-params "$opt_params" \
+                          "${extra_params[@]}"
 
 MINUTES=$(echo "scale=2; $SECONDS/60" | bc)
 

@@ -11,7 +11,7 @@ parser.add_argument('--extension', dest='ext', type=str, default='eps')
 args = parser.parse_args()
 
 # Extract data:
-keep_models = ['VIPRS', 'VIPRS-GSv_p', 'SBayesR', 'Lassosum', 'LDPred2-grid', 'PRScs', 'PRSice2']
+keep_models = ['VIPRS', 'VIPRS-GSv_p', 'SBayesR', 'Lassosum', 'MegaPRS', 'LDPred2-grid', 'PRScs', 'PRSice2']
 
 bin_real_data = extract_predictive_evaluation_data(phenotype_type='binary',
                                                    configuration='real',
@@ -42,7 +42,8 @@ plt.figure(figsize=set_figure_size('paper', subplots=(1, 4)))
 plot_real_predictive_performance(quant_real_data,
                                  col_wrap=2,
                                  model_order=['VIPRS', 'VIPRS-GS', 'SBayesR (*)',
-                                              'Lassosum', 'LDPred2-grid', 'PRScs', 'PRSice2'])
+                                              'Lassosum', 'MegaPRS', 'LDPred2-grid', 'PRScs', 'PRSice2'],
+                                 add_hatches=True)
 
 plt.savefig("plots/main_figures/figure_6/6_a." + args.ext, bbox_inches='tight')
 plt.close()
@@ -52,7 +53,8 @@ plt.figure(figsize=set_figure_size('paper', subplots=(1, 2)))
 plot_real_predictive_performance(bin_real_data,
                                  metric='PR-AUC',
                                  col_wrap=1,
-                                 model_order=sort_models(bin_real_data['Model'].unique()))
+                                 model_order=sort_models(bin_real_data['Model'].unique()),
+                                 add_hatches=True)
 
 plt.savefig("plots/main_figures/figure_6/6_b." + args.ext, bbox_inches='tight')
 plt.close()

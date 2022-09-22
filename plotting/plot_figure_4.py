@@ -12,6 +12,7 @@ def plot_relative_predictive_performance(r_df,
                                          ancestry_order=None,
                                          trait_order=None,
                                          col_wrap=3,
+                                         add_hatches=True,
                                          palette='Set2'):
 
     g = sns.catplot(x="Ancestry",
@@ -27,10 +28,13 @@ def plot_relative_predictive_performance(r_df,
                     col_order=trait_order,
                     palette=palette)
 
+    if add_hatches:
+        add_hatch_to_facet_plot(g, patch_index=np.arange(8))
+
     for fig_ax in g.fig.axes:
         fig_ax.set_title(fig_ax.get_title().replace("Trait = ", ""))
 
-    g.set_axis_labels("Ancestry", "Relative " + metric_name(metric))
+    g.set_axis_labels("Ancestry group", "Relative " + metric_name(metric))
 
     return g
 
@@ -39,7 +43,7 @@ parser = argparse.ArgumentParser(description='Generate Figure 4')
 parser.add_argument('--extension', dest='ext', type=str, default='eps')
 args = parser.parse_args()
 
-keep_models = ['VIPRS', 'VIPRS-GSv_p', 'SBayesR', 'Lassosum', 'LDPred2-grid', 'PRScs', 'PRSice2']
+keep_models = ['VIPRS', 'VIPRS-GSv_p', 'SBayesR', 'Lassosum', 'MegaPRS', 'LDPred2-grid', 'PRScs', 'PRSice2']
 keep_panels = ['ukbb_50k_windowed', 'external']
 
 # Extract evaluation data for the White British cohort:
@@ -113,7 +117,7 @@ plt.figure(figsize=set_figure_size(width='paper'))
 plot_relative_predictive_performance(quant_real_data_combined,
                                      metric='R2',
                                      model_order=['VIPRS', 'VIPRS-GS', 'SBayesR',
-                                                  'Lassosum', 'LDPred2-grid', 'PRScs', 'PRSice2'],
+                                                  'Lassosum', 'MegaPRS', 'LDPred2-grid', 'PRScs', 'PRSice2'],
                                      ancestry_order=['Italy', 'India', 'China', 'Nigeria'],
                                      trait_order=sort_traits('quantitative',
                                                              quant_real_data_combined['Trait'].unique()))

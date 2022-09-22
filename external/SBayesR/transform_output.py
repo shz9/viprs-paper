@@ -10,7 +10,7 @@ parser.add_argument('-o', '--output', dest='output_dir', type=str, required=True
 parser.add_argument('-s', '--sumstats', dest='ss_dir', type=str, required=True,
                     help='The summary statistics files')
 parser.add_argument('-t', '--type', dest='type', type=str, default='plink',
-                    choices={'plink', 'pystatgen'},
+                    choices={'plink', 'magenpy'},
                     help="Type of summary statistics file")
 args = parser.parse_args()
 
@@ -24,15 +24,15 @@ for chrom in range(1, 23):
     sumstats_file = osp.join(args.ss_dir, f"chr_{chrom}.ma")
 
     # Read the SNP effects file:
-    snp_effect_df = pd.read_csv(snp_effects_file, sep="\s+")
+    snp_effect_df = pd.read_csv(snp_effects_file, delim_whitespace=True)
     snp_effect_df = snp_effect_df[['Chrom', 'Name', 'PIP', 'A1Effect']]
     snp_effect_df.columns = ['CHR', 'SNP', 'PIP', 'BETA']
 
     # Read the summary statistics table:
     if args.type == 'plink':
-        ss_table = pd.read_csv(sumstats_file, sep="\s+")[['SNP', 'A1', 'A2']]
+        ss_table = pd.read_csv(sumstats_file, delim_whitespace=True)[['SNP', 'A1', 'A2']]
     else:
-        ss_table = pd.read_csv(sumstats_file, sep="\s+")[['ID', 'ALT', 'REF']]
+        ss_table = pd.read_csv(sumstats_file, delim_whitespace=True)[['ID', 'ALT', 'REF']]
         ss_table.columns = ['SNP', 'A1', 'A2']
 
     # Merge the summary statistics table with the output table:
@@ -45,7 +45,7 @@ for chrom in range(1, 23):
     # --------------------------------------------- #
     # Transform the hyperparameter estimates:
 
-    params = pd.read_csv(hyperparams_file, sep="\s+", skiprows=1)
+    params = pd.read_csv(hyperparams_file, delim_whitespace=True, skiprows=1)
     heritability = params.loc['hsq', 'Mean']
     prop_causal = snp_effect_df['PIP'].mean()
 

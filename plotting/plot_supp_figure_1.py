@@ -41,7 +41,8 @@ makedir("plots/supplementary_figures/figure_1/")
 plt.figure(figsize=set_figure_size('paper', subplots=(1, 3)))
 
 plot_simulation_predictive_performance(quant_sim_data,
-                                       model_order=['VIPRS (' + ldp.replace('ukbb_', '') + ')' for ldp in keep_panels])
+                                       model_order=['VIPRS (' + ldp.replace('ukbb_', '') + ')' for ldp in keep_panels],
+                                       col_order=sort_simulations(quant_sim_data['Simulation model'].unique()))
 
 plt.savefig("plots/supplementary_figures/figure_1/1_a." + args.ext, bbox_inches='tight')
 plt.close()
@@ -52,6 +53,7 @@ plt.figure(figsize=set_figure_size('paper', subplots=(1, 3)))
 
 plot_simulation_predictive_performance(bin_sim_data,
                                        metric='PR-AUC',
-                                       model_order=['VIPRS (' + ldp.replace('ukbb_', '') + ')' for ldp in keep_panels])
+                                       model_order=['VIPRS (' + ldp.replace('ukbb_', '') + ')' for ldp in keep_panels],
+                                       col_order=sort_simulations(bin_sim_data['Simulation model'].unique()))
 plt.savefig("plots/supplementary_figures/figure_1/1_b." + args.ext, bbox_inches='tight')
 plt.close()

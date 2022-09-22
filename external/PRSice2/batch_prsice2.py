@@ -8,7 +8,7 @@ sys.path.append(osp.dirname(osp.dirname(osp.dirname(__file__))))
 from utils import makedir
 
 
-parser = argparse.ArgumentParser(description='Deploy SBayesR model fitting jobs on the cluster')
+parser = argparse.ArgumentParser(description='Deploy PRSice2 model fitting jobs on the cluster')
 
 parser.add_argument('-p', '--phenotype', dest='pheno_name', type=str,
                     help='The name of the phenotype.')
@@ -42,16 +42,17 @@ for gd in glob.glob(gwas_dir):
 
     trait = osp.basename(gd)
     config = osp.basename(osp.dirname(gd))
+    trait_type = osp.basename(osp.dirname(osp.dirname(gd)))
 
     if 'real' in config:
-        keep_file = f"data/keep_files/ukbb_cv/{args.type}/{trait}/{config.replace('real_', '')}/validation.keep"
+        keep_file = f"data/keep_files/ukbb_cv/{trait_type}/{trait}/{config.replace('real_', '')}/validation.keep"
     else:
         keep_file = "data/keep_files/ukbb_valid_subset.keep"
 
     jobs.append({
         'Trait': gd,
         'Keep': keep_file,
-        'Name': f"external/PRSice2/{args.type}/{config}/{trait}"
+        'Name': f"external/PRSice2/{trait_type}/{config}/{trait}"
     })
 
 

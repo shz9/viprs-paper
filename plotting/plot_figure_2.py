@@ -11,7 +11,7 @@ parser.add_argument('--extension', dest='ext', type=str, default='eps')
 args = parser.parse_args()
 
 # Extract data:
-keep_models = ['VIPRS', 'VIPRS-GSv_p', 'SBayesR', 'Lassosum', 'LDPred2-grid', 'PRScs', 'PRSice2']
+keep_models = ['VIPRS', 'VIPRS-GSv_p', 'SBayesR', 'Lassosum', 'MegaPRS', 'LDPred2-grid', 'PRScs', 'PRSice2']
 keep_panels = ['ukbb_50k_windowed', 'external']
 
 bin_real_data = extract_predictive_evaluation_data(phenotype_type='binary',
@@ -44,7 +44,8 @@ plot_real_predictive_performance(quant_real_data,
                                  model_order=sort_models(quant_real_data['Model'].unique()),
                                  row_order=sort_traits('quantitative', quant_real_data['Trait'].unique()),
                                  col_order=sort_traits('quantitative', quant_real_data['Trait'].unique()),
-                                 col_wrap=3)
+                                 col_wrap=3,
+                                 add_hatches=True)
 plt.subplots_adjust(wspace=.1)
 plt.savefig("plots/main_figures/figure_2/2_a." + args.ext, bbox_inches='tight')
 plt.close()
@@ -55,7 +56,8 @@ plot_real_predictive_performance(bin_real_data,
                                  metric='PR-AUC',
                                  model_order=sort_models(bin_real_data['Model'].unique()),
                                  row_order=sort_traits('binary', bin_real_data['Trait'].unique()),
-                                 col_wrap=1)
+                                 col_wrap=1,
+                                 add_hatches=True)
 plt.subplots_adjust(wspace=.1)
 plt.savefig("plots/main_figures/figure_2/2_b." + args.ext, bbox_inches='tight')
 plt.close()

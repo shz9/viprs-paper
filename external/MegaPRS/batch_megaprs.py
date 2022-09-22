@@ -8,7 +8,7 @@ sys.path.append(osp.dirname(osp.dirname(osp.dirname(__file__))))
 from utils import makedir
 
 
-parser = argparse.ArgumentParser(description='Deploy PRScs model fitting jobs on the cluster')
+parser = argparse.ArgumentParser(description='Deploy MegaPRS model fitting jobs on the cluster')
 
 parser.add_argument('-p', '--phenotype', dest='pheno_name', type=str,
                     help='The name of the phenotype.')
@@ -47,10 +47,17 @@ for gd in glob.glob(gwas_dir):
     config = osp.basename(osp.dirname(gd))
     trait_type = osp.basename(osp.dirname(osp.dirname(gd)))
 
+    if 'real' in config:
+        keep_file = f"data/keep_files/ukbb_cv/{trait_type}/{trait}/{config.replace('real_', '')}/validation.keep"
+    else:
+        keep_file = "data/keep_files/ukbb_valid_subset.keep"
+
     jobs.append({
         'Trait': gd,
-        'Name': f"external/PRScs/{trait_type}/{config}/{trait}"
+        'Keep': keep_file,
+        'Name': f"external/MegaPRS/{trait_type}/{config}/{trait}"
     })
+
 
 if len(jobs) > 500:
     print("Cannot submit more than 500 jobs simultaneously. Please re-run with specific arguments.")
@@ -65,7 +72,7 @@ for job in jobs:
     except Exception as e:
         pass
 
-    cmd = ["sbatch", "-J", job['Name'], "external/PRScs/fit_prscs.sh", job['Trait']]
+    cmd = ["sbatch", "-J", job['Name'], "external/MegaPRS/fit_megaprs.sh", job['Trait'], job['Keep']]
     print(" ".join(cmd))
     result = subprocess.run(" ".join(cmd), shell=True, capture_output=True)
     print(result.stdout)

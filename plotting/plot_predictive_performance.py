@@ -66,28 +66,45 @@ def extract_predictive_evaluation_data(phenotype_type=None,
         return combined_df
 
 
-def plot_simulation_predictive_performance(s_df, metric='R2',
-                                           showfliers=False, model_order=None,
+def plot_simulation_predictive_performance(s_df,
+                                           metric='R2',
+                                           showfliers=False,
+                                           model_order=None,
+                                           add_hatches=False,
+                                           row_order=None,
+                                           col_order=None,
+                                           col_wrap=3,
                                            palette='Set2'):
 
     g = sns.catplot(x="Heritability",
                     y=metric,
                     hue="Model",
-                    col="Prop. Causal",
+                    col="Simulation model",
                     data=s_df,
                     kind="box",
                     showfliers=showfliers,
+                    row_order=row_order,
+                    col_order=col_order,
                     hue_order=model_order,
+                    col_wrap=col_wrap,
                     palette=palette)
 
     if metric_name is not None:
         g.set_axis_labels("Heritability", metric_name(metric))
+
+    if add_hatches:
+        add_hatch_to_facet_plot(g, patch_index=[0, 1], kind="box")
+
+    # Update the subplot titles:
+    for fig_ax in g.fig.axes:
+        fig_ax.set_title(fig_ax.get_title().replace("Simulation model = ", ""))
 
     return g
 
 
 def plot_real_predictive_performance(r_df, metric='R2',
                                      add_bar_labels=True,
+                                     add_hatches=False,
                                      x_label_rotation=90,
                                      hide_x_labels=False,
                                      model_order=None, row_order=None, col_order=None,
@@ -110,6 +127,9 @@ def plot_real_predictive_performance(r_df, metric='R2',
 
     if add_bar_labels:
         add_labels_to_bars(g)
+
+    if add_hatches:
+        add_hatch_to_facet_plot(g, patch_index=[0, 1])
 
     if x_label_rotation != 0 or hide_x_labels:
         for fig_ax in g.fig.axes:
@@ -137,8 +157,8 @@ def plot_real_predictive_performance_with_lines(r_df,
 
     unique_traits = trait_order or r_df['Trait'].unique()
 
-    ax = sns.barplot(x=metric,
-                     y="Trait",
+    ax = sns.barplot(x="Trait",
+                     y=metric,
                      hue="Model",
                      data=r_df,
                      hue_order=model_order,
@@ -146,12 +166,13 @@ def plot_real_predictive_performance_with_lines(r_df,
                      palette=palette)
 
     if add_labels:
-        add_labels_to_bars_horizontal(ax)
+        add_labels_to_bars_vertical(ax)
 
-    for l in lines:
-        add_lines_to_bars(ax, [l['values'][t] for t in unique_traits], color=l['color'], label=l['label'])
+    if lines is not None:
+        for l in lines:
+            add_lines_to_bars(ax, [l['values'][t] for t in unique_traits], color=l['color'], label=l['label'])
 
-    ax.set(xlabel=metric_name(metric), ylabel='Trait')
+    ax.set(xlabel='Trait', ylabel=metric_name(metric))
     plt.legend()
 
     return ax
@@ -204,7 +225,7 @@ def main():
         pred_metrics = ['R2', 'Alt R2', 'Full R2', 'Naive R2', 'Pearson Correlation', 'Partial Correlation']
 
     final_simulation_df = extract_predictive_evaluation_data(phenotype_type=args.type,
-                                                             configuration='simulation',
+                                                             configuration='h2_*_p_*',
                                                              keep_models=args.models.split(","))
     final_real_df = extract_predictive_evaluation_data(phenotype_type=args.type,
                                                        configuration='real',

@@ -79,11 +79,27 @@ def extract_hyperparameter_estimates_data(phenotype_type=None,
 
         if 'real' in config:
             est_df['Heritability'] = np.nan
-            est_df['Prop. Causal'] = np.nan
+            est_df['Simulation model'] = np.nan
         else:
-            _, h2, _, p = config.split("_")
+
+            try:
+                _, h2, _, p = config.split("_")
+
+                map_names = {'0.01': 'Proportion Causal: 1%',
+                             '0.001': 'Proportion Causal: 0.1%',
+                             '0.0001': 'Proportion Causal: 0.01%'}
+
+                est_df['Simulation model'] = map_names[p]
+            except ValueError:
+                _, h2, p = config.split("_")
+
+                map_names = {'inf': 'Infinitesimal',
+                             'infGM': 'Infinitesimal Mixture',
+                             'sparseGM': 'Sparse Mixture'}
+
+                est_df['Simulation model'] = map_names[p]
+
             est_df['Heritability'] = float(h2)
-            est_df['Prop. Causal'] = float(p)
 
         dfs.append(est_df)
 
@@ -94,6 +110,9 @@ def extract_hyperparameter_estimates_data(phenotype_type=None,
 def plot_simulation_hyperparameter_estimates(s_df, metric,
                                              showfliers=False,
                                              model_order=None,
+                                             row_order=None,
+                                             col_order=None,
+                                             col_wrap=3,
                                              palette='Set2',
                                              log_scale=False):
 
@@ -102,15 +121,22 @@ def plot_simulation_hyperparameter_estimates(s_df, metric,
     g = sns.catplot(x="Heritability",
                     y=metric,
                     hue="Model",
-                    col="Prop. Causal",
+                    col="Simulation model",
                     data=s_df,
                     kind="box",
                     showfliers=showfliers,
                     hue_order=model_order,
+                    col_order=col_order,
+                    row_order=row_order,
+                    col_wrap=col_wrap,
                     palette=palette)
 
     if metric_name is not None:
         g.set_axis_labels("Heritability", metric_name(metric))
+
+    # Update the subplot titles:
+    for fig_ax in g.fig.axes:
+        fig_ax.set_title(fig_ax.get_title().replace("Simulation model = ", ""))
 
     if log_scale:
         for i, ax in enumerate(g.fig.axes):
@@ -181,7 +207,7 @@ def main():
 
     simulation_data = extract_hyperparameter_estimates_data(phenotype_type=args.type,
                                                             keep_models=['VIPRS', 'SBayesR'],
-                                                            configuration='simulation',
+                                                            configuration='h2_*_p_*',
                                                             keep_panels=['external', args.ld_panel])
     real_data = extract_hyperparameter_estimates_data(phenotype_type=args.type,
                                                       configuration='real',

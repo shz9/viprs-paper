@@ -39,7 +39,8 @@ makedir("plots/supplementary_figures/figure_3/")
 plt.figure(figsize=set_figure_size('paper', subplots=(1, 3)))
 
 plot_simulation_predictive_performance(quant_sim_data,
-                                       model_order=sort_models(quant_sim_data['Model'].unique()))
+                                       model_order=sort_models(quant_sim_data['Model'].unique()),
+                                       col_order=sort_simulations(quant_sim_data['Simulation model'].unique()))
 
 plt.savefig("plots/supplementary_figures/figure_3/3_a." + args.ext, bbox_inches='tight')
 plt.close()
@@ -50,6 +51,7 @@ plt.figure(figsize=set_figure_size('paper', subplots=(1, 3)))
 
 plot_simulation_predictive_performance(bin_sim_data,
                                        metric='PR-AUC',
-                                       model_order=sort_models(quant_sim_data['Model'].unique()))
+                                       model_order=sort_models(bin_sim_data['Model'].unique()),
+                                       col_order=sort_simulations(bin_sim_data['Simulation model'].unique()))
 plt.savefig("plots/supplementary_figures/figure_3/3_b." + args.ext, bbox_inches='tight')
 plt.close()

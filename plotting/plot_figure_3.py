@@ -10,7 +10,7 @@ parser.add_argument('--extension', dest='ext', type=str, default='eps')
 args = parser.parse_args()
 
 # Extract data:
-keep_models = ['VIPRS', 'VIPRS-GSv_p', 'SBayesR', 'Lassosum', 'LDPred2-grid', 'PRScs', 'PRSice2']
+keep_models = ['VIPRS', 'VIPRS-GSv_p', 'SBayesR', 'Lassosum', 'MegaPRS', 'LDPred2-grid', 'PRScs', 'PRSice2']
 keep_traits = ['HEIGHT', 'HDL', 'BMI', 'FVC', 'FEV1', 'HC', 'WC', 'LDL', 'BW', 'ASTHMA', 'T2D', 'RA']
 
 sim_time_stats = extract_time_stats(keep_models=keep_models,

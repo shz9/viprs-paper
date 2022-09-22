@@ -54,7 +54,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     combined_models = ['VIPRS-GSv_p', 'SBayesR']
-    keep_models = ['VIPRS', 'VIPRS-GSv_p', 'SBayesR', 'Lassosum', 'LDPred2-grid', 'PRScs', 'PRSice2']
+    keep_models = ['VIPRS', 'VIPRS-GSv_p', 'SBayesR', 'Lassosum', 'MegaPRS', 'LDPred2-grid', 'PRScs', 'PRSice2']
     keep_panels = ['external', 'ukbb_50k_windowed']
     real_traits = glob.glob("data/phenotypes/*/real/*.txt")
     real_folds = [f'real_fold_{i}' for i in range(1, 6)]

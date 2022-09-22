@@ -11,7 +11,7 @@ parser.add_argument('--extension', dest='ext', type=str, default='eps')
 args = parser.parse_args()
 
 # Extract data:
-keep_models = ['VIPRS', 'VIPRS-GSv_p', 'VIPRS-GS_p', 'VIPRS-BO_p', 'VIPRS-BOv_p', 'VIPRS-BMA_p']
+keep_models = ['VIPRS', 'VIPRS-GSv_p', 'VIPRS-GSp_p', 'VIPRS-GS_p', 'VIPRS-BO_p', 'VIPRS-BOv_p', 'VIPRS-BMA_p']
 keep_panels = ['ukbb_50k_windowed']
 
 bin_real_data = extract_predictive_evaluation_data(phenotype_type='binary',

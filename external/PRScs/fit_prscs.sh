@@ -21,6 +21,9 @@ export MKL_NUM_THREADS=8
 export NUMEXPR_NUM_THREADS=8
 export OMP_NUM_THREADS=8
 
+# Read configs (e.g. LD matrix path):
+. external/PRScs/config.sh
+
 # Inputs:
 ss_dir=$(readlink -e "$1") # Summary statistics directory
 
@@ -44,7 +47,7 @@ SECONDS=0
 
 for chrom in $(seq 1 22)
 do
-  python "$prscs_bin" --ref_dir "$HOME/projects/def-sgravel/data/ld/ldblk_ukbb_eur" \
+  python "$prscs_bin" --ref_dir "$LD_PANEL_PATH" \
          --bim_prefix "data/ukbb_qc_genotypes/chr_$chrom" \
          --sst_file "$ss_dir/chr_${chrom}.prscs.ss" \
          --out_dir "$output_dir/chr_$chrom" \

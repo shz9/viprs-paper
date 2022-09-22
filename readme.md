@@ -208,6 +208,17 @@ Finally, to generate the figures and plots you see in the manuscript, you can ex
 source plotting/batch_plot.sh
 ```
 
+## New analyses in v2 of the manuscript
+
+In version 2 of the manuscript, we added new simulation scenarios and 
+included `MegaPRS` in the list of baseline models that we compare against.
+
+The new simulation scripts can be found in `simulation_supplementary` directory.
+
+In addition to the simulations, I also added new scripts for performing model fit 
+and computing LD matrices using the latest versions of the `viprs` and `magenpy
+software implementations.
+
 ## Questions and inquiries
 
 If you have any questions or inquiries about any of the steps in this analysis, feel free to open an issue under this GitHub repo or email the corresponding authors on the manuscript.

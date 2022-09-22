@@ -38,4 +38,14 @@ python setup.py
 cd prs/magenpy || exit
 python setup.py
 
+
+# For the new implementations, we need to create a virtual environment for the viprs package:
+
+module load python/3.8
+python -m venv viprs_venv
+source viprs_venv/bin/activate
+pip install --upgrade pip
+pip install viprs
+
+
 cd "$VIPRS_PATH" || exit

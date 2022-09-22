@@ -49,6 +49,32 @@ def set_figure_size(width, fraction=1, subplots=(1, 1), height_extra_pct=0., wid
     return fig_width_in + fig_width_in*width_extra_pct, fig_height_in + fig_height_in*height_extra_pct
 
 
+def add_hatch_to_facet_plot(g, patch_index=None, kind='bar', hatch="//"):
+
+    from seaborn.axisgrid import FacetGrid
+
+    if isinstance(g, FacetGrid):
+        axes = g.axes.flatten()
+    else:
+        axes = [g]
+
+    for ax in axes:
+
+        if kind == 'bar':
+            container = ax.patches
+        elif kind == 'box':
+            container = ax.artists
+
+        for p_idx, patch in enumerate(container):
+
+            if patch_index is not None:
+                if p_idx not in patch_index:
+                    continue
+            patch.set_hatch(hatch)
+
+    return g
+
+
 def update_model_names(data_df):
 
     unique_models = data_df['Model'].unique()
@@ -62,39 +88,46 @@ def update_model_names(data_df):
         if len(strategy_models) < 1:
             return {}
 
-        # Check if some of the grids are localized while others are not:
-        l_in_model = ['l' in m.replace(model_name, '').split('_')[0] for m in strategy_models]
+        search_names = [m.replace(model_name, '').split('_')[0] for m in strategy_models]
 
-        # Check if there are models with different grid metrics (validation vs. ELBO):
-        v_in_model = ['v' in m.replace(model_name, '').split('_')[0] for m in strategy_models]
+        # Check if some of the grids are localized while others are not:
+        l_in_model = ['l' in m for m in search_names]
+
+        # Check if all models used validation:
+        v_in_model = ['v' in m for m in search_names]
+
+        # Check if all models used pseudo-validation:
+        p_in_model = ['p' in m for m in search_names]
+
+        if sum(l_in_model) == len(l_in_model):
+            search_names = [m.replace('l', '') for m in search_names]
+
+        if sum(v_in_model) == len(v_in_model):
+            search_names = [m.replace('v', '') for m in search_names]
+        elif sum(p_in_model) == len(p_in_model):
+            search_names = [m.replace('p', '') for m in search_names]
+        else:
+            for i in range(len(search_names)):
+                if v_in_model[i]:
+                    search_names[i] = '-val'
+                elif p_in_model[i]:
+                    search_names[i] = '-pseudoval'
+                else:
+                    search_names[i] = '-ELBO'
 
         # Check that the search was done over the same hyperparameters:
-        param_in_model = [m.split('_')[1] for m in strategy_models]
+        param_in_model = ['_' + m.split('_')[1] for m in strategy_models]
+        if len(set(param_in_model)) == 1:
+            param_in_model = ['']*len(param_in_model)
 
         # If need be, replace the old model names:
 
-        new_model_names = [m.replace(model_name, '') for m in strategy_models]
-
-        # If all models include a localized grid, remove the `l` modifier:
-        if sum(l_in_model) == len(l_in_model):
-            new_model_names = [m.replace('l', '') for m in new_model_names]
-
-        # If all models evaluated performance with a validation set:
-        if sum(v_in_model) == len(v_in_model):
-            new_model_names = [m.replace('v', '') for m in new_model_names]
-        elif model_name != 'VIPRS-BMA':
-            new_model_names = [['-ELBO', '']['v' in m] + m.replace('v', '') for m in new_model_names]
-
-        # If all models searched the same hyperparameters:
-        if len(set(param_in_model)) == 1:
-            new_model_names = [m.split('_')[0] for m in new_model_names]
-
-        new_model_names = [model_name + m for m in new_model_names]
+        new_model_names = [model_name + search_names[i] + param_in_model[i] for i in range(len(strategy_models))]
 
         return dict(zip(strategy_models, new_model_names))
 
     update_dict = {}
-    base_models = ['VIPRS', 'VIPRSMix', 'VIPRSAlpha', 'VIPRSSBayes', 'VIPRSSBayesAlpha']
+    base_models = ['VIPRS', 'VIPRSMix', 'VIPRSAlpha']
     base_strategies = ['GS', 'BO', 'BMA']
 
     for bm in base_models:
@@ -149,7 +182,14 @@ def add_labels_to_bars(g, rotation=90, fontsize='smaller'):
     This function takes a barplot and adds labels above each bar with its value.
     """
 
-    for ax in g.axes.flatten():
+    from seaborn.axisgrid import FacetGrid
+
+    if isinstance(g, FacetGrid):
+        axes = g.axes.flatten()
+    else:
+        axes = [g]
+
+    for ax in axes:
 
         y_min, y_max = ax.get_ylim()
         scale = ax.get_yaxis().get_scale()
@@ -181,6 +221,30 @@ def add_labels_to_bars(g, rotation=90, fontsize='smaller'):
                     fontsize=fontsize,
                     rotation=rotation,
                     ha='center')
+
+
+def add_labels_to_bars_vertical(ax, fontsize='smaller'):
+
+    y_min, y_max = ax.get_ylim()
+
+    for p in ax.patches:
+
+        p_height = p.get_height()
+
+        if round(p_height, 3) > .45 * (y_max - y_min):
+            y = y_min + .5 * p_height
+        else:
+            y = y_min + p_height * 1.05 + 0.05 * (y_max - y_min)
+
+        x = p.get_x() + .5*p.get_width()
+        value = p.get_height()
+        ax.text(x, y,
+                f'{value:.3f}',
+                ha="center",
+                va="bottom",
+                color='black',
+                rotation=90,
+                fontsize=fontsize)
 
 
 def add_labels_to_bars_horizontal(ax, fontsize='smaller'):
@@ -217,6 +281,14 @@ def sort_traits(trait_type, traits):
         ] if t in traits]
     else:
         return [t for t in ['ASTHMA', 'T2D', 'T1D', 'RA', 'PASS_T2D', 'PASS_RA'] if t in traits]
+
+
+def sort_simulations(sims):
+
+    simulations = ['Proportion Causal: 0.01%', 'Proportion Causal: 0.1%', 'Proportion Causal: 1%',
+                   'Sparse Mixture', 'Infinitesimal Mixture', 'Infinitesimal']
+
+    return [s for s in simulations if s in sims]
 
 
 def metric_name(metric):
@@ -283,6 +355,7 @@ def sort_models(models):
     external_model_order = [
         'SBayesR',
         'Lassosum',
+        'MegaPRS',
         'LDPred2-inf', 'LDPred2-auto', 'LDPred2-grid',
         'PRScs',
         'PRSice2',

@@ -97,6 +97,7 @@ def plot_time_stats(time_stats_df,
                     showmeans=True,
                     model_order=None,
                     palette='Set2',
+                    add_hatches=True,
                     ax=None):
 
     assert units in ('hours', 'minutes', 'log_minutes')
@@ -115,6 +116,9 @@ def plot_time_stats(time_stats_df,
                     showmeans=showmeans,
                     meanprops={"markerfacecolor": "white", "markeredgecolor": "black"}
                     )
+
+    if add_hatches:
+        add_hatch_to_facet_plot(g, patch_index=[0, 1], kind="box")
 
     if x_label_rotation != 0:
         g.set_xticklabels(g.get_xticklabels(), rotation=x_label_rotation)

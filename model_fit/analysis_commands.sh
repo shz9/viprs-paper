@@ -34,6 +34,10 @@ python model_fit/batch_model_fit.py -m VIPRS -l ukbb_50k_windowed --strategy GS 
 python model_fit/batch_model_fit.py -m VIPRSAlpha -l ukbb_50k_windowed --strategy GS --opt-params pi --grid-metric validation
 python model_fit/batch_model_fit.py -m VIPRSMix -l ukbb_50k_windowed --strategy GS --opt-params pi --grid-metric validation
 
+# Grid search with pseudo-validation as criterion:
+python model_fit/batch_model_fit_new.py -m VIPRS -l ukbb_50k_windowed --strategy GS --opt-params pi --grid-metric pseudo_validation
+
+
 # Grid search with ELBO as criterion:
 python model_fit/batch_model_fit.py -m VIPRS -l ukbb_50k_windowed --strategy GS --opt-params pi --grid-metric ELBO
 

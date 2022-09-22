@@ -6,14 +6,14 @@ parser = argparse.ArgumentParser(description='Transform summary statistics to CO
 parser.add_argument('-s', '--sumstats', dest='ss_file', type=str, required=True,
                     help='The summary statistics files')
 parser.add_argument('-t', '--type', dest='type', type=str, default='plink',
-                    choices={'plink', 'pystatgen'})
+                    choices={'plink', 'magenpy'})
 args = parser.parse_args()
 
 print(f"> Transforming summary statistics file: {args.ss_file}")
 # Read the sumstats file:
 ss_df = pd.read_csv(args.ss_file, sep="\t")
 
-if args.type == 'pystatgen':
+if args.type == 'magenpy':
     ss_df = ss_df[['SNP', 'A1', 'A2', 'MAF', 'BETA', 'SE', 'PVAL', 'N']]
 elif args.type == 'plink':
     ss_df['A2'] = ss_df.apply(lambda x: [x['ALT1'], x['REF']][x['A1'] == x['ALT1']], axis=1)

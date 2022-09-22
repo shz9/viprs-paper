@@ -87,6 +87,7 @@ def process_trait(trait_f):
             'Trait': trait,
             'LD Panel': ld_panel,
             'Model': model,
+            'Configuration': config,
             'Class': ['Quantitative', 'Binary'][trait_type == 'binary']
         })
         if config == 'real':
@@ -100,9 +101,24 @@ def process_trait(trait_f):
     eval_pheno_df = pd.DataFrame(pheno_res)
 
     if config != 'real':
-        _, h2, _, p = config.split("_")
+        try:
+            _, h2, _, p = config.split("_")
+
+            map_names = {'0.01': 'Proportion Causal: 1%',
+                         '0.001': 'Proportion Causal: 0.1%',
+                         '0.0001': 'Proportion Causal: 0.01%'}
+
+            eval_pheno_df['Simulation model'] = map_names[p]
+        except ValueError:
+            _, h2, p = config.split("_")
+
+            map_names = {'inf': 'Infinitesimal',
+                         'infGM': 'Infinitesimal Mixture',
+                         'sparseGM': 'Sparse Mixture'}
+
+            eval_pheno_df['Simulation model'] = map_names[p]
+
         eval_pheno_df['Heritability'] = float(h2)
-        eval_pheno_df['Prop. Causal'] = float(p)
 
     output_file = f"data/evaluation/{trait_type}/{config}/{trait}.csv"
     makedir(osp.dirname(output_file))
@@ -113,11 +129,7 @@ def process_trait(trait_f):
         existing_df['Trait'] = existing_df['Trait'].astype(str)
 
         # Specify the columns to merge on:
-        merge_cols = ['Trait', 'LD Panel', 'Model', 'Class']
-        if config == 'real':
-            merge_cols += ['Fold']
-        else:
-            merge_cols += ['Heritability', 'Prop. Causal']
+        merge_cols = ['Trait', 'LD Panel', 'Model', 'Class', 'Configuration']
 
         # Merge existing and new evaluation datasets:
         eval_pheno_df = existing_df.merge(eval_pheno_df, how='outer', on=merge_cols)
@@ -181,7 +193,7 @@ if __name__ == '__main__':
                            names=['FID', 'IID'] + covariates,
                            delim_whitespace=True)
 
-    pool = Pool(4)
+    pool = Pool(7)
     pool.map(process_trait, glob.glob(pheno_dir))
     pool.close()
     pool.join()

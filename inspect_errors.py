@@ -2,7 +2,7 @@ import argparse
 import subprocess
 
 
-def inspect_log_files(path, error_terms=('error', 'OptimizationDivergence')):
+def inspect_log_files(path, error_terms=('error', 'OptimizationDivergence', 'Exception')):
 
     for err in error_terms:
         try:
